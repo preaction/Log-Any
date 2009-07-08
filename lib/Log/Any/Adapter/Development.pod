@@ -7,7 +7,7 @@ Log::Any::Adapter::Development -- Manual for developing new Log::Any adapters
 
 The adapter module:
 
-   package Log::Any::Adapter::Log::YetAnother;
+   package Log::Any::Adapter::Log::YAL;
    use strict;
    use warnings;
    use Log::Any::Util qw(make_method);
@@ -35,7 +35,7 @@ The adapter module:
 
 and the application:
 
-   Log::Any->set_adapter('Log::YetAnother');
+   Log::Any->set_adapter('Log::YAL');
 
 =head1 DESCRIPTION
 
@@ -59,9 +59,52 @@ If it's an internal driver, you can call it whatever you like and use it like
 =head1 BASE CLASS
 
 All adapters must directly or indirectly inherit from
-L<Log::Any::Adapter::Base>.
+L<Log::Any::Adapter::Base|Log::Any::Adapter::Base>.
 
 =head1 METHODS
+
+=head2 Constructor
+
+The constructor (C<new>) is provided by
+L<Log::Any::Adapter::Base|Log::Any::Adapter::Base>. It will:
+
+=over
+
+=item *
+
+place any adapter arguments into a hash, along with the category
+
+=item *
+
+bless the hash into your subclass
+
+=item *
+
+call L</init> which may be optionally provided by your subclass
+
+=back
+
+At this point, overriding the default constructor is not supported. Hopefully it
+will not be needed.
+
+The constructor is called whenever a log object is requested. e.g. If the application
+initializes Log::Any like so:
+
+    Log::Any->set_adapter('Log::YAL', yal_object => $yal, depth => 3);
+
+and then a class requests a logger like so:
+
+    package Foo;
+    use Log::Any qw($log);
+
+Then C<$log> will be populated with the return value of:
+
+    Log::Any::Adapter::Log::Yal->new(yal_object => $yal, depth => 3, category => 'Foo');
+
+This is memoized, so if the same category should be requested again
+(e.g. through a separate C<get_logger> call, the same object will be
+returned. Therefore, you should try to avoid anything non-deterministic
+in your L</init> function.
 
 =head2 Required methods
 
@@ -105,9 +148,9 @@ method names with
 
 =back
 
-=head2 Overridable methods
+=head2 Optional methods
 
-The following methods have a default implementation but MAY be overriden by
+The following methods have no default implementation but MAY be provided by
 your subclass:
 
 =over
@@ -115,7 +158,7 @@ your subclass:
 =item init ()
 
 This is called after the adapter object is created and blessed into your class.
- It will be a hash containing the parameters that were passed to new(). Perform
+It will be a hash containing the parameters that were passed to new(). Perform
 any necessary validation or initialization here.
 
 =back
@@ -146,6 +189,8 @@ Returns a list of detection methods: is_debug, is_info, etc.
 =item Log::Any->logging_and_detection_methods
 
 Returns a combined list of logging and detection methods.
+
+=back
 
 =head1 AUTHOR
 
