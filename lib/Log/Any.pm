@@ -6,14 +6,13 @@ use warnings;
 
 our $VERSION = '0.01';
 
-my ( $Logger_Spec, $Logger_Cache, @Exports );
+my $Manager = Log::Any::Manager->new();
 
 sub import {
     my $class  = shift;
     my $caller = caller();
 
     my @export_params = ($caller, @_);
-    push( @Exports, \@export_params );
     $class->_export_to_caller( $caller, @export_params );
 }
 
@@ -41,10 +40,6 @@ sub _export_to_caller {
             if ( $var eq '$log' ) {
                 $value = $class->get_logger( category => $caller );
             }
-            elsif ( $var =~ /^\$log_is_(debug|info|warn|error|fatal)$/ ) {
-                my $method = "is_$1";
-                $value = $class->get_logger( category => $caller )->$method;
-            }
             else {
                 croak $class->_invalid_import_error($param);
             }
@@ -55,59 +50,20 @@ sub _export_to_caller {
     }
 }
 
-sub set_logger {
-    my $class = shift;
-    $Logger_Spec = shift;
-    $class->handle_logger_change();
+sub _invalid_import_error {
+    my ( $class, $param ) = @_;
+
+    die "invalid import '$param' - valid imports are '$log'";
 }
 
-# TODO: better name
-sub handle_logger_change {
-    my ($class) = @_;
-
-    %Logger_Cache = ();
-    foreach my $export_params (@Exports) {
-        $class->_export_to_caller(@$export_params);
-    }
+sub use_logger {
+    my $class = shift;
+    $Manager->use_logger(@_);
 }
 
 sub get_logger {
-    my ( $class, %params ) = @_;
-
-    # Get category from params or from caller package
-    #
-    my $category = delete( $params{'category'} );
-    if ( !defined($category) ) {
-        $category = caller()
-          || croak 'no category specified and could not determine from caller';
-    }
-
-    # Call resolve_logger_spec to get logger; memoize for category
-    #
-    my $logger = $Logger_Cache{$category};
-    if ( !defined($logger) ) {
-        $logger = $class->resolve_logger_spec( $Logger_Spec, $category );
-        $Logger_Cache{$category} = $logger;
-    }
-
-    return $logger;
-}
-
-sub resolve_logger_spec {
-    my ( $class, $spec, $category ) = @_;
-
-    if ( !defined($spec) ) {
-        return $class->null_logger();
-    }
-    elsif ( blessed($spec) ) {
-        return $spec;
-    }
-    elsif ( ref($spec) eq 'CODE' ) {
-        return $class->_resolve_logger_spec( $spec->($category) );
-    }
-    elsif ( $spec eq 'log4perl' ) {
-        return Log::Log4perl->get_logger($category);
-    }
+    my $class = shift;
+    $Manager->get_logger(@_);
 }
 
 1;
