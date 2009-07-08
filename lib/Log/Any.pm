@@ -111,7 +111,7 @@ In a CPAN or other module:
     use Log::Any qw($log);
 
     $log->error("an error occurred");
-    $log->debug("arguments are: " . Dumper(\@_))
+    $log->debugf("arguments are: %s", \@_)
         if $log->is_debug();
 
 In your application:
@@ -260,6 +260,19 @@ To log a message, use any of the log levels. e.g.
 
     $log->error("this is an error");
     $log->info("this is an info message");
+
+You should B<not> include a newline in your message; that is the
+responsibility of the logging mechanism, which may or may not want it.
+
+There are also printf-style versions of each of these methods:
+
+    $log->errorf("an error occurred: %s", $@);
+    $log->debugf("called with %d params: %s", $param_count, \@params);
+
+There are two advantages of the printf-style methods. First, they can be
+more readable than concatenated strings (subjective of course); second, any
+complex references (like \@params above) are automatically expanded with
+Data::Dumper.
 
 =head2 Log level detection
 
