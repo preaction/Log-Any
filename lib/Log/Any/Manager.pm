@@ -1,11 +1,13 @@
 package Log::Any::Manager;
+use Log::Any::Util qw(require_dynamic);
 use strict;
 use warnings;
 
 sub new {
-    my ($class) = @_;
+    my $class = shift;
+    my $self = {@_};
     bless $self, $class;
-    $self->use_logger('Null');
+    $self->set_adapter('Null');
     return $self;
 }
 
@@ -19,8 +21,7 @@ sub set_adapter {
     );
     $self->{adapter_class}  = $adapter_class;
     $self->{adapter_params} = \%adapter_params;
-    eval "require $adapter_class";
-    die $@ if $@;
+    require_dynamic($adapter_class);
     $self->{category_matters} = $adapter_class->category_matters;
 
     # Replace each adapter out in the wild by reblessing and overriding hash
@@ -36,22 +37,14 @@ sub set_adapter {
 
 sub get_logger {
     my ( $self, %params ) = @_;
-
+    
     my $category;
-    if ( $self->{category_matters} ) {
 
-        # Get category from params or from caller package
-        #
-        $category = delete( $params{'category'} );
-        if ( !defined($category) ) {
-            $category = caller();
-        }
-    }
-    else {
-
-        # Category doesn't matter for this adapter; just use Default
-        #
-        $category = 'Default';
+    # Get category from params or from caller package
+    #
+    $category = delete( $params{'category'} );
+    if ( !defined($category) ) {
+        $category = caller();
     }
 
     # Create a new adapter for this category if it is not already in cache
@@ -60,7 +53,7 @@ sub get_logger {
     if ( !defined($adapter) ) {
         $adapter =
           $self->{adapter_class}
-          ->new( @{ $self->{adapter_params} }, category => $category );
+          ->new( %{ $self->{adapter_params} }, category => $category );
         $self->{adapter_cache}->{$category} = $adapter;
     }
     return $adapter;

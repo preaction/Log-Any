@@ -10,6 +10,7 @@ our @EXPORT = qw(
 
 our @EXPORT_OK = qw(
   make_alias
+  require_dynamic
   dp
   dps
 );
@@ -31,6 +32,13 @@ sub _dump_value_with_caller {
     my @caller = caller(1);
     return sprintf( "[dp at %s line %d.] [%d] %s\n",
         $caller[1], $caller[2], $$, $dump );
+}
+
+sub require_dynamic {
+    my ($class) = @_;
+
+    eval "require $class";
+    die $@ if $@;
 }
 
 sub dp {

@@ -4,9 +4,25 @@ use strict;
 use warnings;
 use base qw(Log::Any::Adapter::Base);
 
+sub category_matters { 1 }
+
+sub init {
+    my ($self) = @_;
+
+    $self->{msgs} = [];
+}
+
 foreach my $method ( Log::Any->logging_methods() ) {
-    make_alias( $method,
-        sub { my ( $self, $msg ) = @_; push( @{ $self->{msgs} }, $msg ) } );
+    make_alias(
+        $method,
+        sub {
+            my ( $self, $text ) = @_;
+            push(
+                @{ $self->{msgs} },
+                { level => $method, category => $self->{category}, text => $text }
+            );
+        }
+    );
 }
 
 foreach my $method ( Log::Any->detection_methods() ) {

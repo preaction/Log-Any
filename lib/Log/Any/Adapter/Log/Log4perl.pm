@@ -15,7 +15,7 @@ sub init {
 
 # Delegate methods to logger, mapping levels down to log4perl levels where necessary
 #
-foreach my $method ( __PACKAGE__->logging_and_detection_methods() ) {
+foreach my $method ( Log::Any->logging_and_detection_methods() ) {
     my $log4perl_method = $method;
     for ($log4perl_method) {
         s/notice/info/;

@@ -1,6 +1,8 @@
 package Log::Any;
 use 5.006;
 use Carp qw(croak);
+use Log::Any::Manager;
+use Log::Any::Util qw(dp);
 use strict;
 use warnings;
 
@@ -13,7 +15,7 @@ sub import {
     my $caller = caller();
 
     my @export_params = ( $caller, @_ );
-    $class->_export_to_caller( $caller, @export_params );
+    $class->_export_to_caller( @export_params );
 }
 
 sub _export_to_caller {
@@ -34,26 +36,24 @@ sub _export_to_caller {
 
     # Import requested variables into caller
     #
-    if ( my @vars = grep { /^\$/ } @params ) {
-        foreach my $var (@vars) {
-            my $value;
-            if ( $var eq '$log' ) {
-                $value = $class->get_logger( category => $caller );
-            }
-            else {
-                croak $class->_invalid_import_error($param);
-            }
-            my $no_sigil_var = substr( $var, 1 );
-            no strict 'refs';
-            *{"$caller\::$no_sigil_var"} = \$value;
+    foreach my $var (@vars) {
+        my $value;
+        if ( $var eq '$log' ) {
+            $value = $class->get_logger( category => $caller );
         }
+        else {
+            croak $class->_invalid_import_error($var);
+        }
+        my $no_sigil_var = substr( $var, 1 );
+        no strict 'refs';
+        *{"$caller\::$no_sigil_var"} = \$value;
     }
 }
 
 sub _invalid_import_error {
     my ( $class, $param ) = @_;
 
-    die "invalid import '$param' - valid imports are '$log'";
+    die "invalid import '$param' - valid imports are '\$log'";
 }
 
 sub set_adapter {
@@ -64,6 +64,22 @@ sub set_adapter {
 sub get_logger {
     my $class = shift;
     $Manager->get_logger(@_);
+}
+
+sub logging_methods {
+    my $class = shift;
+    return qw(debug info notice warning error critical alert emergency);
+}
+
+sub detection_methods {
+    my $class = shift;
+    return map { "is_$_" } $class->logging_methods();
+}
+
+sub logging_and_detection_methods {
+    my $class = shift;
+    my @list = ($class->logging_methods, $class->detection_methods);
+    return @list;
 }
 
 1;
