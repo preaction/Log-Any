@@ -13,7 +13,6 @@ sub new {
 }
 
 sub init             { }
-sub category_matters { 0 }
 
 sub delegate_method_to_slot {
     my ( $class, $slot, $method, $adapter_method ) = @_;

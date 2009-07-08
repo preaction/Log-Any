@@ -5,8 +5,6 @@ use Log::Any::Util qw(make_alias);
 use strict;
 use warnings;
 
-sub category_matters { 1 }
-
 sub init {
     my ($self) = @_;
 

@@ -4,8 +4,6 @@ use strict;
 use warnings;
 use base qw(Log::Any::Adapter::Base);
 
-sub category_matters { 1 }
-
 sub init {
     my ($self) = @_;
 

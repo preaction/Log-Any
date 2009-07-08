@@ -22,7 +22,6 @@ sub set_adapter {
     $self->{adapter_class}  = $adapter_class;
     $self->{adapter_params} = \%adapter_params;
     require_dynamic($adapter_class);
-    $self->{category_matters} = $adapter_class->category_matters;
 
     # Replace each adapter out in the wild by reblessing and overriding hash
     #
