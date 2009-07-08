@@ -9,10 +9,14 @@ sub new {
     return $self;
 }
 
-sub use_logger {
-    my ( $$self, $adapter_name, %adapter_params ) = @_;
+sub set_adapter {
+    my ( $self, $adapter_name, %adapter_params ) = @_;
 
-    my $adapter_class = "Log::Any::Adapter::$adapter_name";
+    my $adapter_class = (
+          substr( $adapter_name, 0, 1 ) eq '+'
+        ? substr( $adapter_name, 1 )
+        : "Log::Any::Adapter::$adapter_name"
+    );
     $self->{adapter_class}  = $adapter_class;
     $self->{adapter_params} = \%adapter_params;
     eval "require $adapter_class";
@@ -44,6 +48,9 @@ sub get_logger {
         }
     }
     else {
+
+        # Category doesn't matter for this adapter; just use Default
+        #
         $category = 'Default';
     }
 

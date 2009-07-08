@@ -6,12 +6,21 @@ use warnings;
 use base qw(Exporter);
 
 our @EXPORT = qw(
+);
+
+our @EXPORT_OK = qw(
+  make_alias
   dp
   dps
 );
 
-our @EXPORT_OK = qw(
-);
+sub make_alias {
+    my ( $method, $code, $pkg ) = @_;
+
+    $pkg ||= caller();
+    no strict 'refs';
+    *{ $pkg . "::$method" } = $code;
+}
 
 sub _dump_value_with_caller {
     my ($value) = @_;

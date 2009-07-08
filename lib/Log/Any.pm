@@ -12,7 +12,7 @@ sub import {
     my $class  = shift;
     my $caller = caller();
 
-    my @export_params = ($caller, @_);
+    my @export_params = ( $caller, @_ );
     $class->_export_to_caller( $caller, @export_params );
 }
 
@@ -56,9 +56,9 @@ sub _invalid_import_error {
     die "invalid import '$param' - valid imports are '$log'";
 }
 
-sub use_logger {
+sub set_adapter {
     my $class = shift;
-    $Manager->use_logger(@_);
+    $Manager->set_adapter(@_);
 }
 
 sub get_logger {
