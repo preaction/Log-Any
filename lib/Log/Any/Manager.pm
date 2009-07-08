@@ -1,11 +1,12 @@
 package Log::Any::Manager;
+use Carp;
 use Log::Any::Util qw(require_dynamic);
 use strict;
 use warnings;
 
 sub new {
     my $class = shift;
-    my $self = {@_};
+    my $self  = {@_};
     bless $self, $class;
     $self->set_adapter('Null');
     return $self;
@@ -14,6 +15,8 @@ sub new {
 sub set_adapter {
     my ( $self, $adapter_name, %adapter_params ) = @_;
 
+    croak "adapter class required"
+      unless defined($adapter_name) && $adapter_name =~ /\S/;
     my $adapter_class = (
           substr( $adapter_name, 0, 1 ) eq '+'
         ? substr( $adapter_name, 1 )
