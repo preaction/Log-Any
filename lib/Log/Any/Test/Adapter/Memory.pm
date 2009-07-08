@@ -1,5 +1,5 @@
 package Log::Any::Test::Adapter::Memory;
-use Log::Any::Util qw(make_alias);
+use Log::Any::Util qw(make_method);
 use strict;
 use warnings;
 use base qw(Log::Any::Adapter::Base);
@@ -11,7 +11,7 @@ sub init {
 }
 
 foreach my $method ( Log::Any->logging_methods() ) {
-    make_alias(
+    make_method(
         $method,
         sub {
             my ( $self, $text ) = @_;
@@ -24,7 +24,7 @@ foreach my $method ( Log::Any->logging_methods() ) {
 }
 
 foreach my $method ( Log::Any->detection_methods() ) {
-    make_alias( $method, sub { my ( $self, $msg ) = @_; return 1 } );
+    make_method( $method, sub { my ( $self, $msg ) = @_; return 1 } );
 }
 
 1;

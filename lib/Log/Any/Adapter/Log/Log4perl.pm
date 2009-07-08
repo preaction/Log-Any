@@ -1,7 +1,7 @@
 package Log::Any::Adapter::Log::Log4perl;
 use Log4perl;
 use Carp qw(croak);
-use Log::Any::Util qw(make_alias);
+use Log::Any::Util qw(make_method);
 use strict;
 use warnings;
 

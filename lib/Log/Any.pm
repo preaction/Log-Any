@@ -2,7 +2,6 @@ package Log::Any;
 use 5.006;
 use Carp qw(croak);
 use Log::Any::Manager;
-use Log::Any::Util qw(dp);
 use strict;
 use warnings;
 
@@ -333,8 +332,7 @@ previous calls. In fact, C<set_adapter> is automatically called once with
 'Null' at startup, so every call you make will be an overwrite.
 
 When you call C<set_adapter>, any Log::Any loggers that have previously been
-created (with C<use Log::Any qw($log)> or with C<Log::Any-E<gt>get_logger>)
-will automatically be converted to the new adapter. This allows modules to
+created will automatically start using the new adapter. This allows modules to
 freely create and use loggers without worrying about when (or if) the
 application is going to set an adapter. For example:
 
@@ -358,7 +356,7 @@ Jonathan Swartz
 
 =head1 SEE ALSO
 
-L<Some::Module>
+The many Log:: modules on CPAN
 
 =head1 COPYRIGHT & LICENSE
 

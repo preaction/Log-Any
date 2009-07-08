@@ -9,14 +9,14 @@ our @EXPORT = qw(
 );
 
 our @EXPORT_OK = qw(
-  make_alias
+  make_method
   require_dynamic
   dump_one_line
   dp
   dps
 );
 
-sub make_alias {
+sub make_method {
     my ( $method, $code, $pkg ) = @_;
 
     $pkg ||= caller();
