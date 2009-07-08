@@ -1,5 +1,5 @@
 #!perl
-use Test::More tests => 17;
+use Test::More tests => 21;
 use Test::Deep qw(cmp_deeply);
 use strict;
 use warnings;
@@ -26,6 +26,8 @@ use warnings;
 }
 
 my $main_log = Log::Any->get_logger();
+is($main_log, Log::Any->get_logger(), "memoization - no cat");
+is($main_log, Log::Any->get_logger(category => 'main'), "memoization - cat");
 
 isa_ok( $Foo::log, 'Log::Any::Adapter::Null', 'Foo::log starts as null' );
 isa_ok( $Bar::log, 'Log::Any::Adapter::Null', 'Foo::log starts as null' );
@@ -40,6 +42,8 @@ isa_ok( $Bar::log, 'Log::Any::Test::Adapter::Memory',
 isa_ok( $main_log, 'Log::Any::Test::Adapter::Memory',
     'main_log is now memory' );
 ok($Foo::log ne $Bar::log, 'Foo::log and Bar::log are different');
+is($main_log, Log::Any->get_logger(), "memoization - no cat");
+is($main_log, Log::Any->get_logger(category => 'main'), "memoization - cat");
 
 cmp_deeply( $Foo::log->{msgs}, [], 'Foo::log has empty buffer' );
 cmp_deeply( $Bar::log->{msgs}, [], 'Bar::log has empty buffer' );
