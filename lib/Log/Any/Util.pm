@@ -1,5 +1,5 @@
 package Log::Any::Util;
-use Carp qw( croak longmess );
+use Carp qw( longmess );
 use Data::Dumper;
 use strict;
 use warnings;
