@@ -62,8 +62,8 @@ sub set_adapter {
 }
 
 sub get_logger {
-    my $class = shift;
-    $Manager->get_logger(@_);
+    my ($class, %params) = @_;
+    $Manager->get_logger(category => scalar(caller()), %params);
 }
 
 sub logging_methods {

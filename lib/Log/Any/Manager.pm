@@ -36,12 +36,7 @@ sub set_adapter {
 
 sub get_logger {
     my ( $self, %params ) = @_;
-    
-    my $category;
-
-    # Get category from params or from caller package
-    #
-    $category = delete( $params{'category'} );
+    my $category = delete( $params{'category'} );
     if ( !defined($category) ) {
         $category = caller();
     }

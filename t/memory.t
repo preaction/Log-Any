@@ -1,5 +1,5 @@
 #!perl
-use Test::More tests => 10;
+use Test::More tests => 17;
 use Test::Deep qw(cmp_deeply);
 use strict;
 use warnings;
@@ -25,8 +25,11 @@ use warnings;
     }
 }
 
+my $main_log = Log::Any->get_logger();
+
 isa_ok( $Foo::log, 'Log::Any::Adapter::Null', 'Foo::log starts as null' );
 isa_ok( $Bar::log, 'Log::Any::Adapter::Null', 'Foo::log starts as null' );
+isa_ok( $main_log, 'Log::Any::Adapter::Null', 'Foo::log starts as null' );
 
 Log::Any->set_adapter('+Log::Any::Test::Adapter::Memory');
 
@@ -34,14 +37,18 @@ isa_ok( $Foo::log, 'Log::Any::Test::Adapter::Memory',
     'Foo::log is now memory' );
 isa_ok( $Bar::log, 'Log::Any::Test::Adapter::Memory',
     'Bar::log is now memory' );
+isa_ok( $main_log, 'Log::Any::Test::Adapter::Memory',
+    'main_log is now memory' );
 ok($Foo::log ne $Bar::log, 'Foo::log and Bar::log are different');
 
 cmp_deeply( $Foo::log->{msgs}, [], 'Foo::log has empty buffer' );
 cmp_deeply( $Bar::log->{msgs}, [], 'Bar::log has empty buffer' );
+cmp_deeply( $main_log->{msgs}, [], 'Bar::log has empty buffer' );
 ok($Foo::log->{msgs} ne $Bar::log->{msgs}, 'Foo::log and Bar::log have different buffers');
 
 Foo->log_debug('for foo');
 Bar->log_info('for bar');
+$main_log->error('for main');
 
 cmp_deeply(
     $Foo::log->{msgs},
@@ -53,3 +60,14 @@ cmp_deeply(
     [ { level => 'info', category => 'Bar', text => 'for bar' } ],
     'Foo log appeared in memory'
 );
+cmp_deeply(
+    $main_log->{msgs},
+    [ { level => 'error', category => 'main', text => 'for main' } ],
+    'main log appeared in memory'
+);
+
+Log::Any->set_adapter('Null');
+
+isa_ok( $Foo::log, 'Log::Any::Adapter::Null', 'Foo::log is null again' );
+isa_ok( $Bar::log, 'Log::Any::Adapter::Null', 'Foo::log is null again' );
+isa_ok( $main_log, 'Log::Any::Adapter::Null', 'main_log is null again' );
