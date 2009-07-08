@@ -152,31 +152,31 @@ messages, while leaving the choice of logging mechanism to the application.
 
 Many modules have something interesting to say. Unfortunately, there is no
 standard way for them to say it - some output to STDERR, others to warn, others
-to Log::Dispatch. And there is no standard way for an application to activate
-logging for one of these modules - there might be a method or a package
-variable, but they are always named uniquely.
+to L<Log::Dispatch|Log::Dispatch>. And there is no standard way to get a module
+to start talking - sometimes you must call a uniquely named method, other times
+set a package variable.
 
-This being Perl, there are many fine logging mechanisms available on CPAN:
-Log4perl, Log::Dispatch, Log::Tiny, etc.  Each has their pros and
-cons. Unfortunately, the existence of so many mechanisms makes it difficult
-for a CPAN author to commit their users to one of them.  This may be why
-many CPAN modules choose not to log at all.
+This being Perl, there are many logging mechanisms available on CPAN:
+L<Log::Log4perl|Log::Log4perl>, L<Log::Dispatch|Log::Dispatch>,
+L<Log::Tiny|Log::Tiny>, etc.  Each has their pros and cons. Unfortunately, the
+existence of so many mechanisms makes it difficult for a CPAN author to commit
+his/her users to one of them.  This may be why many CPAN modules invent their
+own logging or choose not to log at all.
 
-There are two parts to a logging API. The first, I<log production>, includes
-methods to output logs (like C<$log-E<gt>debug>) and methods to inspect
-whether a log level is activated (like C<$log-E<gt>is_debug>). This is
-generally all that CPAN modules care about. The second, I<log consumption>,
-includes a way to configure where logging goes (a file, the screen, etc.)
-and the code to send it there. This is generally the responsibility of the
-application.
+To untangle this situation, we must acknowledge the two parts of a logging API.
+The first, I<log production>, includes methods to output logs (like
+C<$log-E<gt>debug>) and methods to inspect whether a log level is activated
+(like C<$log-E<gt>is_debug>). This is generally all that CPAN modules care
+about. The second, I<log consumption>, includes a way to configure where
+logging goes (a file, the screen, etc.) and the code to send it there. This
+choice generally belongs to the application.
 
-Log::Any provides a standard log production API that modules can use, and
-provides adapters to common logging modules so that applications can specify
-how the logs are consumed. It supports a standard set of log levels (e.g. as
-used by syslog) and log categories (e.g. as used by log4perl). It defaults
-to 'null' logging activity, so that a module can safely start logging
-without worrying about whether the application has initialized a logging
-mechanism.
+Log::Any provides a standard log production API for modules, and allows
+applications to choose the mechanism for log consumption.  It supports a
+standard set of log levels (e.g. as used by syslog) and log categories (e.g. as
+used by log4perl). It defaults to 'null' logging activity, so that a module can
+safely start logging without worrying about whether the application has
+initialized a logging mechanism.
 
 =head1 LOG LEVELS
 
@@ -199,10 +199,10 @@ the top three levels to 'fatal'.
 
 =head1 CATEGORIES
 
-Every logger has a category, generally named after the containing class. With
-the notable exception of log4perl, most logging mechanisms don't care about
-categories, so they will just be ignored. That said, category-based logging is
-very powerful and it would be nice if more mechanisms supported it.
+Every logger has a category, generally the name of the class that asked for the
+logger. With the notable exception of log4perl, most logging mechanisms don't
+care about categories, so they will just be ignored. That said, category-based
+logging is very powerful and it would be nice if more mechanisms supported it.
 
 =head1 ADAPTERS
 
@@ -237,6 +237,9 @@ L<Log::Any::Adapter::Null> - logs nothing - the default
 This list may be incomplete. A complete set of adapters can be found on CPAN by
 searching for "Log::Any::Adapter".
 
+See L<Log::Any::Adapter::Development> for information on developing new
+adapters.
+
 =head1 PRODUCING LOGS (FOR MODULES)
 
 =head2 Getting a logger
@@ -246,51 +249,54 @@ The most convenient way to get a logger in your module is:
     use Log::Any qw($log);
 
 This creates a package variable $log and assigns it to the logger for the
-current package.
+current package. It is equivalent to
+
+    our $log = Log::Any->get_logger(category => __PACKAGE__);
 
 In general, to get a logger for a specified category:
 
-    my $log = get_logger([category => $category])
+    my $log = Log::Any->get_logger(category => $category)
 
 If no category is specified, the caller package is used.
 
 =head2 Logging
 
-To log a message, use any of the log levels. e.g.
+To log a message, use any of the log levels or aliases. e.g.
 
     $log->error("this is an error");
-    $log->info("this is an info message");
+    $log->warn("this is a warning");
+    $log->warning("this is also a warning");
 
-You should B<not> include a newline in your message; that is the
-responsibility of the logging mechanism, which may or may not want it.
+You should B<not> include a newline in your message; that is the responsibility
+of the logging mechanism, which may or may not want the newline.
 
 There are also printf-style versions of each of these methods:
 
     $log->errorf("an error occurred: %s", $@);
     $log->debugf("called with %d params: %s", $param_count, \@params);
 
-There are two advantages of the printf-style methods. First, they can be
+The printf-style methods have a few advantages. First, they can be
 more readable than concatenated strings (subjective of course); second, any
-complex references (like \@params above) are automatically expanded with
-Data::Dumper.
+complex references (like C<\@params> above) are automatically converted to
+strings with Data::Dumper; third, a logging mechanism could potentially hash
+the format string to a unique id, e.g. to group related log messages together.
 
 =head2 Log level detection
 
 To detect whether a log level is on, use "is_" followed by any of the log
-levels. e.g.
+levels or aliases. e.g.
 
-    if ($log->is_info()) {
-        ...
-    }
+    if ($log->is_info()) { ... }
     $log->debug("arguments are: " . Dumper(\@_))
         if $log->is_debug();
 
 This is important for efficiency, as you can avoid the work of putting together
-the logging message (in the above case, stringifying @_) if the log level is
+the logging message (in the above case, stringifying C<@_>) if the log level is
 not active.
 
-Some logging mechanisms don't support detection of log levels - e.g. Log::Tiny.
-In these cases the detection methods will always return 1.
+Some logging mechanisms don't support detection of log levels - e.g.
+L<Log::Tiny|Log::Tiny>.  In these cases the detection methods will always
+return 1.
 
 In contrast, the default logging mechanism - Null - will return 0 for all
 detection methods.
@@ -322,13 +328,13 @@ The remaining arguments are passed along to the adapter constructor. See the
 documentation for the individual adapter classes for more information.
 
 set_adapter can be called multiple times; the last call overwrites any previous
-calls. In fact, set_adapter is automatically called once with 'Null' at startup,
-so every call you make will be an overwrite.
+calls. In fact, set_adapter is automatically called once with 'Null' at
+startup, so every call you make will be an overwrite.
 
 When you call set_adapter, any Log::Any loggers that have previously been
 created (with C<use Log::Any qw($log)> or with C<Log::Any-E<gt>get_logger>)
-will automatically be converted to the new adapter. This allows modules
-to freely create and use loggers without worrying about when (or if) the
+will automatically be converted to the new adapter. This allows modules to
+freely create and use loggers without worrying about when (or if) the
 application is going to set an adapter. For example:
 
     my $log = Log::Any->get_logger();
