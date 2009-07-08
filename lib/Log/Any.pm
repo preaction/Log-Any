@@ -15,7 +15,7 @@ sub import {
     my $caller = caller();
 
     my @export_params = ( $caller, @_ );
-    $class->_export_to_caller( @export_params );
+    $class->_export_to_caller(@export_params);
 }
 
 sub _export_to_caller {
@@ -62,8 +62,8 @@ sub set_adapter {
 }
 
 sub get_logger {
-    my ($class, %params) = @_;
-    $Manager->get_logger(category => scalar(caller()), %params);
+    my ( $class, %params ) = @_;
+    $Manager->get_logger( category => scalar( caller() ), %params );
 }
 
 sub logging_methods {
@@ -78,7 +78,7 @@ sub detection_methods {
 
 sub logging_and_detection_methods {
     my $class = shift;
-    my @list = ($class->logging_methods, $class->detection_methods);
+    my @list = ( $class->logging_methods, $class->detection_methods );
     return @list;
 }
 
@@ -117,10 +117,6 @@ including, without limitation, the implied warranties of merchantibility and
 fitness for a particular purpose.
 
 This program is free software; you can redistribute it and/or modify it under
-the sam
-
-e term
-
-s as Perl itself.
+the same terms as Perl itself.
 
 =cut
