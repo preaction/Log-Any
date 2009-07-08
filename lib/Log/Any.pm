@@ -82,6 +82,17 @@ sub logging_and_detection_methods {
     return @list;
 }
 
+sub log_level_aliases {
+    my $class = shift;
+    return (
+        inform => 'info',
+        warn   => 'warning',
+        err    => 'error',
+        crit   => 'critical',
+        fatal  => 'critical'
+    );
+}
+
 1;
 
 __END__
@@ -94,11 +105,231 @@ Log::Any -- Log anywhere
 
 =head1 SYNOPSIS
 
+In a CPAN or other module:
+
+    package Foo;
+    use Log::Any qw($log);
+
+    $log->error("an error occurred");
+    $log->debug("arguments are: " . Dumper(\@_))
+        if $log->is_debug();
+
+In your application:
+
     use Log::Any;
+
+    # Choose a logging mechanism:
+
+    use Log::Log4perl;
+    Log::Log4perl::init('/etc/log4perl.conf');
+    Log::Any->set_adapter('Log::Log4perl');
+
+    # or
+
+    use Log::Dispatch;
+    my $dispatcher = Log::Dispatch->new();
+    $dispatcher->add(...);
+    Log::Any->set_adapter('Log::Dispatch', dispatcher => $dispatcher);
+
+    # or
+
+    use Log::Dispatch::Config;
+    Log::Dispatch::Config->configure('/path/to/log.conf');
+    Log::Any->set_adapter('Log::Dispatch');
+
+    # or
+
+    use Log::Tiny;
+    my $log = Log::Tiny->new('myapp.log');
+    Log::Any->set_adapter('Log::Tiny', log => $log);
 
 =head1 DESCRIPTION
 
-Log::Any provides
+Log::Any provides a facility for CPAN modules to safely and efficiently log
+messages, while leaving the choice of logging mechanism to the application.
+
+=head1 BACKGROUND
+
+Many modules have something interesting to say. Unfortunately, there is no
+standard way for them to say it - some output to STDERR, others to warn, others
+to Log::Dispatch. And there is no standard way for an application to activate
+logging for one of these modules - there might be a method or a package
+variable, but they are always named uniquely.
+
+This being Perl, there are many fine logging mechanisms available on CPAN:
+Log4perl, Log::Dispatch, Log::Tiny, etc.  Each has their pros and
+cons. Unfortunately, the existence of so many mechanisms makes it difficult
+for a CPAN author to commit their users to one of them.  This may be why
+many CPAN modules choose not to log at all.
+
+There are two parts to a logging API. The first, I<log production>, includes
+methods to output logs (like C<$log-E<gt>debug>) and methods to inspect
+whether a log level is activated (like C<$log-E<gt>is_debug>). This is
+generally all that CPAN modules care about. The second, I<log consumption>,
+includes a way to configure where logging goes (a file, the screen, etc.)
+and the code to send it there. This is generally the responsibility of the
+application.
+
+Log::Any provides a standard log production API that modules can use, and
+provides adapters to common logging modules so that applications can specify
+how the logs are consumed. It supports a standard set of log levels (e.g. as
+used by syslog) and log categories (e.g. as used by log4perl). It defaults
+to 'null' logging activity, so that a module can safely start logging
+without worrying about whether the application has initialized a logging
+mechanism.
+
+=head1 LOG LEVELS
+
+Every logging mechanism on CPAN uses a slightly different set of levels. For
+Log::Any we've standardized on the log levels from syslog, and also added a
+number of common aliases:
+
+     debug
+     info (inform)
+     notice
+     warning (warn)
+     error (err)
+     critical (crit, fatal)
+     alert
+     emergency
+
+Levels are translated as appropriate to the underlying logging mechanism. For
+example, log4perl only has five levels, so we translate 'notice' to 'info' and
+the top three levels to 'fatal'.
+
+=head1 CATEGORIES
+
+Every logger has a category, generally named after the containing class. With
+the notable exception of log4perl, most logging mechanisms don't care about
+categories, so they will just be ignored. That said, category-based logging is
+very powerful and it would be nice if more mechanisms supported it.
+
+=head1 ADAPTERS
+
+In order to use a logging mechanism with Log::Any, there needs to be an adapter
+class for it. Typically this is under Log::Any::Adapter::I<module-name>. The
+following adapters are available as of this writing:
+
+=over
+
+=item *
+
+L<Log::Any::Adapter::Log::Log4perl> - work with log4perl
+
+=item *
+
+L<Log::Any::Adapter::Log::Dispatch> - work with Log::Dispatch
+
+=item *
+
+L<Log::Any::Adapter::Log::Dispatch::Config> - work with Log::Dispatch::Config
+
+=item *
+
+L<Log::Any::Adapter::Log::Tiny> - work with Log::Tiny
+
+=item *
+
+L<Log::Any::Adapter::Null> - logs nothing - the default
+
+=back
+
+This list may be incomplete. A complete set of adapters can be found on CPAN by
+searching for "Log::Any::Adapter".
+
+=head1 PRODUCING LOGS (FOR MODULES)
+
+=head2 Getting a logger
+
+The most convenient way to get a logger in your module is:
+
+    use Log::Any qw($log);
+
+This creates a package variable $log and assigns it to the logger for the
+current package.
+
+In general, to get a logger for a specified category:
+
+    my $log = get_logger([category => $category])
+
+If no category is specified, the caller package is used.
+
+=head2 Logging
+
+To log a message, use any of the log levels. e.g.
+
+    $log->error("this is an error");
+    $log->info("this is an info message");
+
+=head2 Log level detection
+
+To detect whether a log level is on, use "is_" followed by any of the log
+levels. e.g.
+
+    if ($log->is_info()) {
+        ...
+    }
+    $log->debug("arguments are: " . Dumper(\@_))
+        if $log->is_debug();
+
+This is important for efficiency, as you can avoid the work of putting together
+the logging message (in the above case, stringifying @_) if the log level is
+not active.
+
+Some logging mechanisms don't support detection of log levels - e.g. Log::Tiny.
+In these cases the detection methods will always return 1.
+
+In contrast, the default logging mechanism - Null - will return 0 for all
+detection methods.
+
+=head1 CONSUMING LOGS (FOR APPLICATIONS)
+
+=head2 Choosing an adapter
+
+Initially, all Log::Any logs are discarded (via the Null adapter). If you want
+the logs to go somewhere, you need to select an adapter with set_adapter, e.g.:
+
+    # Use Log::Log4perl
+    Log::Log4perl::init('/etc/log4perl.conf');
+    Log::Any->set_adapter('Log::Log4perl');
+
+    # Use Log::Dispatch
+    my $dispatcher = Log::Dispatch->new();
+    $dispatcher->add(...);
+    Log::Any->set_adapter('Log::Dispatch', dispatcher => $dispatcher);
+
+The first argument to set_adapter is the name of an adapter. It is
+automatically prepended with "Log::Any::Adapter::". If instead you want to pass
+the full name of an adapter, prefix it with a "+". e.g.
+
+    # Use My::Adapter class
+    Log::Any->set_adapter('+My::Adapter', ...);
+
+The remaining arguments are passed along to the adapter constructor. See the
+documentation for the individual adapter classes for more information.
+
+set_adapter can be called multiple times; the last call overwrites any previous
+calls. In fact, set_adapter is automatically called once with 'Null' at startup,
+so every call you make will be an overwrite.
+
+When you call set_adapter, any Log::Any loggers that have previously been
+created (with C<use Log::Any qw($log)> or with C<Log::Any-E<gt>get_logger>)
+will automatically be converted to the new adapter. This allows modules
+to freely create and use loggers without worrying about when (or if) the
+application is going to set an adapter. For example:
+
+    my $log = Log::Any->get_logger();
+    $log->error("aiggh!");   # this goes nowhere
+    ...
+    Log::Any->set_adapter('Log::Log4perl');
+    $log->error("aiggh!");   # this goes to log4perl
+    ...
+    Log::Any->set_adapter('Null');
+    $log->error("aiggh!");   # this goes nowhere again
+
+There is no way to set more than one adapter at a time. If you want to log to
+more than one place, arrange that through the logging mechanism (e.g.
+Log::Dispatch and Log::Log4perl both make this easy).
 
 =head1 AUTHOR
 
