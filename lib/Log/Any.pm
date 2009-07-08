@@ -275,11 +275,11 @@ There are also printf-style versions of each of these methods:
     $log->errorf("an error occurred: %s", $@);
     $log->debugf("called with %d params: %s", $param_count, \@params);
 
-The printf-style methods have a few advantages. First, they can be
-more readable than concatenated strings (subjective of course); second, any
-complex references (like C<\@params> above) are automatically converted to
-strings with Data::Dumper; third, a logging mechanism could potentially hash
-the format string to a unique id, e.g. to group related log messages together.
+The printf-style methods have a few advantages. First, they can be more
+readable than concatenated strings (subjective of course); second, any complex
+references (like C<\@params> above) are automatically converted to strings with
+Data::Dumper; third, a logging mechanism could potentially hash the format
+string to a unique id, e.g. to group related log messages together.
 
 =head2 Log level detection
 
@@ -305,8 +305,9 @@ detection methods.
 
 =head2 Choosing an adapter
 
-Initially, all Log::Any logs are discarded (via the Null adapter). If you want
-the logs to go somewhere, you need to select an adapter with set_adapter, e.g.:
+Initially, all C<Log::Any> logs are discarded (via the Null adapter). If you
+want the logs to go somewhere, you need to select an adapter with set_adapter,
+e.g.:
 
     # Use Log::Log4perl
     Log::Log4perl::init('/etc/log4perl.conf');
@@ -317,7 +318,7 @@ the logs to go somewhere, you need to select an adapter with set_adapter, e.g.:
     $dispatcher->add(...);
     Log::Any->set_adapter('Log::Dispatch', dispatcher => $dispatcher);
 
-The first argument to set_adapter is the name of an adapter. It is
+The first argument to C<set_adapter> is the name of an adapter. It is
 automatically prepended with "Log::Any::Adapter::". If instead you want to pass
 the full name of an adapter, prefix it with a "+". e.g.
 
@@ -327,11 +328,11 @@ the full name of an adapter, prefix it with a "+". e.g.
 The remaining arguments are passed along to the adapter constructor. See the
 documentation for the individual adapter classes for more information.
 
-set_adapter can be called multiple times; the last call overwrites any previous
-calls. In fact, set_adapter is automatically called once with 'Null' at
-startup, so every call you make will be an overwrite.
+C<set_adapter> can be called multiple times; the last call overwrites any
+previous calls. In fact, C<set_adapter> is automatically called once with
+'Null' at startup, so every call you make will be an overwrite.
 
-When you call set_adapter, any Log::Any loggers that have previously been
+When you call C<set_adapter>, any Log::Any loggers that have previously been
 created (with C<use Log::Any qw($log)> or with C<Log::Any-E<gt>get_logger>)
 will automatically be converted to the new adapter. This allows modules to
 freely create and use loggers without worrying about when (or if) the
@@ -348,7 +349,8 @@ application is going to set an adapter. For example:
 
 There is no way to set more than one adapter at a time. If you want to log to
 more than one place, arrange that through the logging mechanism (e.g.
-Log::Dispatch and Log::Log4perl both make this easy).
+L<Log::Dispatch|Log::Dispatch> and L<Log::Log4perl|Log::Log4perl> both make
+this easy).
 
 =head1 AUTHOR
 
