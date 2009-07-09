@@ -84,11 +84,11 @@ call L</init> which may be optionally provided by your subclass
 
 =back
 
-At this point, overriding the default constructor is not supported. Hopefully it
-will not be needed.
+At this point, overriding the default constructor is not supported. Hopefully
+it will not be needed.
 
-The constructor is called whenever a log object is requested. e.g. If the application
-initializes Log::Any like so:
+The constructor is called whenever a log object is requested. e.g. If the
+application initializes Log::Any like so:
 
     Log::Any->set_adapter('Log::YAL', yal_object => $yal, depth => 3);
 
@@ -101,10 +101,10 @@ Then C<$log> will be populated with the return value of:
 
     Log::Any::Adapter::Log::Yal->new(yal_object => $yal, depth => 3, category => 'Foo');
 
-This is memoized, so if the same category should be requested again
-(e.g. through a separate C<get_logger> call, the same object will be
-returned. Therefore, you should try to avoid anything non-deterministic
-in your L</init> function.
+This is memoized, so if the same category should be requested again (e.g.
+through a separate C<get_logger> call, the same object will be returned.
+Therefore, you should try to avoid anything non-deterministic in your L</init>
+function.
 
 =head2 Required methods
 

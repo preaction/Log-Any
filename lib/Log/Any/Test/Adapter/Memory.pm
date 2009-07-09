@@ -17,7 +17,11 @@ foreach my $method ( Log::Any->logging_methods() ) {
             my ( $self, $text ) = @_;
             push(
                 @{ $self->{msgs} },
-                { level => $method, category => $self->{category}, text => $text }
+                {
+                    level    => $method,
+                    category => $self->{category},
+                    text     => $text
+                }
             );
         }
     );
