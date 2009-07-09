@@ -34,7 +34,7 @@ sub dump_one_line {
 sub _dump_value_with_caller {
     my ($value) = @_;
 
-    my $dump = dump_one_line($value);
+    my $dump   = dump_one_line($value);
     my @caller = caller(1);
     return sprintf( "[dp at %s line %d.] [%d] %s\n",
         $caller[1], $caller[2], $$, $dump );
