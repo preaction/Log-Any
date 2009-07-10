@@ -134,7 +134,7 @@ In your application:
 
     use Log::Dispatch::Config;
     Log::Dispatch::Config->configure('/path/to/log.conf');
-    Log::Any->set_adapter('Log::Dispatch');
+    Log::Any->set_adapter('Log::Dispatch', dispatcher => Log::Dispatch::Config->instance);
 
     # or
 
@@ -145,24 +145,23 @@ In your application:
 =head1 DESCRIPTION
 
 Log::Any provides a facility for CPAN modules to safely and efficiently log
-messages, while leaving the choice of logging mechanism to the application.
+messages, while letting the application choose (or decline to choose) a logging
+mechanism.
 
 =head1 BACKGROUND
 
-Many modules have something interesting to say. Unfortunately, there is no
-standard way for them to say it - some output to STDERR, others to warn, others
-to L<Log::Dispatch|Log::Dispatch>. And there is no standard way to get a module
-to start talking - sometimes you must call a uniquely named method, other times
+Many modules have something interesting to say. Unfortunately there is no
+standard way for them to say it - some output to STDERR, others to C<warn>,
+others to custom file logs. And there is no standard way to get a module to
+start talking - sometimes you must call a uniquely named method, other times
 set a package variable.
 
-This being Perl, there are many logging mechanisms available on CPAN:
-L<Log::Log4perl|Log::Log4perl>, L<Log::Dispatch|Log::Dispatch>,
-L<Log::Tiny|Log::Tiny>, etc.  Each has their pros and cons. Unfortunately, the
-existence of so many mechanisms makes it difficult for a CPAN author to commit
-his/her users to one of them.  This may be why many CPAN modules invent their
-own logging or choose not to log at all.
+This being Perl, there are many logging mechanisms available on CPAN.  Each has
+their pros and cons. Unfortunately, the existence of so many mechanisms makes
+it difficult for a CPAN author to commit his/her users to one of them. This may
+be why many CPAN modules invent their own logging or choose not to log at all.
 
-To untangle this situation, we must acknowledge the two parts of a logging API.
+To untangle this situation, we must separate the two parts of a logging API.
 The first, I<log production>, includes methods to output logs (like
 C<$log-E<gt>debug>) and methods to inspect whether a log level is activated
 (like C<$log-E<gt>is_debug>). This is generally all that CPAN modules care
@@ -174,8 +173,8 @@ Log::Any provides a standard log production API for modules, and allows
 applications to choose the mechanism for log consumption.  It supports a
 standard set of log levels (e.g. as used by syslog) and log categories (e.g. as
 used by log4perl). It defaults to 'null' logging activity, so that a module can
-safely start logging without worrying about whether the application has
-initialized a logging mechanism.
+safely log without worrying about whether the application has initialized a
+logging mechanism.
 
 =head1 LOG LEVELS
 
