@@ -362,8 +362,7 @@ The many Log:: modules on CPAN
 
 Copyright (C) 2007 Jonathan Swartz.
 
-Log::Any is provided "as is" and without any express or implied warranties,
-including, without limitation, the implied warranties of merchantibility and
+Log::Any is provided "as is" and without any express or implied warranties, including, without limitation, the implied warranties of merchantibility and
 fitness for a particular purpose.
 
 This program is free software; you can redistribute it and/or modify it under
