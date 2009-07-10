@@ -205,30 +205,35 @@ logging is very powerful and it would be nice if more mechanisms supported it.
 =head1 ADAPTERS
 
 In order to use a logging mechanism with Log::Any, there needs to be an adapter
-class for it. Typically this is under Log::Any::Adapter::I<module-name>. The
-following adapters are available as of this writing:
+class for it. Typically this is named Log::Any::Adapter::I<FullLogModuleName>.
+
+All of the adapters (with the exception of the default 'Null' adapter) are in
+CPAN distributions separate from Log-Any. This allows us to minimize Log-Any's
+dependencies, tests, and revisions, which in turn should help module authors
+feel comfortable about using it.
+
+The following adapters are available as of this writing:
 
 =over
 
 =item *
 
-L<Log::Any::Adapter::Log::Log4perl> - work with log4perl
+L<Log::Any::Adapter::Log::Log4perl|Log::Any::Adapter::Log::Log4perl> - work
+with log4perl
 
 =item *
 
-L<Log::Any::Adapter::Log::Dispatch> - work with Log::Dispatch
+L<Log::Any::Adapter::Log::Dispatch|Log::Any::Adapter::Log::Dispatch> - work
+with Log::Dispatch or Log::Dispatch::Config
 
 =item *
 
-L<Log::Any::Adapter::Log::Dispatch::Config> - work with Log::Dispatch::Config
+L<Log::Any::Adapter::Log::Tiny|Log::Any::Adapter::Log::Tiny> - work with
+Log::Tiny
 
 =item *
 
-L<Log::Any::Adapter::Log::Tiny> - work with Log::Tiny
-
-=item *
-
-L<Log::Any::Adapter::Null> - logs nothing - the default
+L<Log::Any::Adapter::Null|Log::Any::Adapter::Null> - logs nothing - the default
 
 =back
 
@@ -348,6 +353,12 @@ There is no way to set more than one adapter at a time. If you want to log to
 more than one place, arrange that through the logging mechanism (e.g.
 L<Log::Dispatch|Log::Dispatch> and L<Log::Log4perl|Log::Log4perl> both make
 this easy).
+
+=head1 WHAT LOG::ANY ISN'T
+
+Log::Any does not, and never will, include code that knows how to log to a
+particular place (file, screen, etc.). It can only forward logging requests to
+another logging mechanism.
 
 =head1 AUTHOR
 
