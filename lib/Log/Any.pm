@@ -176,6 +176,9 @@ used by log4perl). Importantly, it defaults to 'null' logging activity, so that
 a module can safely log without worrying about whether the application has
 initialized (or will ever initialize) a logging mechanism.
 
+See http://www.openswartz.com/2007/09/06/standard-logging-api/ for the original
+post proposing this module.
+
 =head1 LOG LEVELS
 
 Every logging mechanism on CPAN uses a slightly different set of levels. For
@@ -333,8 +336,8 @@ The remaining arguments are passed along to the adapter constructor. See the
 documentation for the individual adapter classes for more information.
 
 C<set_adapter> can be called multiple times; the last call overwrites any
-previous calls. In fact, C<set_adapter> is automatically called once with
-'Null' at startup, so every call you make will be an overwrite.
+previous calls. In fact, C<set_adapter> is automatically called with 'Null' at
+startup, so every call you make will be an overwrite.
 
 When you call C<set_adapter>, any C<Log::Any> loggers that have previously been
 created will automatically start using the new adapter. This allows modules to
