@@ -13,7 +13,7 @@ sub init {
 # Delegate methods to dispatcher
 #
 foreach my $method ( Log::Any->logging_and_detection_methods() ) {
-    __PACKAGE__->delegate_method_to_slot( $method, 'dispatcher' );
+    __PACKAGE__->delegate_method_to_slot( 'dispatcher', $method, $method );
 }
 
 1;
