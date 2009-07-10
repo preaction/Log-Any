@@ -100,7 +100,7 @@ __END__
 
 =head1 NAME
 
-Log::Any -- Log anywhere
+Log::Any -- Bringing chatty modules and interested applications together
 
 =head1 SYNOPSIS
 
