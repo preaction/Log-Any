@@ -100,7 +100,7 @@ __END__
 
 =head1 NAME
 
-Log::Any -- Bringing chatty modules and interested applications together
+Log::Any -- Bringing loggers and listeners together
 
 =head1 SYNOPSIS
 
@@ -141,6 +141,10 @@ In your application:
     use Log::Tiny;
     my $log = Log::Tiny->new('myapp.log');
     Log::Any->set_adapter('Log::Tiny', log => $log);
+
+    # or
+
+    Log::Any->set_adapter('+My::Log::Any::Adapter', ...);
 
 =head1 DESCRIPTION
 
