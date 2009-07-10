@@ -57,3 +57,4 @@ sub get_logger {
 }
 
 1;
+
