@@ -144,7 +144,7 @@ In your application:
 
 =head1 DESCRIPTION
 
-Log::Any provides a facility for CPAN modules to safely and efficiently log
+C<Log::Any> provides a facility for CPAN modules to safely and efficiently log
 messages, while letting the application choose (or decline to choose) a logging
 mechanism.
 
@@ -169,17 +169,17 @@ about. The second, I<log consumption>, includes a way to configure where
 logging goes (a file, the screen, etc.) and the code to send it there. This
 choice generally belongs to the application.
 
-Log::Any provides a standard log production API for modules, and allows
+C<Log::Any> provides a standard log production API for modules, and allows
 applications to choose the mechanism for log consumption.  It supports a
 standard set of log levels (e.g. as used by syslog) and log categories (e.g. as
-used by log4perl). It defaults to 'null' logging activity, so that a module can
-safely log without worrying about whether the application has initialized a
-logging mechanism.
+used by log4perl). Importantly, it defaults to 'null' logging activity, so that
+a module can safely log without worrying about whether the application has
+initialized (or will ever initialize) a logging mechanism.
 
 =head1 LOG LEVELS
 
 Every logging mechanism on CPAN uses a slightly different set of levels. For
-Log::Any we've standardized on the log levels from syslog, and also added a
+C<Log::Any> we've standardized on the log levels from syslog, and also added a
 number of common aliases:
 
      debug
@@ -204,8 +204,9 @@ logging is very powerful and it would be nice if more mechanisms supported it.
 
 =head1 ADAPTERS
 
-In order to use a logging mechanism with Log::Any, there needs to be an adapter
-class for it. Typically this is named Log::Any::Adapter::I<FullLogModuleName>.
+In order to use a logging mechanism with C<Log::Any>, there needs to be an
+adapter class for it. Typically this is named
+Log::Any::Adapter::I<FullLogModuleName>.
 
 All of the adapters (with the exception of the default 'Null' adapter) are in
 CPAN distributions separate from Log-Any. This allows us to minimize Log-Any's
@@ -280,9 +281,9 @@ There are also printf-style versions of each of these methods:
 
 The printf-style methods have a few advantages. First, they can be more
 readable than concatenated strings (subjective of course); second, any complex
-references (like C<\@params> above) are automatically converted to strings with
-Data::Dumper; third, a logging mechanism could potentially hash the format
-string to a unique id, e.g. to group related log messages together.
+references (like C<\@params> above) are automatically converted to single-line
+strings with C<Data::Dumper>; third, a logging mechanism could potentially hash
+the format string to a unique id, e.g. to group related log messages together.
 
 =head2 Log level detection
 
@@ -309,8 +310,8 @@ detection methods.
 =head2 Choosing an adapter
 
 Initially, all C<Log::Any> logs are discarded (via the Null adapter). If you
-want the logs to go somewhere, you need to select an adapter with set_adapter,
-e.g.:
+want the logs to go somewhere, you need to select an adapter with
+C<set_adapter>, e.g.:
 
     # Use Log::Log4perl
     Log::Log4perl::init('/etc/log4perl.conf');
@@ -335,7 +336,7 @@ C<set_adapter> can be called multiple times; the last call overwrites any
 previous calls. In fact, C<set_adapter> is automatically called once with
 'Null' at startup, so every call you make will be an overwrite.
 
-When you call C<set_adapter>, any Log::Any loggers that have previously been
+When you call C<set_adapter>, any C<Log::Any> loggers that have previously been
 created will automatically start using the new adapter. This allows modules to
 freely create and use loggers without worrying about when (or if) the
 application is going to set an adapter. For example:
@@ -356,7 +357,7 @@ this easy).
 
 =head1 WHAT LOG::ANY ISN'T
 
-Log::Any does not, and never will, include code that knows how to log to a
+C<Log::Any> does not, and never will, include code that knows how to log to a
 particular place (file, screen, etc.). It can only forward logging requests to
 another logging mechanism.
 
