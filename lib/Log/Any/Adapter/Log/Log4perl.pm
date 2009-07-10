@@ -1,9 +1,10 @@
 package Log::Any::Adapter::Log::Log4perl;
-use Log4perl;
+use Log::Log4perl;
 use Carp qw(croak);
 use Log::Any::Util qw(make_method);
 use strict;
 use warnings;
+use base qw(Log::Any::Adapter::Base);
 
 sub init {
     my ($self) = @_;
