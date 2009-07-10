@@ -148,9 +148,9 @@ In your application:
 
 =head1 DESCRIPTION
 
-C<Log::Any> provides a facility for CPAN modules to safely and efficiently log
-messages, while letting the application choose (or decline to choose) a logging
-mechanism.
+C<Log::Any> allows CPAN modules to safely and efficiently log messages, while
+letting the application choose (or decline to choose) a logging mechanism such
+as C<Log::Dispatch> or C<Log::Log4perl>.
 
 =head1 BACKGROUND
 
@@ -362,11 +362,33 @@ more than one place, arrange that through the logging mechanism (e.g.
 L<Log::Dispatch|Log::Dispatch> and L<Log::Log4perl|Log::Log4perl> both make
 this easy).
 
-=head1 WHAT LOG::ANY ISN'T
+=head1 Q & A
 
-C<Log::Any> does not, and never will, include code that knows how to log to a
-particular place (file, screen, etc.). It can only forward logging requests to
+=over
+
+=item Isn't Log::Any just yet another logging mechanism?
+
+No. C<Log::Any> does not, and never will, include code that knows how to log to
+a particular place (file, screen, etc.) It can only forward logging requests to
 another logging mechanism.
+
+=item Why don't you just pick the best logging mechanism, and use and promote it?
+
+Each of the logging mechanisms have their pros and cons, particularly in terms
+of how they are configured. For example, log4perl offers a great deal of power
+and flexibility but some potentially heavy configuration, whereas
+C<Log::Dispatch> is extremely configuration light but doesn't handle
+categories. There is also the unnamed future logger that may have advantages
+over either of these two, and all the custom in-house loggers people have
+created and cannot (for whatever reason) stop using.
+
+=item Why does Log::Any use Moose or I<insert modern Perl technique>?
+
+To encourage CPAN module authors to adopt and use C<Log::Any>, we aim to have
+as few dependencies and chances of breakage as possible. Thus, sadly, no
+C<Moose> or other niceties.
+
+=back
 
 =head1 AUTHOR
 
