@@ -393,7 +393,7 @@ The many Log:: modules on CPAN
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright (C) 2007 Jonathan Swartz.
+Copyright (C) 2009 Jonathan Swartz.
 
 Log::Any is provided "as is" and without any express or implied warranties,
 including, without limitation, the implied warranties of merchantibility and
