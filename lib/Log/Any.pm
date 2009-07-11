@@ -52,7 +52,7 @@ sub _export_to_caller {
 sub _invalid_import_error {
     my ( $class, $param ) = @_;
 
-    die "invalid import '$param' - valid imports are '\$log'";
+    return "invalid import '$param' - valid imports are '\$log'";
 }
 
 sub set_adapter {
