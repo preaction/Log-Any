@@ -10,6 +10,7 @@ our @EXPORT = qw(
 
 our @EXPORT_OK = qw(
   make_method
+  read_file
   require_dynamic
   dump_one_line
   dp
@@ -38,6 +39,15 @@ sub _dump_value_with_caller {
     my @caller = caller(1);
     return sprintf( "[dp at %s line %d.] [%d] %s\n",
         $caller[1], $caller[2], $$, $dump );
+}
+
+sub read_file {
+    my ($file) = @_;
+
+    open( my $fh, $file );
+    local $/;
+    my $contents = <$fh>;
+    return $contents;
 }
 
 sub require_dynamic {
