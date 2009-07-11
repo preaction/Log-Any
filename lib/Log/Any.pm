@@ -226,7 +226,7 @@ The most convenient way to get a logger in your module is:
 
     use Log::Any qw($log);
 
-This creates a package variable $log and assigns it to the logger for the
+This creates a package variable I<$log> and assigns it to the logger for the
 current package. It is equivalent to
 
     our $log = Log::Any->get_logger(category => __PACKAGE__);
