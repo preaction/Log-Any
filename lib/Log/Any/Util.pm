@@ -5,9 +5,6 @@ use strict;
 use warnings;
 use base qw(Exporter);
 
-our @EXPORT = qw(
-);
-
 our @EXPORT_OK = qw(
   make_method
   read_file
@@ -44,8 +41,9 @@ sub _dump_value_with_caller {
 sub read_file {
     my ($file) = @_;
 
-    open( my $fh, $file );
-    local $/;
+    local $/ = undef;
+    open( my $fh, '<', $file )
+      or die "cannot open '$file': $!";
     my $contents = <$fh>;
     return $contents;
 }
@@ -53,7 +51,7 @@ sub read_file {
 sub require_dynamic {
     my ($class) = @_;
 
-    eval "require $class";
+    eval "require $class";    ## no critic
     die $@ if $@;
 }
 

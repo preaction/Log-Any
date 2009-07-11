@@ -7,6 +7,7 @@ severity = 3
 [-Subroutines::RequireArgUnpacking]
 [-Subroutines::RequireFinalReturn]
 [-NamingConventions::ProhibitAmbiguousNames]
+[-InputOutput::RequireBriefOpen]
 
 # Jury's still out on these
 [-RegularExpressions::RequireExtendedFormatting]
@@ -21,3 +22,6 @@ allow = refs
 # Default too short
 [RegularExpressions::ProhibitComplexRegexes]
 max_characters = 100
+
+# Theoretically I like this, but ultimately caused too many exceptions
+[-ErrorHandling::RequireCarping]
