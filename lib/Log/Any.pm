@@ -146,36 +146,14 @@ C<Log::Any> allows CPAN modules to safely and efficiently log messages, while
 letting the application choose (or decline to choose) a logging mechanism such
 as C<Log::Dispatch> or C<Log::Log4perl>.
 
-=head1 BACKGROUND
+C<Log::Any> has a very tiny footprint and no dependencies, which makes it
+appropriate for even small CPAN modules to use. Importantly, it defaults to
+'null' logging activity, so a module can safely log without worrying about
+whether the application has chosen (or will ever choose) a logging mechanism.
 
-Many modules have something interesting to say. Unfortunately there is no
-standard way for them to say it - some output to STDERR, others to C<warn>,
-others to custom file logs. And there is no standard way to get a module to
-start talking - sometimes you must call a uniquely named method, other times
-set a package variable.
-
-This being Perl, there are many logging mechanisms available on CPAN.  Each has
-their pros and cons. Unfortunately, the existence of so many mechanisms makes
-it difficult for a CPAN author to commit his/her users to one of them. This may
-be why many CPAN modules invent their own logging or choose not to log at all.
-
-To untangle this situation, we must separate the two parts of a logging API.
-The first, I<log production>, includes methods to output logs (like
-C<$log-E<gt>debug>) and methods to inspect whether a log level is activated
-(like C<$log-E<gt>is_debug>). This is generally all that CPAN modules care
-about. The second, I<log consumption>, includes a way to configure where
-logging goes (a file, the screen, etc.) and the code to send it there. This
-choice generally belongs to the application.
-
-C<Log::Any> provides a standard log production API for modules, and allows
-applications to choose the mechanism for log consumption.  It supports a
-standard set of log levels (e.g. as used by syslog) and log categories (e.g. as
-used by log4perl). Importantly, it defaults to 'null' logging activity, so that
-a module can safely log without worrying about whether the application has
-initialized (or will ever initialize) a logging mechanism.
-
-See http://www.openswartz.com/2007/09/06/standard-logging-api/ for the original
-post proposing this module.
+The application, in turn, may at any time choose a logging mechanism and tell
+C<Log::Any> to use it.  This will cause all subsequent C<Log::Any> logging
+statements out in various modules to flow through that mechanism.
 
 =head1 LOG LEVELS
 
@@ -350,6 +328,33 @@ more than one place, arrange that through the logging mechanism (e.g.
 L<Log::Dispatch|Log::Dispatch> and L<Log::Log4perl|Log::Log4perl> both make
 this easy).
 
+=head1 MOTIVATION
+
+Many modules have something interesting to say. Unfortunately there is no
+standard way for them to say it - some output to STDERR, others to C<warn>,
+others to custom file logs. And there is no standard way to get a module to
+start talking - sometimes you must call a uniquely named method, other times
+set a package variable.
+
+This being Perl, there are many logging mechanisms available on CPAN.  Each has
+their pros and cons. Unfortunately, the existence of so many mechanisms makes
+it difficult for a CPAN author to commit his/her users to one of them. This may
+be why many CPAN modules invent their own logging or choose not to log at all.
+
+To untangle this situation, we must separate the two parts of a logging API.
+The first, I<log production>, includes methods to output logs (like
+C<$log-E<gt>debug>) and methods to inspect whether a log level is activated
+(like C<$log-E<gt>is_debug>). This is generally all that CPAN modules care
+about. The second, I<log consumption>, includes a way to configure where
+logging goes (a file, the screen, etc.) and the code to send it there. This
+choice generally belongs to the application.
+
+C<Log::Any> provides a standard log production API for modules, and allows
+applications to choose the mechanism for log consumption.
+
+See http://www.openswartz.com/2007/09/06/standard-logging-api/ for the original
+post proposing this module.
+
 =head1 Q & A
 
 =over
@@ -364,8 +369,8 @@ another logging mechanism.
 
 Each of the logging mechanisms have their pros and cons, particularly in terms
 of how they are configured. For example, log4perl offers a great deal of power
-and flexibility but some potentially heavy configuration, whereas
-C<Log::Dispatch> is extremely configuration light but doesn't handle
+and flexibility but uses a global and potentially heavy configuration, whereas
+C<Log::Dispatch> is extremely configuration-light but doesn't handle
 categories. There is also the unnamed future logger that may have advantages
 over either of these two, and all the custom in-house loggers people have
 created and cannot (for whatever reason) stop using.
