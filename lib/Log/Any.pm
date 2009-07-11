@@ -138,12 +138,6 @@ In your application:
 
     # or
 
-    use Log::Tiny;
-    my $log = Log::Tiny->new('myapp.log');
-    Log::Any->set_adapter('Log::Tiny', log => $log);
-
-    # or
-
     Log::Any->set_adapter('+My::Log::Any::Adapter', ...);
 
 =head1 DESCRIPTION
@@ -236,11 +230,6 @@ with Log::Dispatch or Log::Dispatch::Config
 
 =item *
 
-L<Log::Any::Adapter::Log::Tiny|Log::Any::Adapter::Log::Tiny> - work with
-Log::Tiny
-
-=item *
-
 L<Log::Any::Adapter::Null|Log::Any::Adapter::Null> - logs nothing - the default
 
 =back
@@ -305,9 +294,8 @@ This is important for efficiency, as you can avoid the work of putting together
 the logging message (in the above case, stringifying C<@_>) if the log level is
 not active.
 
-Some logging mechanisms don't support detection of log levels - e.g.
-L<Log::Tiny|Log::Tiny>.  In these cases the detection methods will always
-return 1.
+Some logging mechanisms don't support detection of log levels. In these cases
+the detection methods will always return 1.
 
 In contrast, the default logging mechanism - Null - will return 0 for all
 detection methods.
