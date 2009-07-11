@@ -5,7 +5,7 @@ use Log::Any::Manager;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 my $Manager = Log::Any::Manager->new();
 
