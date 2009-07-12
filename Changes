@@ -4,6 +4,8 @@ Revision history for Log-Any
 
 0.02  Jul 11, 2009
 
+- Eliminate unnecessary Test/InternalOnly.pm class
+
 0.01  Jul 11, 2009
 
 - Initial version
