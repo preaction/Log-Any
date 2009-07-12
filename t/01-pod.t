@@ -1,9 +1,11 @@
 #!perl
 use strict;
 use warnings;
-use Log::Any::Test::InternalOnly;
-
 use Test::More;
+
+unless ( $ENV{LOG_ANY_INTERNAL_TESTS} ) {
+    plan skip_all => "internal test only";
+}
 
 # Ensure a recent version of Test::Pod
 my $min_tp = 1.22;
