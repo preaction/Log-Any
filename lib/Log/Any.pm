@@ -375,7 +375,7 @@ categories. There is also the unnamed future logger that may have advantages
 over either of these two, and all the custom in-house loggers people have
 created and cannot (for whatever reason) stop using.
 
-=item Why does Log::Any use Moose or I<insert modern Perl technique>?
+=item Why doesn't Log::Any use Moose or I<insert modern Perl technique>?
 
 To encourage CPAN module authors to adopt and use C<Log::Any>, we aim to have
 as few dependencies and chances of breakage as possible. Thus, sadly, no
