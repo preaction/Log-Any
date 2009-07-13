@@ -114,12 +114,19 @@ your subclass:
 =over
 
 =item debug ($msg)
+
 =item info ($msg)
+
 =item notice ($msg)
+
 =item warning ($msg)
+
 =item error ($msg)
+
 =item critical ($msg)
+
 =item alert ($msg)
+
 =item emergency ($msg)
 
 These methods log a message at the specified level.
@@ -130,12 +137,19 @@ method names with
     Log::Any->logging_methods
 
 =item is_debug ()
+
 =item is_info ()
+
 =item is_notice ()
+
 =item is_warning ()
+
 =item is_error ()
+
 =item is_critical ()
+
 =item is_alert ()
+
 =item is_emergency ()
 
 These methods return a boolean indicating whether the specified level is
