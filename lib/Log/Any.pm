@@ -215,8 +215,8 @@ L<Log::Any::Adapter::Null|Log::Any::Adapter::Null> - logs nothing - the default
 This list may be incomplete. A complete set of adapters can be found on CPAN by
 searching for "Log::Any::Adapter".
 
-See L<Log::Any::Adapter::Development> for information on developing new
-adapters.
+See L<Log::Any::Adapter::Development|Log::Any::Adapter::Development> for
+information on developing new adapters.
 
 =head1 PRODUCING LOGS (FOR MODULES)
 
