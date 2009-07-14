@@ -9,6 +9,8 @@ perl_version '5.006';
 
 build_requires 'Test::More' => 0;
 
+requires 'Carp' => 0;
+
 license 'perl';
 
 auto_install;
