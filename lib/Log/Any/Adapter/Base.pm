@@ -23,11 +23,14 @@ sub delegate_method_to_slot {
         $class );
 }
 
-# Alias 'warn' to 'warning', etc.
+# Forward 'warn' to 'warning', 'is_warn' to 'is_warning', and so on for all aliases
 #
 my %aliases = Log::Any->log_level_aliases;
 while ( my ( $alias, $realname ) = each(%aliases) ) {
-    make_method( $alias, \&$realname );
+    make_method( $alias, sub { my $self = shift; $self->$realname(@_) } );
+    my $is_alias    = "is_$alias";
+    my $is_realname = "is_$realname";
+    make_method( $is_alias, sub { my $self = shift; $self->$is_realname(@_) } );
 }
 
 # Add printf-style versions of all logging methods and aliases - e.g. errorf, debugf
