@@ -4,7 +4,12 @@ Revision history for Log-Any
 
 0.02  Jul 11, 2009
 
-- Eliminate unnecessary Test/InternalOnly.pm class
+* Fixes
+  - Fix logging aliases like warn => warning
+
+* Implementation
+  - Eliminate unnecessary Test/InternalOnly.pm class
+  - Precompute alias and method lists like Log::Any->logging_methods
 
 0.01  Jul 11, 2009
 
