@@ -2,6 +2,7 @@ package Log::Any;
 use 5.006;
 use Carp qw(croak);
 use Log::Any::Manager;
+use Log::Any::Util qw(make_method);
 use strict;
 use warnings;
 
@@ -65,32 +66,31 @@ sub get_logger {
     $Manager->get_logger( category => scalar( caller() ), %params );
 }
 
-sub logging_methods {
-    my $class = shift;
-    return qw(debug info notice warning error critical alert emergency);
-}
+my ( %log_level_aliases, @logging_methods, @logging_aliases, @detection_methods,
+    @detection_aliases, @logging_and_detection_methods );
 
-sub detection_methods {
-    my $class = shift;
-    return map { "is_$_" } $class->logging_methods();
-}
-
-sub logging_and_detection_methods {
-    my $class = shift;
-    my @list = ( $class->logging_methods, $class->detection_methods );
-    return @list;
-}
-
-sub log_level_aliases {
-    my $class = shift;
-    return (
+BEGIN {
+    %log_level_aliases = (
         inform => 'info',
         warn   => 'warning',
         err    => 'error',
         crit   => 'critical',
         fatal  => 'critical'
     );
+    @logging_methods =
+      qw(debug info notice warning error critical alert emergency);
+    @logging_aliases               = keys(%log_level_aliases);
+    @detection_methods             = map { "is_$_" } @logging_methods;
+    @detection_aliases             = map { "is_$_" } @logging_aliases;
+    @logging_and_detection_methods = ( @logging_methods, @detection_methods );
 }
+
+sub log_level_aliases             { %log_level_aliases }
+sub logging_methods               { @logging_methods }
+sub logging_aliases               { @logging_aliases }
+sub detection_methods             { @detection_methods }
+sub detection_aliases             { @detection_aliases }
+sub logging_and_detection_methods { @logging_and_detection_methods }
 
 1;
 
@@ -399,7 +399,11 @@ Log::Any is provided "as is" and without any express or implied warranties,
 including, without limitation, the implied warranties of merchantibility and
 fitness for a particular purpose.
 
-This program is free software; you can redistribute it and/or modify it under
-the same terms as Perl itself.
+This program is free software; you can
+
+redistribute it and/or modif
+
+y it under the same terms as Perl itself.
+
 
 =cut
