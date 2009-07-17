@@ -17,7 +17,7 @@ sub set_adapter {
 
     croak "adapter class required"
       unless defined($adapter_name) && $adapter_name =~ /\S/;
-    $adapter_class =~ s/^Log:://;
+    $adapter_name =~ s/^Log:://;
     my $adapter_class = (
           substr( $adapter_name, 0, 1 ) eq '+'
         ? substr( $adapter_name, 1 )
