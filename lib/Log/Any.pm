@@ -121,20 +121,20 @@ In your application:
 
     use Log::Log4perl;
     Log::Log4perl::init('/etc/log4perl.conf');
-    Log::Any->set_adapter('Log::Log4perl');
+    Log::Any->set_adapter('Log4perl');
 
     # or
 
     use Log::Dispatch;
     my $dispatcher = Log::Dispatch->new();
     $dispatcher->add(...);
-    Log::Any->set_adapter('Log::Dispatch', dispatcher => $dispatcher);
+    Log::Any->set_adapter('Dispatch', dispatcher => $dispatcher);
 
     # or
 
     use Log::Dispatch::Config;
     Log::Dispatch::Config->configure('/path/to/log.conf');
-    Log::Any->set_adapter('Log::Dispatch', dispatcher => Log::Dispatch::Config->instance);
+    Log::Any->set_adapter('Dispatch', dispatcher => Log::Dispatch::Config->instance);
 
     # or
 
@@ -184,8 +184,7 @@ logging is very powerful and it would be nice if more mechanisms supported it.
 =head1 ADAPTERS
 
 In order to use a logging mechanism with C<Log::Any>, there needs to be an
-adapter class for it. Typically this is named
-Log::Any::Adapter::I<FullLogModuleName>.
+adapter class for it. Typically this is named Log::Any::Adapter::I<something>.
 
 All of the adapters (with the exception of the default 'Null' adapter) are in
 CPAN distributions separate from Log-Any. This allows us to minimize Log-Any's
@@ -198,13 +197,12 @@ The following adapters are available as of this writing:
 
 =item *
 
-L<Log::Any::Adapter::Log::Log4perl|Log::Any::Adapter::Log::Log4perl> - work
-with log4perl
+L<Log::Any::Adapter::Log4perl|Log::Any::Adapter::Log4perl> - work with log4perl
 
 =item *
 
-L<Log::Any::Adapter::Log::Dispatch|Log::Any::Adapter::Log::Dispatch> - work
-with Log::Dispatch or Log::Dispatch::Config
+L<Log::Any::Adapter::Dispatch|Log::Any::Adapter::Dispatch> - work with
+Log::Dispatch or Log::Dispatch::Config
 
 =item *
 
@@ -288,12 +286,12 @@ C<set_adapter>, e.g.:
 
     # Use Log::Log4perl
     Log::Log4perl::init('/etc/log4perl.conf');
-    Log::Any->set_adapter('Log::Log4perl');
+    Log::Any->set_adapter('Log4perl');
 
     # Use Log::Dispatch
     my $dispatcher = Log::Dispatch->new();
     $dispatcher->add(...);
-    Log::Any->set_adapter('Log::Dispatch', dispatcher => $dispatcher);
+    Log::Any->set_adapter('Dispatch', dispatcher => $dispatcher);
 
 The first argument to C<set_adapter> is the name of an adapter. It is
 automatically prepended with "Log::Any::Adapter::". If instead you want to pass
@@ -317,7 +315,7 @@ application is going to set an adapter. For example:
     my $log = Log::Any->get_logger();
     $log->error("aiggh!");   # this goes nowhere
     ...
-    Log::Any->set_adapter('Log::Log4perl');
+    Log::Any->set_adapter('Log4perl');
     $log->error("aiggh!");   # this goes to log4perl
     ...
     Log::Any->set_adapter('Null');

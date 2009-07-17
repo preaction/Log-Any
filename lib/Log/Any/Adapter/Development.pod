@@ -7,7 +7,7 @@ Log::Any::Adapter::Development -- Manual for developing new Log::Any adapters
 
 The adapter module:
 
-   package Log::Any::Adapter::Log::YAL;
+   package Log::Any::Adapter::YAL;
    use strict;
    use warnings;
    use Log::Any::Util qw(make_method);
@@ -35,15 +35,15 @@ The adapter module:
 
 and the application:
 
-   Log::Any->set_adapter('Log::YAL');
+   Log::Any->set_adapter('YAL');
 
 =head1 DESCRIPTION
 
 This document describes how to implement a new Log;:Any adapter.
 
 The easiest way to start is to look at the source of existing adapters, such as
-L<Log::Any::Adapter::Log::Log4perl|Log::Any::Adapter::Log::Log4perl> and
-L<Log::Any::Adapter::Log::Dispatch>.
+L<Log::Any::Adapter::Log4perl|Log::Any::Adapter::Log4perl> and
+L<Log::Any::Adapter::Dispatch|Log::Any::Adapter::Dispatch>.
 
 =head1 NAMING
 
@@ -99,7 +99,7 @@ and then a class requests a logger like so:
 
 Then C<$log> will be populated with the return value of:
 
-    Log::Any::Adapter::Log::Yal->new(yal_object => $yal, depth => 3, category => 'Foo');
+    Log::Any::Adapter::Yal->new(yal_object => $yal, depth => 3, category => 'Foo');
 
 This is memoized, so if the same category should be requested again (e.g.
 through a separate C<get_logger> call, the same object will be returned.
@@ -188,9 +188,9 @@ The following methods are useful for defining adapters:
 Handle the specified $method by calling $adapter_method on the object contained
 in $self->{$slot}.
 
-See L<Log::Any::Adapter::Log::Dispatch|Log::Any::Adapter::Log::Dispatch> and
-L<Log::Any::Adapter::Log::Log4perl|Log::Any::Adapter::Log::Log4perl> for
-examples of usage.
+See L<Log::Any::Adapter::Dispatch|Log::Any::Adapter::Dispatch> and
+L<Log::Any::Adapter::Log4perl|Log::Any::Adapter::Log4perl> for examples of
+usage.
 
 =item Log::Any->logging_methods
 
