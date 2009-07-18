@@ -2,7 +2,7 @@ Revision history for Log-Any
 
 ** denotes an incompatible change
 
-0.03  Jul 14, 2009
+0.03  Jul 17, 2009
 
 * Improvements
   - Eliminated extra '::Log' from adapter names, e.g. Log::Any::Adapter::Log::Dispatch is
