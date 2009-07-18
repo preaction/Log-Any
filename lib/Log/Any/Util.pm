@@ -6,12 +6,12 @@ use warnings;
 use base qw(Exporter);
 
 our @EXPORT_OK = qw(
+  dp
+  dps
+  dump_one_line
   make_method
   read_file
   require_dynamic
-  dump_one_line
-  dp
-  dps
 );
 
 sub make_method {
