@@ -4,6 +4,11 @@ Revision history for Log-Any
 
 0.03  Jul 14, 2009
 
+* Improvements
+  - Eliminated extra '::Log' from adapter names, e.g. Log::Any::Adapter::Log::Dispatch is
+    now Log::Any::Adapter::Dispatch. The long name was properly descriptive but was making
+    me wince every time.
+
 0.02  Jul 14, 2009
 
 * Fixes
