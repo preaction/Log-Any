@@ -6,7 +6,7 @@ use Log::Any::Util qw(make_method);
 use strict;
 use warnings;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 my $Manager = Log::Any::Manager->new();
 
