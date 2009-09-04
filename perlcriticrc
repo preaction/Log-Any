@@ -25,3 +25,6 @@ max_characters = 100
 
 # Theoretically I like this, but ultimately caused too many exceptions
 [-ErrorHandling::RequireCarping]
+
+# Unfortunately this breaks on 'open( my $fh, '<', $file )'
+# [-Variables::ProhibitUnusedVariables]

@@ -41,7 +41,8 @@ sub read_file {
     my ($file) = @_;
 
     local $/ = undef;
-    open( my $fh, '<', $file )
+    my $fh;
+    open( $fh, '<', $file )
       or die "cannot open '$file': $!";
     my $contents = <$fh>;
     return $contents;
@@ -50,8 +51,10 @@ sub read_file {
 sub require_dynamic {
     my ($class) = @_;
 
-    eval "require $class";    ## no critic
-    die $@ if $@;
+    unless ( defined( eval "require $class" ) )
+    {    ## no critic (ProhibitStringyEval)
+        die $@;
+    }
 }
 
 sub cmp_deeply {
