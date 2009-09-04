@@ -6,8 +6,7 @@ use warnings;
 use base qw(Exporter);
 
 our @EXPORT_OK = qw(
-  dp
-  dps
+  cmp_deeply
   dump_one_line
   make_method
   read_file
@@ -55,12 +54,11 @@ sub require_dynamic {
     die $@ if $@;
 }
 
-sub dp {
-    print STDERR _dump_value_with_caller(@_);
-}
+sub cmp_deeply {
+    my ( $ref1, $ref2, $name ) = @_;
 
-sub dps {
-    print STDERR longmess( _dump_value_with_caller(@_) );
+    my $tb = Test::Builder->new();
+    $tb->is_eq( dump_one_line($ref1), dump_one_line($ref2), $name );
 }
 
 1;

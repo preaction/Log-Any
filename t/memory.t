@@ -1,6 +1,6 @@
 #!perl
 use Test::More tests => 21;
-use Test::Deep qw(cmp_deeply);
+use Log::Any::Util qw(cmp_deeply);
 use strict;
 use warnings;
 
