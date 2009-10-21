@@ -1,14 +1,14 @@
 package Log::Any;
 use 5.006;
 use Carp qw(croak);
-use Log::Any::Manager;
 use Log::Any::Util qw(make_method);
 use strict;
 use warnings;
 
 our $VERSION = '0.05';
 
-my $Manager = Log::Any::Manager->new();
+require Log::Any::Manager::Starter;
+my $Manager = Log::Any::Manager::Starter->new();
 
 sub import {
     my $class  = shift;
@@ -56,9 +56,14 @@ sub _invalid_import_error {
     return "invalid import '$param' - valid imports are '\$log'";
 }
 
-sub set_adapter {
-    my $class = shift;
-    $Manager->set_adapter(@_);
+foreach my $method (qw(set_adapter set_adapter_for remove_adapter)) {
+    make_method(
+        $method,
+        sub {
+            my $class = shift;
+            return $Manager->$method(@_);
+        }
+    );
 }
 
 sub get_logger {
