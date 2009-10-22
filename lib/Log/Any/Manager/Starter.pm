@@ -8,9 +8,16 @@ sub new {
     my $class = shift;
     my $self  = {@_};
     bless $self, $class;
-    $self->{adapter_class}  = 'Log::Any::Adapter::Null';
-    $self->{adapter_params} = {};
+    $self->{category_cache} = {};
     return $self;
+}
+
+sub _get_logger_for_category {
+    my ( $self, $category ) = @_;
+
+    $self->{category_cache}->{$category} ||=
+      { adapter => Log::Any::Adapter::Null->new() };
+    return $self->{category_cache}->{$category}->{adapter};
 }
 
 sub upgrade_to_full {
@@ -22,6 +29,7 @@ sub upgrade_to_full {
           "error loading $full_class - do you have Log-Any-Adapter installed? - $@";
     }
     bless( $self, $full_class );
+    $self->initialize_full();
 }
 
 foreach my $method (qw(set_adapter set_adapter_for remove_adapter)) {

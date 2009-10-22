@@ -6,10 +6,8 @@ use warnings;
 use base qw(Exporter);
 
 our @EXPORT_OK = qw(
-  cmp_deeply
   dump_one_line
   make_method
-  read_file
   require_dynamic
 );
 
@@ -37,17 +35,6 @@ sub _dump_value_with_caller {
         $caller[1], $caller[2], $$, $dump );
 }
 
-sub read_file {
-    my ($file) = @_;
-
-    local $/ = undef;
-    my $fh;
-    open( $fh, '<', $file )
-      or die "cannot open '$file': $!";
-    my $contents = <$fh>;
-    return $contents;
-}
-
 sub require_dynamic {
     my ($class) = @_;
 
@@ -55,13 +42,6 @@ sub require_dynamic {
     {    ## no critic (ProhibitStringyEval)
         die $@;
     }
-}
-
-sub cmp_deeply {
-    my ( $ref1, $ref2, $name ) = @_;
-
-    my $tb = Test::Builder->new();
-    $tb->is_eq( dump_one_line($ref1), dump_one_line($ref2), $name );
 }
 
 1;
