@@ -118,32 +118,7 @@ In a CPAN or other module:
     $log->debugf("arguments are: %s", \@_)
         if $log->is_debug();
 
-In your application:
-
-    use Log::Any;
-
-    # Choose a logging mechanism:
-
-    use Log::Log4perl;
-    Log::Log4perl::init('/etc/log4perl.conf');
-    Log::Any->set_adapter('Log4perl');
-
-    # or
-
-    use Log::Dispatch;
-    my $dispatcher = Log::Dispatch->new();
-    $dispatcher->add(...);
-    Log::Any->set_adapter('Dispatch', dispatcher => $dispatcher);
-
-    # or
-
-    use Log::Dispatch::Config;
-    Log::Dispatch::Config->configure('/path/to/log.conf');
-    Log::Any->set_adapter('Dispatch', dispatcher => Log::Dispatch::Config->instance);
-
-    # or
-
-    Log::Any->set_adapter('+My::Log::Any::Adapter', ...);
+    my $log2 = Log::Any->get_logger(category => 'My::Class');
 
 =head1 DESCRIPTION
 
@@ -151,14 +126,14 @@ C<Log::Any> allows CPAN modules to safely and efficiently log messages, while
 letting the application choose (or decline to choose) a logging mechanism such
 as C<Log::Dispatch> or C<Log::Log4perl>.
 
-C<Log::Any> has a very tiny footprint and no dependencies, which makes it
-appropriate for even small CPAN modules to use. Importantly, it defaults to
-'null' logging activity, so a module can safely log without worrying about
-whether the application has chosen (or will ever choose) a logging mechanism.
+C<Log::Any> has a very tiny footprint and no dependencies beyond Perl 5.6,
+which makes it appropriate for even small CPAN modules to use. Importantly, it
+defaults to 'null' logging activity, so a module can safely log without
+worrying about whether the application has chosen (or will ever choose) a
+logging mechanism.
 
 The application, in turn, may at any time choose a logging mechanism and tell
-C<Log::Any> to use it.  This will cause all subsequent C<Log::Any> logging
-statements out in various modules to flow through that mechanism.
+C<Log::Any> to use it via L<Log::Any::Adapter|Log::Any::Adapter>.
 
 =head1 LOG LEVELS
 
@@ -182,44 +157,8 @@ the top three levels to 'fatal'.
 =head1 CATEGORIES
 
 Every logger has a category, generally the name of the class that asked for the
-logger. With the notable exception of log4perl, most logging mechanisms don't
-care about categories, so they will just be ignored. That said, category-based
-logging is very powerful and it would be nice if more mechanisms supported it.
-
-=head1 ADAPTERS
-
-In order to use a logging mechanism with C<Log::Any>, there needs to be an
-adapter class for it. Typically this is named Log::Any::Adapter::I<something>.
-
-All of the adapters (with the exception of the default 'Null' adapter) are in
-CPAN distributions separate from Log-Any. This allows us to minimize Log-Any's
-dependencies, tests, and revisions, which in turn should help module authors
-feel comfortable about using it.
-
-The following adapters are available as of this writing:
-
-=over
-
-=item *
-
-L<Log::Any::Adapter::Log4perl|Log::Any::Adapter::Log4perl> - work with log4perl
-
-=item *
-
-L<Log::Any::Adapter::Dispatch|Log::Any::Adapter::Dispatch> - work with
-Log::Dispatch or Log::Dispatch::Config
-
-=item *
-
-L<Log::Any::Adapter::Null|Log::Any::Adapter::Null> - logs nothing - the default
-
-=back
-
-This list may be incomplete. A complete set of adapters can be found on CPAN by
-searching for "Log::Any::Adapter".
-
-See L<Log::Any::Adapter::Development|Log::Any::Adapter::Development> for
-information on developing new adapters.
+logger. Some logging mechanisms, like log4perl, can direct logs to different
+places depending on category.
 
 =head1 PRODUCING LOGS (FOR MODULES)
 
@@ -283,53 +222,10 @@ detection methods.
 
 =head1 CONSUMING LOGS (FOR APPLICATIONS)
 
-=head2 Choosing an adapter
-
-Initially, all C<Log::Any> logs are discarded (via the Null adapter). If you
-want the logs to go somewhere, you need to select an adapter with
-C<set_adapter>, e.g.:
-
-    # Use Log::Log4perl
-    Log::Log4perl::init('/etc/log4perl.conf');
-    Log::Any->set_adapter('Log4perl');
-
-    # Use Log::Dispatch
-    my $dispatcher = Log::Dispatch->new();
-    $dispatcher->add(...);
-    Log::Any->set_adapter('Dispatch', dispatcher => $dispatcher);
-
-The first argument to C<set_adapter> is the name of an adapter. It is
-automatically prepended with "Log::Any::Adapter::". If instead you want to pass
-the full name of an adapter, prefix it with a "+". e.g.
-
-    # Use My::Adapter class
-    Log::Any->set_adapter('+My::Adapter', ...);
-
-The remaining arguments are passed along to the adapter constructor. See the
-documentation for the individual adapter classes for more information.
-
-C<set_adapter> can be called multiple times; the last call overwrites any
-previous calls. In fact, C<set_adapter> is automatically called with 'Null' at
-startup, so every call you make will be an overwrite.
-
-When you call C<set_adapter>, any C<Log::Any> loggers that have previously been
-created will automatically start using the new adapter. This allows modules to
-freely create and use loggers without worrying about when (or if) the
-application is going to set an adapter. For example:
-
-    my $log = Log::Any->get_logger();
-    $log->error("aiggh!");   # this goes nowhere
-    ...
-    Log::Any->set_adapter('Log4perl');
-    $log->error("aiggh!");   # this goes to log4perl
-    ...
-    Log::Any->set_adapter('Null');
-    $log->error("aiggh!");   # this goes nowhere again
-
-There is no way to set more than one adapter at a time. If you want to log to
-more than one place, arrange that through the logging mechanism (e.g.
-L<Log::Dispatch|Log::Dispatch> and L<Log::Log4perl|Log::Log4perl> both make
-this easy).
+To direct logs somewhere - a file, the screen, etc. - you must use
+L<Log::Any::Adapter|Log::Any::Adapter>. This is intentionally kept in a
+separate distribution to keep C<Log::Any> itself as simple and unchanging as
+possible.
 
 =head1 MOTIVATION
 
@@ -352,8 +248,9 @@ about. The second, I<log consumption>, includes a way to configure where
 logging goes (a file, the screen, etc.) and the code to send it there. This
 choice generally belongs to the application.
 
-C<Log::Any> provides a standard log production API for modules, and allows
-applications to choose the mechanism for log consumption.
+C<Log::Any> provides a standard log production API for modules.
+C<Log::Any::Adapter> allows applications to choose the mechanism for log
+consumption.
 
 See http://www.openswartz.com/2007/09/06/standard-logging-api/ for the original
 post proposing this module.
