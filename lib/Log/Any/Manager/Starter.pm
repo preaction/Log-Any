@@ -32,7 +32,7 @@ sub upgrade_to_full {
     $self->initialize_full();
 }
 
-foreach my $method (qw(set_adapter set_adapter_for remove_adapter)) {
+foreach my $method (qw(set_adapter remove_adapter)) {
     make_method(
         $method,
         sub {

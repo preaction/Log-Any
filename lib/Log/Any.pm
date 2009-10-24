@@ -56,7 +56,7 @@ sub _invalid_import_error {
     return "invalid import '$param' - valid imports are '\$log'";
 }
 
-foreach my $method (qw(set_adapter set_adapter_for remove_adapter)) {
+foreach my $method (qw(set_adapter remove_adapter)) {
     make_method(
         $method,
         sub {
@@ -222,10 +222,10 @@ detection methods.
 
 =head1 CONSUMING LOGS (FOR APPLICATIONS)
 
-To direct logs somewhere - a file, the screen, etc. - you must use
-L<Log::Any::Adapter|Log::Any::Adapter>. This is intentionally kept in a
-separate distribution to keep C<Log::Any> itself as simple and unchanging as
-possible.
+To direct logs somewhere - a file, the screen, etc. - you must install a
+L<Log::Any::Adapter|Log::Any::Adapter> module. These are intentionally kept in
+separate distributions to keep C<Log::Any> itself as simple and unchanging as
+possible (and thus encourage its use in CPAN modules).
 
 =head1 MOTIVATION
 
@@ -299,11 +299,7 @@ Log::Any is provided "as is" and without any express or implied warranties,
 including, without limitation, the implied warranties of merchantibility and
 fitness for a particular purpose.
 
-This program is free software; you can
-
-redistribute it and/or modif
-
-y it under the same terms as Perl itself.
-
+This program is free software; you canredistribute it and/or modify it under
+the same terms as Perl itself.
 
 =cut
