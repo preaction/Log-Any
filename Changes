@@ -4,6 +4,10 @@ Revision history for Log-Any
 
 0.05  Sep 3, 2009
 
+* Implementation
+  - Move adapter-setting behavior to a separate distribution, Log::Any::Adapter, so as to
+    keep Log::Any stable and unchanging
+
 0.04  Sep 3, 2009
 
 * Fixes
