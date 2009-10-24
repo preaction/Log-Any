@@ -1,5 +1,4 @@
 package Log::Any::Adapter::Base;
-use Carp qw(croak);
 use Log::Any;
 use Log::Any::Util qw(make_method dump_one_line);
 use strict;
