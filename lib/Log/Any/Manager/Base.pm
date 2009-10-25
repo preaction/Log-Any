@@ -1,5 +1,4 @@
 package Log::Any::Manager::Base;
-use Log::Any::Adapter::Null;
 use strict;
 use warnings;
 

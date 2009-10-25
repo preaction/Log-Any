@@ -1,5 +1,6 @@
 package Log::Any::Manager::Starter;
 use Log::Any::Util qw(make_method);
+use Log::Any::Adapter::Null;
 use strict;
 use warnings;
 use base qw(Log::Any::Manager::Base);
@@ -18,29 +19,6 @@ sub _get_logger_for_category {
     $self->{category_cache}->{$category} ||=
       { adapter => Log::Any::Adapter::Null->new() };
     return $self->{category_cache}->{$category}->{adapter};
-}
-
-sub upgrade_to_full {
-    my ($self) = @_;
-
-    my $full_class = "Log::Any::Manager::Full";
-    unless ( defined( eval "require $full_class" ) ) {
-        die
-          "error loading $full_class - do you have Log-Any-Adapter installed? - $@";
-    }
-    bless( $self, $full_class );
-    $self->initialize_full();
-}
-
-foreach my $method (qw(set_adapter remove_adapter)) {
-    make_method(
-        $method,
-        sub {
-            my $self = shift;
-            $self->upgrade_to_full();
-            return $self->$method(@_);
-        }
-    );
 }
 
 1;

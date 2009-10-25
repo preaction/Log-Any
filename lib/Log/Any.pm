@@ -7,8 +7,25 @@ use warnings;
 
 our $VERSION = '0.05';
 
+# Manager is accessed and manipulated by Log::Any::Adapter
+#
 require Log::Any::Manager::Starter;
-my $Manager = Log::Any::Manager::Starter->new();
+our $Manager = Log::Any::Manager::Starter->new();
+sub manager { $Manager }
+
+foreach my $method (qw(set_adapter remove_adapter)) {
+    make_method(
+        $method,
+        sub {
+            eval "require Log::Any::Adapter";
+            if ($@) {
+                croak
+                  "method '$method' requires Log::Any::Adapter which could not be loaded - $@";
+            }
+            return Log::Any::Adapter->$method(@_);
+        }
+    );
+}
 
 sub import {
     my $class  = shift;
@@ -26,44 +43,16 @@ sub _export_to_caller {
     #
     my @vars;
     foreach my $param (@_) {
-        if ( substr( $param, 0, 1 ) eq '$' ) {
-            push( @vars, $param );
+        if ( $param eq '$log' ) {
+            my $log = $class->get_logger( category => $caller );
+            no strict 'refs';
+            my $varname = "$caller\::log";
+            *$varname = \$log;
         }
         else {
-            croak $class->_invalid_import_error($param);
+            croak "invalid import '$param' - valid imports are '\$log'";
         }
     }
-
-    # Import requested variables into caller
-    #
-    foreach my $var (@vars) {
-        my $value;
-        if ( $var eq '$log' ) {
-            $value = $class->get_logger( category => $caller );
-        }
-        else {
-            croak $class->_invalid_import_error($var);
-        }
-        my $no_sigil_var = substr( $var, 1 );
-        no strict 'refs';
-        *{"$caller\::$no_sigil_var"} = \$value;
-    }
-}
-
-sub _invalid_import_error {
-    my ( $class, $param ) = @_;
-
-    return "invalid import '$param' - valid imports are '\$log'";
-}
-
-foreach my $method (qw(set_adapter remove_adapter)) {
-    make_method(
-        $method,
-        sub {
-            my $class = shift;
-            return $Manager->$method(@_);
-        }
-    );
 }
 
 sub get_logger {
@@ -127,10 +116,9 @@ letting the application choose (or decline to choose) a logging mechanism such
 as C<Log::Dispatch> or C<Log::Log4perl>.
 
 C<Log::Any> has a very tiny footprint and no dependencies beyond Perl 5.6,
-which makes it appropriate for even small CPAN modules to use. Importantly, it
-defaults to 'null' logging activity, so a module can safely log without
-worrying about whether the application has chosen (or will ever choose) a
-logging mechanism.
+which makes it appropriate for even small CPAN modules to use. It defaults to
+'null' logging activity, so a module can safely log without worrying about
+whether the application has chosen (or will ever choose) a logging mechanism.
 
 The application, in turn, may at any time choose a logging mechanism and tell
 C<Log::Any> to use it via L<Log::Any::Adapter|Log::Any::Adapter>.
@@ -222,10 +210,10 @@ detection methods.
 
 =head1 CONSUMING LOGS (FOR APPLICATIONS)
 
-To direct logs somewhere - a file, the screen, etc. - you must install a
-L<Log::Any::Adapter|Log::Any::Adapter> module. These are intentionally kept in
-separate distributions to keep C<Log::Any> itself as simple and unchanging as
-possible (and thus encourage its use in CPAN modules).
+To direct logs somewhere - a file, the screen, etc. - you must use
+L<Log::Any::Adapter|Log::Any::Adapter>. This is intentionally kept in a
+separate distributions to keep C<Log::Any> as simple and unchanging as
+possible.
 
 =head1 MOTIVATION
 
