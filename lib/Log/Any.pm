@@ -10,22 +10,8 @@ our $VERSION = '0.05';
 # Manager is accessed and manipulated by Log::Any::Adapter
 #
 require Log::Any::Manager::Starter;
-our $Manager = Log::Any::Manager::Starter->new();
+my $Manager = Log::Any::Manager::Starter->new();
 sub manager { $Manager }
-
-foreach my $method (qw(set_adapter remove_adapter)) {
-    make_method(
-        $method,
-        sub {
-            eval "require Log::Any::Adapter";
-            if ($@) {
-                croak
-                  "method '$method' requires Log::Any::Adapter which could not be loaded - $@";
-            }
-            return Log::Any::Adapter->$method(@_);
-        }
-    );
-}
 
 sub import {
     my $class  = shift;
@@ -120,8 +106,8 @@ which makes it appropriate for even small CPAN modules to use. It defaults to
 'null' logging activity, so a module can safely log without worrying about
 whether the application has chosen (or will ever choose) a logging mechanism.
 
-The application, in turn, may at any time choose a logging mechanism and tell
-C<Log::Any> to use it via L<Log::Any::Adapter|Log::Any::Adapter>.
+The application, in turn, may at any time choose a logging mechanism via
+L<Log::Any::Adapter|Log::Any::Adapter>.
 
 =head1 LOG LEVELS
 
@@ -277,7 +263,7 @@ Jonathan Swartz
 
 =head1 SEE ALSO
 
-The many Log:: modules on CPAN
+L<Log::Any::Adapter|Log::Any::Adapter>; the many Log:: modules on CPAN
 
 =head1 COPYRIGHT & LICENSE
 

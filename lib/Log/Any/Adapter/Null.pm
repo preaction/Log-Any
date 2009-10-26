@@ -22,7 +22,7 @@ Log::Any::Adapter::Null
 
 =head1 SYNOPSIS
 
-    Log::Any->set_adapter('Null');
+    Log::Any::Adapter->set('Null');
 
 =head1 DESCRIPTION
 
@@ -32,7 +32,7 @@ loaded.
 
 =head1 SEE ALSO
 
-L<Log::Any|Log::Any>
+L<Log::Any|Log::Any>, L<Log::Any::Adapter|Log::Any::Adapter>
 
 =head1 AUTHOR
 
