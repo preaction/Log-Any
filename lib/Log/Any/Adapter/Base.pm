@@ -8,7 +8,7 @@ sub new {
     my $class = shift;
     my $self  = {@_};
     bless $self, $class;
-    $self->init();
+    $self->init(@_);
     return $self;
 }
 
