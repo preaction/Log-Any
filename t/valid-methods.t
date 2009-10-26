@@ -9,9 +9,9 @@ push( @logs, $log );
 push( @logs, Log::Any->get_logger() );
 push( @logs, Log::Any->get_logger( category => 'Foo' ) );
 
-my $logging_method_count = scalar( Log::Any->logging_methods() );
+my $logging_method_count   = scalar( Log::Any->logging_methods() );
 my $detection_method_count = scalar( Log::Any->logging_methods() );
-plan tests => ($logging_method_count * 2 + $detection_method_count + 1) * 3; 
+plan tests => ( $logging_method_count * 2 + $detection_method_count + 1 ) * 3;
 
 foreach my $log (@logs) {
     foreach my $method ( Log::Any->detection_methods() ) {
@@ -23,5 +23,5 @@ foreach my $log (@logs) {
         ok( $log->$methodf("") || 1, "$method runs" );
     }
     eval { $log->bad_method() };
-    like($@, qr{Can\'t locate object method "bad_method"}, "bad method");
+    like( $@, qr{Can\'t locate object method "bad_method"}, "bad method" );
 }
