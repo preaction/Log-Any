@@ -5,8 +5,8 @@ Revision history for Log-Any
 0.05  Sep 3, 2009
 
 * Implementation
-  - Strip Log::Any down to absolute minimum, so as to keep it stable and unchanging. Move
-    everything else to Log::Any::Adapter.
+  - Strip Log::Any down to a relative minimum, so as to keep it stable and
+    unchanging. Move everything else to Log::Any::Adapter.
 
 0.04  Sep 3, 2009
 
