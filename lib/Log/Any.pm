@@ -87,6 +87,13 @@ sub detection_methods             { @detection_methods }
 sub detection_aliases             { @detection_aliases }
 sub logging_and_detection_methods { @logging_and_detection_methods }
 
+# For backward compatibility
+sub set_adapter {
+    my $class = shift;
+    require Log::Any::Adapter;
+    Log::Any::Adapter->set(@_);
+}
+
 1;
 
 __END__
