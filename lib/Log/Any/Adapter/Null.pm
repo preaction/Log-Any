@@ -1,13 +1,29 @@
 package Log::Any::Adapter::Null;
-use Log::Any::Util qw(make_method);
+use Log::Any;
 use strict;
 use warnings;
-use base qw(Log::Any::Adapter::Base);
+
+sub new {
+    my $class = shift;
+    return bless {}, $class;
+}
+
+# Collect all logging and detection methods, including aliases and printf variants
+#
+my %aliases     = Log::Any->log_level_aliases;
+my @alias_names = keys(%aliases);
+my @all_methods = (
+    Log::Any->logging_and_detection_methods(),
+    @alias_names,
+    ( map { "is_$_" } @alias_names ),
+    ( map { $_ . "f" } ( Log::Any->logging_methods, @alias_names ) ),
+);
 
 # All methods are no-ops
 #
-foreach my $method ( Log::Any->logging_and_detection_methods() ) {
-    make_method( $method, sub { } );
+foreach my $method (@all_methods) {
+    no strict 'refs';
+    *{ __PACKAGE__ . "::$method" } = sub { };
 }
 
 1;

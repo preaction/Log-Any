@@ -1,17 +1,17 @@
 package Log::Any;
 use 5.006;
-use Carp qw(croak);
-use Log::Any::Util qw(make_method);
 use strict;
 use warnings;
 
 our $VERSION = '0.05';
 
-# Manager is accessed and manipulated by Log::Any::Adapter
+# Require rather than use, because it depends on subroutines defined below
 #
-require Log::Any::Manager::Starter;
-my $Manager = Log::Any::Manager::Starter->new();
-sub manager { $Manager }
+require Log::Any::Adapter::Null;
+
+# This is accessed in Log::Any::Adapter::Manager::new
+#
+our %NullAdapters;
 
 sub import {
     my $class  = shift;
@@ -36,14 +36,29 @@ sub _export_to_caller {
             *$varname = \$log;
         }
         else {
-            croak "invalid import '$param' - valid imports are '\$log'";
+            die "invalid import '$param' - valid imports are '\$log'";
         }
     }
 }
 
 sub get_logger {
     my ( $class, %params ) = @_;
-    $Manager->get_logger( category => scalar( caller() ), %params );
+
+    my $category = delete( $params{'category'} );
+    if ( !defined($category) ) {
+        $category = caller();
+    }
+    if ($Log::Any::Adapter::Initialized) {
+        return Log::Any::Adapter->get_logger( $category, %params );
+    }
+    else {
+
+        # Record each null adapter that we return, so that we can override
+        # them later if and when Log::Any::Adapter->set is called
+        #
+        $NullAdapters{$category} ||= Log::Any::Adapter::Null->new();
+        return $NullAdapters{$category};
+    }
 }
 
 my ( %log_level_aliases, @logging_methods, @logging_aliases, @detection_methods,
