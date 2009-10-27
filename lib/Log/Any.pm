@@ -121,7 +121,7 @@ which makes it appropriate for even small CPAN modules to use. It defaults to
 'null' logging activity, so a module can safely log without worrying about
 whether the application has chosen (or will ever choose) a logging mechanism.
 
-The application, in turn, may at any time choose a logging mechanism via
+The application, in turn, may choose one or more logging mechanisms via
 L<Log::Any::Adapter|Log::Any::Adapter>.
 
 =head1 LOG LEVELS
@@ -264,11 +264,18 @@ categories. There is also the unnamed future logger that may have advantages
 over either of these two, and all the custom in-house loggers people have
 created and cannot (for whatever reason) stop using.
 
+=item Is it safe for my critical module to depend on Log::Any?
+
+Our intent is to keep C<Log::Any> minimal, and change it only when absolutely
+necessary. Most of the "innovation", if any, is expected to occur in
+C<Log::Any::Adapter>, which your module should not have to depend on (unless it
+wants to direct logs somewhere specific).
+
 =item Why doesn't Log::Any use Moose or I<insert modern Perl technique>?
 
 To encourage CPAN module authors to adopt and use C<Log::Any>, we aim to have
-as few dependencies and chances of breakage as possible. Thus, sadly, no
-C<Moose> or other niceties.
+as few dependencies and chances of breakage as possible. Thus, no C<Moose> or
+other niceties.
 
 =back
 
