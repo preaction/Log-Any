@@ -2,7 +2,7 @@ Revision history for Log-Any
 
 ** denotes an incompatible change
 
-0.06  Oct 27, 2009
+0.06  Oct 31, 2009
 
 * Fixes
   - Implement Log::Any->set_adapter again for backward compatibility with 0.04 and earlier
