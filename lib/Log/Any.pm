@@ -117,6 +117,19 @@ In a CPAN or other module:
 
     my $log2 = Log::Any->get_logger(category => 'My::Class');
 
+In your application:
+
+    use Log::Any::Adapter;
+    
+    # Send all logs to Log::Log4perl
+    Log::Any::Adapter->set('Log4perl');
+
+    # Send all logs to Log::Dispatch
+    my $log = Log::Dispatch->new(outputs => [[ ... ]]);
+    Log::Any::Adapter->set( 'Dispatch', dispatcher => $log );
+
+    # See Log::Any::Adapter documentation for more options
+
 =head1 DESCRIPTION
 
 C<Log::Any> allows CPAN modules to safely and efficiently log messages, while
