@@ -1,5 +1,5 @@
 #!perl
-use Test::More;
+use Test;
 use Log::Any qw($log);
 use strict;
 use warnings;
@@ -15,13 +15,13 @@ plan tests => ( $logging_method_count * 2 + $detection_method_count + 1 ) * 3;
 
 foreach my $log (@logs) {
     foreach my $method ( Log::Any->detection_methods() ) {
-        ok( !$log->$method, "!$method" );
+        ok( !$log->$method );
     }
     foreach my $method ( Log::Any->logging_methods() ) {
-        ok( $log->$method("") || 1, "$method runs" );
+        ok( $log->$method("") || 1 );
         my $methodf = $method . "f";
-        ok( $log->$methodf("") || 1, "$method runs" );
+        ok( $log->$methodf("") || 1 );
     }
     eval { $log->bad_method() };
-    like( $@, qr{Can\'t locate object method "bad_method"}, "bad method" );
+    ok( $@ =~ qr{Can\'t locate object method "bad_method"} );
 }
