@@ -1,10 +1,8 @@
 #!perl
-use Test;
+use Test::Simple tests => 2;
 use Log::Any;
 use strict;
 use warnings;
-
-BEGIN { plan tests => 2 }
 
 eval {
     package Foo;
