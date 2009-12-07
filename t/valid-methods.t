@@ -14,7 +14,7 @@ my $detection_method_count = scalar( Log::Any->logging_methods() );
 
 foreach my $log (@logs) {
     foreach my $method ( Log::Any->detection_methods() ) {
-        ok( !$log->$method );
+        ok( !$log->$method, "!$method" );
     }
     foreach my $method ( Log::Any->logging_methods() ) {
         ok( $log->$method("") || 1, "$method runs" );
