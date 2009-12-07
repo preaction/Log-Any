@@ -4,6 +4,9 @@ Revision history for Log-Any
 
 0.07  Dec 7, 2009
 
+* Implementation
+  - Depend on Test::Simple rather than Test::More
+
 * Improvements
   - Add Log::Any::Test, to aid in testing code that uses Log::Any
 
