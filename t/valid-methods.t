@@ -17,10 +17,10 @@ foreach my $log (@logs) {
         ok( !$log->$method );
     }
     foreach my $method ( Log::Any->logging_methods() ) {
-        ok( $log->$method("") || 1 );
+        ok( $log->$method("") || 1, "$method runs" );
         my $methodf = $method . "f";
-        ok( $log->$methodf("") || 1 );
+        ok( $log->$methodf("") || 1, "$methodf runs" );
     }
     eval { $log->bad_method() };
-    ok( $@ =~ qr{Can\'t locate object method "bad_method"} );
+    ok( $@ =~ qr{Can\'t locate object method "bad_method"}, "bad method" );
 }
