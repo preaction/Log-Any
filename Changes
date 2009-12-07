@@ -2,7 +2,7 @@ Revision history for Log-Any
 
 ** denotes an incompatible change
 
-0.07  Oct 31, 2009
+0.07  Dec 7, 2009
 
 * Improvements
   - Add Log::Any::Test, to aid in testing code that uses Log::Any
