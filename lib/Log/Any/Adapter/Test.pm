@@ -4,24 +4,57 @@ use Log::Any;
 use Test::Builder;
 use strict;
 use warnings;
+use base qw(Log::Any::Adapter::Core);
 
 my $tb = Test::Builder->new();
+my @msgs;
 
 sub new {
     my $class = shift;
-    return bless { msgs => [] }, $class;
+    return bless {@_}, $class;
+}
+
+# Collect all logging and detection methods, including aliases and printf variants
+#
+
+# All detection methods return true
+#
+foreach my $method ( Log::Any->detection_methods() ) {
+    _make_method( $method, sub { 1 } );
+}
+
+# All logging methods push onto msgs array
+#
+foreach my $method ( Log::Any->logging_methods() ) {
+    _make_method(
+        $method,
+        sub {
+            my ( $self, $msg ) = @_;
+            push(
+                @msgs,
+                {
+                    message  => $msg,
+                    level    => $method,
+                    category => $self->{category}
+                }
+            );
+        }
+    );
+}
+
+# Testing methods below
+#
+
+sub msgs {
+    my $self = shift;
+
+    return \@msgs;
 }
 
 sub clear {
     my ($self) = @_;
 
-    $self->{msgs} = [];
-}
-
-sub msgs {
-    my $self = shift;
-
-    return $self->{msgs};
+    @msgs = ();
 }
 
 sub contains_ok {
@@ -109,27 +142,6 @@ sub _first_index {
         return $i if $f->();
     }
     return -1;
-}
-
-# Collect all logging and detection methods, including aliases and printf variants
-#
-
-# All detection methods return true
-#
-foreach my $method ( Log::Any->detection_methods() ) {
-    _make_method( $method, sub { 1 } );
-}
-
-# All logging methods push onto msgs array
-#
-foreach my $method ( Log::Any->logging_methods() ) {
-    _make_method(
-        $method,
-        sub {
-            my ( $self, $msg ) = @_;
-            push( @{ $self->{msgs} }, { message => $msg, level => $method } );
-        }
-    );
 }
 
 1;

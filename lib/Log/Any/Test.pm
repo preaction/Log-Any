@@ -62,9 +62,9 @@ provided.
 
 =item msgs ()
 
-Returns the current contents of the log buffer as an array reference, where
-each element is a hash containing a I<category>, I<level>, and I<message> key.
-e.g.
+Returns the current contents of the global log buffer as an array reference,
+where each element is a hash containing a I<category>, I<level>, and I<message>
+key.  e.g.
 
   {
     category => 'Foo',
