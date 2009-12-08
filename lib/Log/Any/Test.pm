@@ -9,7 +9,11 @@ use Log::Any::Adapter::Test;
 use strict;
 use warnings;
 our $Initialized = 1;
-sub get_logger { return Log::Any::Adapter::Test->new() }
+
+sub get_logger {
+    my ( $self, $category ) = @_;
+    return Log::Any::Adapter::Test->new( category => $category );
+}
 
 1;
 
@@ -46,9 +50,8 @@ C<Log::Any::Test> is a simple module that allows you to test what has been
 logged with Log::Any. Most of its API and implementation have been taken from
 L<Log::Any::Dispatch|Log::Any::Dispatch>.
 
-C<Log::Any::Test> should be used before L<Log::Any|Log::Any>. Using it sends
-all subsequent Log::Any log messages to an in-memory buffer so that they can be
-tested.
+Using C<Log::Any::Test> sends all subsequent Log::Any log messages to a single
+global in-memory buffer.  It should be used before L<Log::Any|Log::Any>.
 
 =head1 METHODS
 
@@ -56,6 +59,23 @@ The test_name is optional in the *_ok methods; a reasonable default will be
 provided.
 
 =over
+
+=item msgs ()
+
+Returns the current contents of the log buffer as an array reference, where
+each element is a hash containing a I<category>, I<level>, and I<message> key.
+e.g.
+
+  {
+    category => 'Foo',
+    level => 'error',
+    message => 'this is an error'
+  },
+  {
+    category => 'Bar::Baz',
+    level => 'debug',
+    message => 'this is a debug'
+  }
 
 =item contains_ok ($regex[, $test_name])
 
@@ -80,11 +100,6 @@ I<$regex>. On success, the message is removed.
 =item clear ()
 
 Clears the log buffer.
-
-=item msgs ()
-
-Returns the current contents of the log buffer as an array reference, where
-each element is a hash containing a I<message> and I<level> key.
 
 =back
 
