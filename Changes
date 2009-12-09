@@ -4,6 +4,9 @@ Revision history for Log-Any
 
 0.08  Dec 7, 2009
 
+* Fixes
+  - Fix Log::Any::Test to support full logging API (aliases and printf methods)
+
 0.07  Dec 7, 2009
 
 * Implementation
