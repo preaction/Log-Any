@@ -14,9 +14,6 @@ sub new {
     return bless {@_}, $class;
 }
 
-# Collect all logging and detection methods, including aliases and printf variants
-#
-
 # All detection methods return true
 #
 foreach my $method ( Log::Any->detection_methods() ) {
