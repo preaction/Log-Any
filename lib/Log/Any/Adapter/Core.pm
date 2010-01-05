@@ -25,7 +25,7 @@ foreach my $name ( Log::Any->logging_methods, keys(%aliases) ) {
             my @new_params =
               map {
                    !defined($_) ? '<undef>'
-                  : ref($_)     ? dump_one_line($_)
+                  : ref($_)     ? _dump_one_line($_)
                   : $_
               } @params;
             my $new_message = sprintf( $format, @new_params );
@@ -40,6 +40,13 @@ sub _make_method {
     $pkg ||= caller();
     no strict 'refs';
     *{ $pkg . "::$method" } = $code;
+}
+
+sub _dump_one_line {
+    my ($value) = @_;
+
+    return Data::Dumper->new( [$value] )->Indent(0)->Sortkeys(1)->Quotekeys(0)
+      ->Terse(1)->Dump();
 }
 
 1;
