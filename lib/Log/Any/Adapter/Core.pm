@@ -22,7 +22,12 @@ foreach my $name ( Log::Any->logging_methods, keys(%aliases) ) {
         $methodf,
         sub {
             my ( $self, $format, @params ) = @_;
-            my @new_params = map { ref($_) ? dump_one_line($_) : $_ } @params;
+            my @new_params =
+              map {
+                   !defined($_) ? '<undef>'
+                  : ref($_)     ? dump_one_line($_)
+                  : $_
+              } @params;
             my $new_message = sprintf( $format, @new_params );
             $self->$method($new_message);
         }

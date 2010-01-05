@@ -6,8 +6,9 @@ use strict;
 use warnings;
 
 $log->err("this is an error") if $log->is_error;
-$log->debugf( "this is a %s", "debug" ) if $log->is_debug;
-$log->contains_ok( qr/this is an error/, 'got error' );
-$log->contains_ok( qr/this is a debug/,  'got debug' );
+$log->debugf( "this is a %s with an %s value", "debug", undef )
+  if $log->is_debug;
+$log->contains_ok( qr/this is an error/,                      'got error' );
+$log->contains_ok( qr/this is a debug with an <undef> value/, 'got debug' );
 $log->empty_ok();
 

@@ -203,11 +203,30 @@ There are also printf-style versions of each of these methods:
     $log->errorf("an error occurred: %s", $@);
     $log->debugf("called with %d params: %s", $param_count, \@params);
 
-The printf-style methods have a few advantages. First, they can be more
-readable than concatenated strings (subjective of course); second, any complex
-references (like C<\@params> above) are automatically converted to single-line
-strings with C<Data::Dumper>; third, a logging mechanism could potentially use
-the format string to group related log messages together.
+The printf-style methods have a few advantages:
+
+=over
+
+=item *
+
+Any complex references (like C<\@params> above) are automatically converted to
+single-line strings with C<Data::Dumper>.
+
+=item *
+
+Any undefined values are automatically converted to the string "<undef>".
+
+=item *
+
+They are often more readable than interpolated strings (at least in the
+author's opinion)
+
+=item *
+
+A logging mechanism could potentially use the unchanging format string (or a
+digest thereof) to group related log messages together.
+
+=back
 
 =head2 Log level detection
 
