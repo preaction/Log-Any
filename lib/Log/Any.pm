@@ -203,7 +203,8 @@ There are also printf-style versions of each of these methods:
     $log->errorf("an error occurred: %s", $@);
     $log->debugf("called with %d params: %s", $param_count, \@params);
 
-The printf-style methods have a few advantages:
+The printf-style methods have a few advantages, besides being arguably more
+readable:
 
 =over
 
@@ -215,11 +216,6 @@ single-line strings with C<Data::Dumper>.
 =item *
 
 Any undefined values are automatically converted to the string "<undef>".
-
-=item *
-
-They are often more readable than interpolated strings (at least in the
-author's opinion)
 
 =item *
 
