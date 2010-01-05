@@ -2,7 +2,7 @@ Revision history for Log-Any
 
 ** denotes an incompatible change
 
-0.09  Dec 15, 2009
+0.09  Jan 5, 2010
 
 * Improvements
   - Convert undef to string "<undef>" in printf-style methods - RT #53398, suggested by Steven Haryanto
