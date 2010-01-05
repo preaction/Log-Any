@@ -4,6 +4,9 @@ Revision history for Log-Any
 
 0.10  Jan 5, 2010
 
+* Fixes
+  - Fix Log::Any::Core to support references in printf-style methods
+
 0.09  Jan 5, 2010
 
 * Improvements
