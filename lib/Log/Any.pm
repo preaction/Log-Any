@@ -72,7 +72,7 @@ BEGIN {
         fatal  => 'critical'
     );
     @logging_methods =
-      qw(debug info notice warning error critical alert emergency);
+      qw(trace debug info notice warning error critical alert emergency);
     @logging_aliases               = keys(%log_level_aliases);
     @detection_methods             = map { "is_$_" } @logging_methods;
     @detection_aliases             = map { "is_$_" } @logging_aliases;
@@ -145,10 +145,10 @@ L<Log::Any::Adapter|Log::Any::Adapter>.
 
 =head1 LOG LEVELS
 
-Every logging mechanism on CPAN uses a slightly different set of levels. For
-C<Log::Any> we've standardized on the log levels from syslog, and also added a
-number of common aliases:
+C<Log::Any> supports the following log levels and aliases, which is meant to be
+inclusive of the major logging packages:
 
+     trace
      debug
      info (inform)
      notice
@@ -159,7 +159,7 @@ number of common aliases:
      emergency
 
 Levels are translated as appropriate to the underlying logging mechanism. For
-example, log4perl only has five levels, so we translate 'notice' to 'info' and
+example, log4perl only has six levels, so we translate 'notice' to 'info' and
 the top three levels to 'fatal'.
 
 =head1 CATEGORIES
