@@ -2,7 +2,7 @@ package Log::Any;
 use strict;
 use warnings;
 
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 
 # Require rather than use, because it depends on subroutines defined below
 #
