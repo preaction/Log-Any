@@ -1,5 +1,5 @@
 #!perl
-use Test::Simple tests => 75;
+use Test::Simple tests => 84;
 use Log::Any qw($log);
 use strict;
 use warnings;
