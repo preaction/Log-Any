@@ -8,11 +8,10 @@ use base qw{Log::Any::Adapter::Base};
 use Unix::Syslog qw{:macros :subs};
 use File::Basename ();
 
-# Optionally initialize object
-#
+# When initialized we connect to syslog.
 sub init {
     my ($self) = @_;
-    return if $self->{opened};
+    return if $self->{_opened};
 
     $self->{name} ||= File::Basename::basename($0);
     $self->{name} ||= 'perl';
@@ -20,15 +19,13 @@ sub init {
     $self->{options}  ||= LOG_PID;
     $self->{facility} ||= LOG_LOCAL7;
 
-    warn "$self->{name}, $self->{options}, $self->{facility}";
     openlog($self->{name}, $self->{options}, $self->{facility});
 
-    $self->{opened} = 1;
+    $self->{_opened} = 1;
     return $self;
 }
 
 # Create logging methods: debug, info, etc.
-#
 foreach my $method (Log::Any->logging_methods()) {
     my $priority = {
         trace     => LOG_DEBUG,
@@ -46,13 +43,12 @@ foreach my $method (Log::Any->logging_methods()) {
         alert     => LOG_ALERT,
         emergency => LOG_EMERG,
     }->{$method};
-    $priority ||= LOG_ERR;      # unknown, take a guess.
+    defined($priority) or $priority = LOG_ERR; # unknown, take a guess.
 
     make_method($method, sub { shift; syslog($priority, shift, @_) });
 }
 
 # Create detection methods: is_debug, is_info, etc.
-#
 my $always_on = sub { 1; };
 foreach my $method (Log::Any->detection_methods()) {
     make_method($method, $always_on);
@@ -76,16 +72,62 @@ Log::Any::Adapter::Syslog - send Log::Any logs to syslog
 
     # You can override defaults:
     use Unix::Syslog qw{:macros};
-    Log::Any::Adapter->set('Syslog', 'my-name', LOG_PID|LOG_PERROR, LOG_LOCAL7);
-
-    # Passing undef as the name gets the default, which this is:
-    Log::Any::Adapter->set('Syslog', undef, LOG_PID);
+    Log::Any::Adapter->set(
+        'Syslog',
+        # name defaults to basename($0)
+        name     => 'my-name',
+        # options default to LOG_PID
+        options  => LOG_PID|LOG_PERROR,
+        # facility defaults to LOG_LOCAL7
+        facility => LOG_LOCAL7
+    );
 
 =head1 DESCRIPTION
 
 L<Log::Any> is a generic adapter for writing logging into Perl modules; this
 adapter use the L<Unix::Syslog> module to direct that output into the standard
 Unix syslog system.
+
+=head1 CONFIGURATION
+
+C<Log::Any::Adapter::Syslog> is designed to work out of the box with no
+configuration required; the defaults should be reasonably sensible.
+
+You can override the default configuration by passing extra arguments to the
+C<Log::Any::Adapter> method:
+
+=over
+
+=item name
+
+The I<name> argument defaults to the basename of C<$0> if not supplied, and is
+inserted into each line sent to syslog to identify the source.
+
+=item options
+
+The I<options> configure the behaviour of syslog; see L<Unix::Syslog> for
+details.
+
+The default is C<LOG_PID>, which includes the PID of the current process after
+the process name:
+
+    example-process[2345]: something amazing!
+
+The most likely addition to that is C<LOG_PERROR> which causes syslog to also
+send a copy of all log messages to the controlling terminal of the process.
+
+B<WARNING:> If you pass a defined value you are setting, not augmenting, the
+options.  So, if you want C<LOG_PID> as well as other flags, pass them all.
+
+=item facility
+
+The I<facility> determines where syslog sends your messages.  The default is
+C<LOCAL7>, which is not the most useful value ever, but is less bad that
+assuming the fixed facilities.
+
+See L<Unix::Syslog> and L<syslog(3)> for details on the available facilities.
+
+=back
 
 =head1 AUTHORS
 
