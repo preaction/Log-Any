@@ -5,6 +5,7 @@
 ^release
 ^tmp
 ^TODO
+^weaver.ini
 
 # pod2html files
 \.pm\.html
