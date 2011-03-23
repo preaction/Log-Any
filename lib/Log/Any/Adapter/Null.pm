@@ -19,11 +19,11 @@ my @all_methods = (
     ( map { $_ . "f" } ( Log::Any->logging_methods, @alias_names ) ),
 );
 
-# All methods are no-ops
+# All methods are no-ops and return false
 #
 foreach my $method (@all_methods) {
     no strict 'refs';
-    *{ __PACKAGE__ . "::$method" } = sub { };
+    *{ __PACKAGE__ . "::$method" } = sub { return undef };
 }
 
 1;

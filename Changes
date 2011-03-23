@@ -4,6 +4,13 @@ Revision history for Log-Any
 
 0.12  Feb 12, 2010
 
+* Fixes
+  - Eliminate 'subroutine redefined' warning in case Log::Any::Adapter loaded before
+    Log::Any::Test
+
+* Implementation
+  - Migrate to Dist::Zilla
+
 0.11  Feb 12, 2010
 
 * Improvements
