@@ -5,8 +5,10 @@ Revision history for Log-Any
 0.12  Feb 12, 2010
 
 * Fixes
+  - Return false from null adapter is_xxx methods - RT #64164 - Chip Salzenberg
   - Eliminate 'subroutine redefined' warning in case Log::Any::Adapter loaded before
     Log::Any::Test
+
 
 * Implementation
   - Migrate to Dist::Zilla
