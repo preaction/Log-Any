@@ -319,23 +319,7 @@ other niceties.
 
 =back
 
-=head1 AUTHOR
-
-Jonathan Swartz
-
 =head1 SEE ALSO
 
-L<Log::Any::Adapter|Log::Any::Adapter>; the many Log:: modules on CPAN
+L<Log::Any::Adapter>, the many Log:: modules on CPAN
 
-=head1 COPYRIGHT & LICENSE
-
-Copyright (C) 2009 Jonathan Swartz.
-
-Log::Any is provided "as is" and without any express or implied warranties,
-including, without limitation, the implied warranties of merchantibility and
-fitness for a particular purpose.
-
-This program is free software; you canredistribute it and/or modify it under
-the same terms as Perl itself.
-
-=cut
