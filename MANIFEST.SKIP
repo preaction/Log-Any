@@ -1,21 +1,10 @@
-^bench
-^bin
-^cp\.yml
 ^data
-^dist
+^dist.ini
 ^docs
 ^git
-^inc/\.author
-^lib/Test
-^localcpan
-^misc
-^perlcriticrc
-^perltidyrc
+^release
 ^tmp
-^wiki
-^README.DEVELOPERS
 ^TODO
-^VERSION
 
 # pod2html files
 \.pm\.html
@@ -26,9 +15,6 @@
 (^|/)\.
 \.bak$
 \.tar\.gz$
-
-# SVN cruft
-^\.svn
 
 # MakeMaker cruft
 ^Makefile$

@@ -14,4 +14,3 @@ $log->contains_ok(
     qr/this is a debug with a defined \(\[1,2\]\) value and an <undef> value/,
     'got debug' );
 $log->empty_ok();
-

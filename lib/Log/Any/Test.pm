@@ -10,6 +10,10 @@ use strict;
 use warnings;
 our $Initialized = 1;
 
+# Eliminate 'subroutine redefined' warning in case Log::Any::Adapter already loaded
+#
+BEGIN { no strict 'refs'; delete 'Log::Any::Adapter::'->{get_logger} }
+
 sub get_logger {
     my ( $self, $category ) = @_;
     return Log::Any::Adapter::Test->new( category => $category );
