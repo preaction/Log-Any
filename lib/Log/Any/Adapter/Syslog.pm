@@ -45,7 +45,7 @@ foreach my $method (Log::Any->logging_methods()) {
     }->{$method};
     defined($priority) or $priority = LOG_ERR; # unknown, take a guess.
 
-    make_method($method, sub { shift; syslog($priority, shift, @_) });
+    make_method($method, sub { shift; syslog($priority, '%s', join('', @_)) });
 }
 
 # Create detection methods: is_debug, is_info, etc.
