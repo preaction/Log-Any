@@ -7,11 +7,13 @@ use base qw{Log::Any::Adapter::Base};
 
 use Unix::Syslog qw{:macros :subs};
 use File::Basename ();
+use Carp qw{cluck};
+
+my $log_params;
 
 # When initialized we connect to syslog.
 sub init {
     my ($self) = @_;
-    return if $self->{_opened};
 
     $self->{name} ||= File::Basename::basename($0);
     $self->{name} ||= 'perl';
@@ -19,10 +21,29 @@ sub init {
     $self->{options}  ||= LOG_PID;
     $self->{facility} ||= LOG_LOCAL7;
 
-    openlog($self->{name}, $self->{options}, $self->{facility});
+    # We want to avoid opening the syslog multiple times, but also catch the
+    # unsupported case where the parameters have changed.
+    if (not defined $log_params) {
 
-    $self->{_opened} = 1;
+        # First time in, note the parameters we used, and open the log>
+        $log_params = $self->_log_params;
+        openlog($self->{name}, $self->{options}, $self->{facility});
+    }
+    else {
+
+        # After that, warn if the check the parameters have changed.
+        if ($log_params ne $self->_log_params) {
+            cluck('Attempting to reinitialize Log::Any::Adapter::Syslog with new parameters');
+        }
+    }
+
     return $self;
+}
+
+sub _log_params {
+    my ($self) = @_;
+    return sprintf('%d,%d,%s',
+        $self->{options}, $self->{facility}, $self->{name});
 }
 
 # Create logging methods: debug, info, etc.
