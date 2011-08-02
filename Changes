@@ -2,7 +2,10 @@ Revision history for Log-Any
 
 ** denotes an incompatible change
 
-0.13  Mar 23, 2011
+0.13  Aug 1, 2011
+
+* Fixes
+  - Fix typo in lib/Log/Any/Adapter/Test.pm - RT #69850 - Stephen Thirlwall
 
 0.12  Mar 23, 2011
 
