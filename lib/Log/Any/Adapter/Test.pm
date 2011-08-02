@@ -76,7 +76,7 @@ sub does_not_contain_ok {
 
     $test_name ||= "log does not contain '$regex'";
     my $found =
-      first_index( sub { $_->{message} =~ /$regex/ }, @{ $self->msgs } );
+      _first_index( sub { $_->{message} =~ /$regex/ }, @{ $self->msgs } );
     if ( $found != -1 ) {
         $tb->ok( 0, $test_name );
         $tb->diag( "found message matching $regex: " . $self->msgs->[$found] );
