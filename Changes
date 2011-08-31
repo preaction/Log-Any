@@ -2,7 +2,7 @@ Revision history for Log-Any
 
 ** denotes an incompatible change
 
-0.14  Aug 2, 2011
+0.14  Aug 31, 2011
 
 * Fixes
   - Fix version number in Log/Any.pm - Stephen Thirlwall
