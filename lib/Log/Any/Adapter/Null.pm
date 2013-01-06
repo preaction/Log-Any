@@ -34,7 +34,7 @@ __END__
 
 =head1 NAME
 
-Log::Any::Adapter::Null
+Log::Any::Adapter::Null -- Discards all log messages
 
 =head1 SYNOPSIS
 
