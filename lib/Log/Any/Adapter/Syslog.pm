@@ -1,8 +1,9 @@
 package Log::Any::Adapter::Syslog;
-# ABSTRACT: Send Log::Any logs to syslog
-
 use strict;
 use warnings;
+
+# ABSTRACT: Send Log::Any logs to syslog
+# VERSION
 
 use Log::Any::Adapter::Util qw{make_method};
 use base qw{Log::Any::Adapter::Base};
