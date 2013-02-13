@@ -81,7 +81,7 @@ foreach my $method (Log::Any->detection_methods()) {
 
 1;
 
-=pod
+__END__
 
 =head1 SYNOPSIS
 
