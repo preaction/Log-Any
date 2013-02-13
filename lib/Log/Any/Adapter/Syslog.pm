@@ -147,23 +147,4 @@ See L<Unix::Syslog> and L<syslog(3)> for details on the available facilities.
 
 =back
 
-=head1 AUTHORS
-
-=over
-
-=item Daniel Pittman <daniel@rimspace.net>
-
-=back
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright 2010 by Daniel Pittman <daniel@rimspace.net>
-
-Log::Any::Adapter::Syslog is provided "as is" and without any express or
-implied warranties, including, without limitation, the implied warranties of
-merchantibility and fitness for a particular purpose.
-
-This program is free software; you can redistribute it and/or modify it under
-the same terms as Perl itself.
-
 =cut
