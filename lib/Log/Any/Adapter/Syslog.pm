@@ -1,4 +1,6 @@
 package Log::Any::Adapter::Syslog;
+# ABSTRACT: Send Log::Any logs to syslog
+
 use strict;
 use warnings;
 
@@ -79,12 +81,6 @@ foreach my $method (Log::Any->detection_methods()) {
 1;
 
 =pod
-
-=encoding utf8
-
-=head1 NAME
-
-Log::Any::Adapter::Syslog - send Log::Any logs to syslog
 
 =head1 SYNOPSIS
 
