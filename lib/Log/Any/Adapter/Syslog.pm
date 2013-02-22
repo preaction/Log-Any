@@ -140,7 +140,7 @@ options.  So, if you want C<LOG_PID> as well as other flags, pass them all.
 =item facility
 
 The I<facility> determines where syslog sends your messages.  The default is
-C<LOCAL7>, which is not the most useful value ever, but is less bad that
+C<LOCAL7>, which is not the most useful value ever, but is less bad than
 assuming the fixed facilities.
 
 See L<Unix::Syslog> and L<syslog(3)> for details on the available facilities.
