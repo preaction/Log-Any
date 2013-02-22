@@ -18,26 +18,17 @@ my $log_params;
 sub init {
     my ($self) = @_;
 
-    $self->{name} ||= File::Basename::basename($0);
-    $self->{name} ||= 'perl';
-
+    $self->{name}     ||= File::Basename::basename($0) || 'perl';
     $self->{options}  ||= LOG_PID;
     $self->{facility} ||= LOG_LOCAL7;
 
-    # We want to avoid opening the syslog multiple times, but also catch the
-    # unsupported case where the parameters have changed.
-    if (not defined $log_params) {
+    # We want to avoid re-opening the syslog unnecessarily, so only do it if
+    # the parameters have changed.
+    my $new_params = $self->_log_params;
+    if ((not defined $log_params) or ($log_params ne $new_params)) {
 
-        # First time in, note the parameters we used, and open the log>
-        $log_params = $self->_log_params;
+        $log_params = $new_params;
         openlog($self->{name}, $self->{options}, $self->{facility});
-    }
-    else {
-
-        # After that, warn if the check the parameters have changed.
-        if ($log_params ne $self->_log_params) {
-            cluck('Attempting to reinitialize Log::Any::Adapter::Syslog with new parameters');
-        }
     }
 
     return $self;
