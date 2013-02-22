@@ -10,7 +10,6 @@ use base qw{Log::Any::Adapter::Base};
 
 use Unix::Syslog qw{:macros :subs};
 use File::Basename ();
-use Carp qw{cluck};
 
 my $log_params;
 
