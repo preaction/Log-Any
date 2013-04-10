@@ -4,7 +4,8 @@ use warnings;
 
 # 'use Log::Any::Test' just defines a test version of Log::Any::Adapter.
 #
-package Log::Any::Adapter;
+package # hide from PAUSE
+    Log::Any::Adapter;
 use Log::Any::Adapter::Test;
 use strict;
 use warnings;
