@@ -1,0 +1,102 @@
+{
+   "abstract" : "Bringing loggers and listeners together",
+   "author" : [
+      "Jonathan Swartz <swartz@pobox.com>",
+      "David Golden <dagolden@cpan.org>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Dist::Zilla version 4.300035, CPAN::Meta::Converter version 2.132140",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Log-Any",
+   "no_index" : {
+      "directory" : [
+         "t",
+         "xt",
+         "examples",
+         "corpus"
+      ],
+      "file" : [
+         "lib/Log/Any/Adapter/Core.pm"
+      ],
+      "package" : [
+         "DB"
+      ]
+   },
+   "prereqs" : {
+      "configure" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "6.30"
+         }
+      },
+      "develop" : {
+         "requires" : {
+            "Pod::Coverage::TrustPod" : "0",
+            "Test::CPAN::Meta" : "0",
+            "Test::Pod" : "1.41",
+            "Test::Pod::Coverage" : "1.08"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "Data::Dumper" : "0",
+            "Test::Builder" : "0",
+            "base" : "0",
+            "perl" : "5.006",
+            "strict" : "0",
+            "warnings" : "0"
+         }
+      },
+      "test" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "0",
+            "File::Spec::Functions" : "0",
+            "List::Util" : "0",
+            "Test::More" : "0",
+            "Test::Simple" : "0"
+         }
+      }
+   },
+   "provides" : {
+      "Log::Any" : {
+         "file" : "lib/Log/Any.pm",
+         "version" : "0.16"
+      },
+      "Log::Any::Adapter::Null" : {
+         "file" : "lib/Log/Any/Adapter/Null.pm",
+         "version" : "0.16"
+      },
+      "Log::Any::Adapter::Test" : {
+         "file" : "lib/Log/Any/Adapter/Test.pm",
+         "version" : "0.16"
+      },
+      "Log::Any::Test" : {
+         "file" : "lib/Log/Any/Test.pm",
+         "version" : "0.16"
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "bugtracker" : {
+         "mailto" : "bug-Log-Any@rt.cpan.org",
+         "web" : "https://rt.cpan.org/Public/Dist/Display.html?Name=Log-Any"
+      },
+      "homepage" : "https://metacpan.org/release/Log-Any",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/dagolden/log-any.git",
+         "web" : "https://github.com/dagolden/log-any"
+      }
+   },
+   "version" : "0.16",
+   "x_authority" : "cpan:DAGOLDEN",
+   "x_contributors" : [
+      "Stephen Thirlwall <sdt@dr.com>"
+   ]
+}
+

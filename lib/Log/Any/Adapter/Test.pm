@@ -4,6 +4,9 @@ use Log::Any;
 use Test::Builder;
 use strict;
 use warnings;
+# VERSION
+# ABSTRACT: Backend adapter for Log::Any::Test
+
 use base qw(Log::Any::Adapter::Core);
 
 my $tb = Test::Builder->new();

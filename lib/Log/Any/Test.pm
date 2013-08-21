@@ -1,6 +1,8 @@
 package Log::Any::Test;
 use strict;
 use warnings;
+# ABSTRACT: Test what you're logging with Log::Any
+# VERSION
 
 # 'use Log::Any::Test' just defines a test version of Log::Any::Adapter.
 #
@@ -23,10 +25,6 @@ sub get_logger {
 1;
 
 =pod
-
-=head1 NAME
-
-Log::Any::Test -- Test what you're logging with Log::Any
 
 =head1 SYNOPSIS
 

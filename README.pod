@@ -1,103 +1,14 @@
-package Log::Any;
-use strict;
-use warnings;
-# ABSTRACT: Bringing loggers and listeners together
-# VERSION
-
-# Require rather than use, because it depends on subroutines defined below
-#
-require Log::Any::Adapter::Null;
-
-# This is accessed in Log::Any::Adapter::Manager::new
-#
-our %NullAdapters;
-
-sub import {
-    my $class  = shift;
-    my $caller = caller();
-
-    my @export_params = ( $caller, @_ );
-    $class->_export_to_caller(@export_params);
-}
-
-sub _export_to_caller {
-    my $class  = shift;
-    my $caller = shift;
-
-    # Parse parameters passed to 'use Log::Any'
-    #
-    my @vars;
-    foreach my $param (@_) {
-        if ( $param eq '$log' ) {
-            my $log = $class->get_logger( category => $caller );
-            no strict 'refs';
-            my $varname = "$caller\::log";
-            *$varname = \$log;
-        }
-        else {
-            die "invalid import '$param' - valid imports are '\$log'";
-        }
-    }
-}
-
-sub get_logger {
-    my ( $class, %params ) = @_;
-
-    my $category = delete( $params{'category'} );
-    if ( !defined($category) ) {
-        $category = caller();
-    }
-    if ($Log::Any::Adapter::Initialized) {
-        return Log::Any::Adapter->get_logger( $category, %params );
-    }
-    else {
-
-        # Record each null adapter that we return, so that we can override
-        # them later if and when Log::Any::Adapter->set is called
-        #
-        $NullAdapters{$category} ||= Log::Any::Adapter::Null->new();
-        return $NullAdapters{$category};
-    }
-}
-
-my ( %log_level_aliases, @logging_methods, @logging_aliases, @detection_methods,
-    @detection_aliases, @logging_and_detection_methods );
-
-BEGIN {
-    %log_level_aliases = (
-        inform => 'info',
-        warn   => 'warning',
-        err    => 'error',
-        crit   => 'critical',
-        fatal  => 'critical'
-    );
-    @logging_methods =
-      qw(trace debug info notice warning error critical alert emergency);
-    @logging_aliases               = keys(%log_level_aliases);
-    @detection_methods             = map { "is_$_" } @logging_methods;
-    @detection_aliases             = map { "is_$_" } @logging_aliases;
-    @logging_and_detection_methods = ( @logging_methods, @detection_methods );
-}
-
-sub log_level_aliases             { %log_level_aliases }
-sub logging_methods               { @logging_methods }
-sub logging_aliases               { @logging_aliases }
-sub detection_methods             { @detection_methods }
-sub detection_aliases             { @detection_aliases }
-sub logging_and_detection_methods { @logging_and_detection_methods }
-
-# For backward compatibility
-sub set_adapter {
-    my $class = shift;
-    require Log::Any::Adapter;
-    Log::Any::Adapter->set(@_);
-}
-
-1;
-
-__END__
-
 =pod
+
+=encoding utf-8
+
+=head1 NAME
+
+Log::Any - Bringing loggers and listeners together
+
+=head1 VERSION
+
+version 0.16
 
 =head1 SYNOPSIS
 
@@ -318,4 +229,48 @@ other niceties.
 =head1 SEE ALSO
 
 L<Log::Any::Adapter>, the many Log:: modules on CPAN
+
+=for :stopwords cpan testmatrix url annocpan anno bugtracker rt cpants kwalitee diff irc mailto metadata placeholders metacpan
+
+=head1 SUPPORT
+
+=head2 Bugs / Feature Requests
+
+Please report any bugs or feature requests through the issue tracker
+at L<https://rt.cpan.org/Public/Dist/Display.html?Name=Log-Any>.
+You will be notified automatically of any progress on your issue.
+
+=head2 Source Code
+
+This is open source software.  The code repository is available for
+public review and contribution under the terms of the license.
+
+L<https://github.com/dagolden/log-any>
+
+  git clone git://github.com/dagolden/log-any.git
+
+=head1 AUTHORS
+
+=over 4
+
+=item *
+
+Jonathan Swartz <swartz@pobox.com>
+
+=item *
+
+David Golden <dagolden@cpan.org>
+
+=back
+
+=head1 CONTRIBUTOR
+
+Stephen Thirlwall <sdt@dr.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2011 by Jonathan Swartz.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 

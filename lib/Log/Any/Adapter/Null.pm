@@ -2,6 +2,8 @@ package Log::Any::Adapter::Null;
 use Log::Any;
 use strict;
 use warnings;
+# ABSTRACT: Discards all log messages
+# VERSION
 
 sub new {
     my $class = shift;
@@ -31,10 +33,6 @@ foreach my $method (@all_methods) {
 __END__
 
 =pod
-
-=head1 NAME
-
-Log::Any::Adapter::Null -- Discards all log messages
 
 =head1 SYNOPSIS
 

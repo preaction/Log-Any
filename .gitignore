@@ -22,3 +22,5 @@ pm_to_blib*
 release
 tmp
 wiki
+/.build
+/Log-Any-*
