@@ -25,7 +25,7 @@ my @all_methods = (
 #
 foreach my $method (@all_methods) {
     no strict 'refs';
-    *{ __PACKAGE__ . "::$method" } = sub { return undef };
+    *{ __PACKAGE__ . "::$method" } = sub { return undef }; ## no critic
 }
 
 1;
