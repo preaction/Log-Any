@@ -1,6 +1,25 @@
 package Log::Any::Adapter::Core;
 use strict;
 use warnings;
+use Log::Any;
+
+sub new {
+    my $class = shift;
+    my $self  = {@_};
+    bless $self, $class;
+    $self->init(@_);
+    return $self;
+}
+
+sub init { }
+
+sub delegate_method_to_slot {
+    my ( $class, $slot, $method, $adapter_method ) = @_;
+
+    make_method( $method,
+        sub { my $self = shift; return $self->{$slot}->$adapter_method(@_) },
+        $class );
+}
 
 # Forward 'warn' to 'warning', 'is_warn' to 'is_warning', and so on for all aliases
 #
