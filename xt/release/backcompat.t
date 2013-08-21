@@ -4,13 +4,10 @@
 #
 use strict;
 use warnings;
-use Capture::Tiny qw/capture_merged/;
-use Log::Any;
-use Test::More tests => 1;
+use Test::More tests => 2;
 
-use Log::Dispatch;
-my $log = Log::Dispatch->new(outputs => [['Screen', newline => 1, min_level => 'debug']]);
-Log::Any->set_adapter('Dispatch', dispatcher => $log);
-my $merged = capture_merged { $log->error("bleah") };
-is($merged, "bleah\n", "got log");
-
+use Log::Any qw($log);
+Log::Any->set_adapter('Test', dummy_param => 1);
+$log->error("bleah");
+$log->contains_ok( qr/bleah/ );
+is ( $log->{dummy_param}, 1, "adapter parameters set" );
