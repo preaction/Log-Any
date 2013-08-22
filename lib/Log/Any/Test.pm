@@ -1,27 +1,14 @@
 package Log::Any::Test;
 use strict;
 use warnings;
+no warnings 'once';
 
 # ABSTRACT: Test what you're logging with Log::Any
 # VERSION
 
-# 'use Log::Any::Test' just defines a test version of Log::Any::Adapter.
-#
-package    # hide from PAUSE
-  Log::Any::Adapter;
-use Log::Any::Adapter::Test;
-use strict;
-use warnings;
-our $Initialized = 1;
+require Log::Any::Adapter::Test;
 
-# Eliminate 'subroutine redefined' warning in case Log::Any::Adapter already loaded
-#
-BEGIN { no strict 'refs'; delete 'Log::Any::Adapter::'->{get_logger} }
-
-sub get_logger {
-    my ( $self, $category ) = @_;
-    return Log::Any::Adapter::Test->new( category => $category );
-}
+$Log::Any::NullAdapterClass = 'Log::Any::Adapter::Test';
 
 1;
 

@@ -13,6 +13,9 @@ require Log::Any::Adapter::Null;
 #
 our %NullAdapters;
 
+# This is overridden in Log::Any::Test
+our $NullAdapterClass = 'Log::Any::Adapter::Null';
+
 sub import {
     my $class  = shift;
     my $caller = caller();
@@ -56,7 +59,7 @@ sub get_logger {
         # Record each null adapter that we return, so that we can override
         # them later if and when Log::Any::Adapter->set is called
         #
-        $NullAdapters{$category} ||= Log::Any::Adapter::Null->new();
+        $NullAdapters{$category} ||= $NullAdapterClass->new();
         return $NullAdapters{$category};
     }
 }
