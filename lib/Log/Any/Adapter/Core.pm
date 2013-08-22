@@ -69,7 +69,7 @@ sub _dump_one_line {
     my ($value) = @_;
 
     return Data::Dumper->new( [$value] )->Indent(0)->Sortkeys(1)->Quotekeys(0)
-      ->Terse(1)->Dump();
+      ->Terse(1)->Useqq(1)->Dump();
 }
 
 1;
