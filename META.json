@@ -94,6 +94,7 @@
    "version" : "0.16",
    "x_authority" : "cpan:JSWARTZ",
    "x_contributors" : [
+      "Maxim Vuets <maxim.vuets@booking.com>",
       "Stephen Thirlwall <sdt@dr.com>"
    ]
 }

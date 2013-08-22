@@ -263,9 +263,19 @@ David Golden <dagolden@cpan.org>
 
 =back
 
-=head1 CONTRIBUTOR
+=head1 CONTRIBUTORS
+
+=over 4
+
+=item *
+
+Maxim Vuets <maxim.vuets@booking.com>
+
+=item *
 
 Stephen Thirlwall <sdt@dr.com>
+
+=back
 
 =head1 COPYRIGHT AND LICENSE
 
