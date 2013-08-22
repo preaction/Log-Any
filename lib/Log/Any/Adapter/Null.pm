@@ -5,12 +5,12 @@ use warnings;
 # ABSTRACT: Discards all log messages
 # VERSION
 
-use Log::Any;
-
-sub new {
-    my $class = shift;
-    return bless {}, $class;
-}
+# Pretend to inherit from Base so we look like a real Adapter class,
+# but really inherit from Core which has the functionality we need
+#
+use Log::Any::Adapter::Core ();
+{ package Log::Any::Adapter::Base }    # so perl knows about it for @ISA
+our @ISA = qw(Log::Any::Adapter::Base Log::Any::Adapter::Core);
 
 # Collect all logging and detection methods, including aliases and printf variants
 #
@@ -26,8 +26,7 @@ my @all_methods = (
 # All methods are no-ops and return false
 #
 foreach my $method (@all_methods) {
-    no strict 'refs';
-    *{ __PACKAGE__ . "::$method" } = sub { return undef };    ## no critic
+    Log::Any->make_method( $method, sub { return undef } );
 }
 
 1;

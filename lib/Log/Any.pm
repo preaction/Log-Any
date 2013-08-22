@@ -90,6 +90,15 @@ sub detection_methods             { @detection_methods }
 sub detection_aliases             { @detection_aliases }
 sub logging_and_detection_methods { @logging_and_detection_methods }
 
+sub make_method {
+    my ( $class, $method, $code, $pkg ) = @_;
+
+    $pkg ||= caller();
+    no strict 'refs';
+    *{ $pkg . "::$method" } = $code;
+}
+
+
 # For backward compatibility
 sub set_adapter {
     my $class = shift;

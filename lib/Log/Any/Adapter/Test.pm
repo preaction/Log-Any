@@ -9,26 +9,26 @@ use Data::Dumper;
 use Log::Any;
 use Test::Builder;
 
-use base qw(Log::Any::Adapter::Core);
+# Pretend to inherit from Base so we look like a real Adapter class,
+# but really inherit from Core which has the functionality we need
+#
+use Log::Any::Adapter::Core ();
+{ package Log::Any::Adapter::Base }    # so perl knows about it for @ISA
+our @ISA = qw(Log::Any::Adapter::Base Log::Any::Adapter::Core);
 
 my $tb = Test::Builder->new();
 my @msgs;
 
-sub new {
-    my $class = shift;
-    return bless {@_}, $class;
-}
-
 # All detection methods return true
 #
 foreach my $method ( Log::Any->detection_methods() ) {
-    _make_method( $method, sub { 1 } );
+    Log::Any->make_method( $method, sub { 1 } );
 }
 
 # All logging methods push onto msgs array
 #
 foreach my $method ( Log::Any->logging_methods() ) {
-    _make_method(
+    Log::Any->make_method(
         $method,
         sub {
             my ( $self, $msg ) = @_;
@@ -72,7 +72,7 @@ sub contains_ok {
     else {
         $tb->ok( 0, $test_name );
         $tb->diag( "could not find message matching $regex; log contains: "
-              . _dump_one_line( $self->msgs ) );
+              . $self->dump_one_line( $self->msgs ) );
     }
 }
 
@@ -101,7 +101,7 @@ sub empty_ok {
     else {
         $tb->ok( 0, $test_name );
         $tb->diag(
-            "log is not empty; contains " . _dump_one_line( $self->msgs ) );
+            "log is not empty; contains " . $self->dump_one_line( $self->msgs ) );
         $self->clear();
     }
 }
@@ -118,23 +118,8 @@ sub contains_only_ok {
     else {
         $tb->ok( 0, $test_name );
         $tb->diag(
-            "log contains $count messages: " . _dump_one_line( $self->msgs ) );
+            "log contains $count messages: " . $self->dump_one_line( $self->msgs ) );
     }
-}
-
-sub _dump_one_line {
-    my ($value) = @_;
-
-    return Data::Dumper->new( [$value] )->Indent(0)->Sortkeys(1)->Quotekeys(0)
-      ->Terse(1)->Dump();
-}
-
-sub _make_method {
-    my ( $method, $code, $pkg ) = @_;
-
-    $pkg ||= caller();
-    no strict 'refs';
-    *{ $pkg . "::$method" } = $code;
 }
 
 sub _first_index {
