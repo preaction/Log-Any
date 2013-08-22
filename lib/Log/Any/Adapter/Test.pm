@@ -76,6 +76,26 @@ sub contains_ok {
     }
 }
 
+sub category_contains_ok {
+    my ( $self, $category, $regex, $test_name ) = @_;
+
+    $test_name ||= "log for $category contains '$regex'";
+    my $found =
+      _first_index(
+        sub { $_->{category} eq $category && $_->{message} =~ /$regex/ },
+        @{ $self->msgs } );
+    if ( $found != -1 ) {
+        splice( @{ $self->msgs }, $found, 1 );
+        $tb->ok( 1, $test_name );
+    }
+    else {
+        $tb->ok( 0, $test_name );
+        $tb->diag(
+            "could not find $category message matching $regex; log contains: "
+              . $self->dump_one_line( $self->msgs ) );
+    }
+}
+
 sub does_not_contain_ok {
     my ( $self, $regex, $test_name ) = @_;
 
@@ -91,6 +111,24 @@ sub does_not_contain_ok {
     }
 }
 
+sub category_does_not_contain_ok {
+    my ( $self, $category, $regex, $test_name ) = @_;
+
+    $test_name ||= "log for $category contains '$regex'";
+    my $found =
+      _first_index(
+        sub { $_->{category} eq $category && $_->{message} =~ /$regex/ },
+        @{ $self->msgs } );
+    if ( $found != -1 ) {
+        $tb->ok( 0, $test_name );
+        $tb->diag( "found $category message matching $regex: "
+              . $self->msgs->[$found] );
+    }
+    else {
+        $tb->ok( 1, $test_name );
+    }
+}
+
 sub empty_ok {
     my ( $self, $test_name ) = @_;
 
@@ -100,8 +138,8 @@ sub empty_ok {
     }
     else {
         $tb->ok( 0, $test_name );
-        $tb->diag(
-            "log is not empty; contains " . $self->dump_one_line( $self->msgs ) );
+        $tb->diag( "log is not empty; contains "
+              . $self->dump_one_line( $self->msgs ) );
         $self->clear();
     }
 }
@@ -117,8 +155,8 @@ sub contains_only_ok {
     }
     else {
         $tb->ok( 0, $test_name );
-        $tb->diag(
-            "log contains $count messages: " . $self->dump_one_line( $self->msgs ) );
+        $tb->diag( "log contains $count messages: "
+              . $self->dump_one_line( $self->msgs ) );
     }
 }
 

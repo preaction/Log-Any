@@ -78,6 +78,17 @@ untouched).
 
 Tests that no message in the log buffer matches I<$regex>.
 
+=item category_contains_ok ($category, $regex[, $test_name])
+
+Tests that a message in the log buffer from a specific category matches
+I<$regex>. On success, the message is I<removed> from the log buffer (but any
+other matches are left untouched).
+
+=item category_does_not_contain_ok ($category, $regex[, $test_name])
+
+Tests that no message from a specific category in the log buffer matches
+I<$regex>.
+
 =item empty_ok ([$test_name])
 
 Tests that there is no log buffer left. On failure, the log buffer is cleared
