@@ -1,13 +1,14 @@
 package Log::Any::Test;
 use strict;
 use warnings;
+
 # ABSTRACT: Test what you're logging with Log::Any
 # VERSION
 
 # 'use Log::Any::Test' just defines a test version of Log::Any::Adapter.
 #
-package # hide from PAUSE
-    Log::Any::Adapter;
+package    # hide from PAUSE
+  Log::Any::Adapter;
 use Log::Any::Adapter::Test;
 use strict;
 use warnings;

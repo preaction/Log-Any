@@ -1,6 +1,7 @@
 package Log::Any;
 use strict;
 use warnings;
+
 # ABSTRACT: Bringing loggers and listeners together
 # VERSION
 

@@ -1,11 +1,13 @@
 package Log::Any::Adapter::Test;
+use strict;
+use warnings;
+
+# VERSION
+# ABSTRACT: Backend adapter for Log::Any::Test
+
 use Data::Dumper;
 use Log::Any;
 use Test::Builder;
-use strict;
-use warnings;
-# VERSION
-# ABSTRACT: Backend adapter for Log::Any::Test
 
 use base qw(Log::Any::Adapter::Core);
 

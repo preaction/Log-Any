@@ -1,9 +1,11 @@
 package Log::Any::Adapter::Null;
-use Log::Any;
 use strict;
 use warnings;
+
 # ABSTRACT: Discards all log messages
 # VERSION
+
+use Log::Any;
 
 sub new {
     my $class = shift;
@@ -25,7 +27,7 @@ my @all_methods = (
 #
 foreach my $method (@all_methods) {
     no strict 'refs';
-    *{ __PACKAGE__ . "::$method" } = sub { return undef }; ## no critic
+    *{ __PACKAGE__ . "::$method" } = sub { return undef };    ## no critic
 }
 
 1;

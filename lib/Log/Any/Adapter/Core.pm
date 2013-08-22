@@ -1,6 +1,7 @@
 package Log::Any::Adapter::Core;
 use strict;
 use warnings;
+
 # ABSTRACT: Base class for Log::Any adapters
 # VERSION
 
