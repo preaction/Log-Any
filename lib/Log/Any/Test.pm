@@ -8,7 +8,7 @@ no warnings 'once';
 
 require Log::Any::Adapter::Test;
 
-$Log::Any::NullAdapterClass = 'Log::Any::Adapter::Test';
+$Log::Any::OverrideDefaultClass = 'Log::Any::Adapter::Test';
 
 1;
 

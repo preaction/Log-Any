@@ -13,8 +13,10 @@ require Log::Any::Adapter::Null;
 #
 our %NullAdapters;
 
+our %DefaultAdapterClasses;
+
 # This is overridden in Log::Any::Test
-our $NullAdapterClass = 'Log::Any::Adapter::Null';
+our $OverrideDefaultClass;
 
 sub import {
     my $class  = shift;
@@ -30,17 +32,28 @@ sub _export_to_caller {
 
     # Parse parameters passed to 'use Log::Any'
     #
-    my @vars;
-    foreach my $param (@_) {
+    my $saw_log_param;
+    while ( my $param = shift @_ ) {
         if ( $param eq '$log' ) {
-            my $log = $class->get_logger( category => $caller );
-            no strict 'refs';
-            my $varname = "$caller\::log";
-            *$varname = \$log;
+            $saw_log_param = 1;    # defer until later
+        }
+        elsif ( $param eq 'default' ) {
+            my $adapter_class = Log::Any->get_adapter_class( shift @_ );
+            Log::Any->require_dynamic($adapter_class);
+            $DefaultAdapterClasses{$caller} ||= $adapter_class;
         }
         else {
             die "invalid import '$param' - valid imports are '\$log'";
         }
+    }
+
+    # get logger after any default has been set
+    #
+    if ($saw_log_param) {
+        my $log = $class->get_logger( category => $caller );
+        no strict 'refs';
+        my $varname = "$caller\::log";
+        *$varname = \$log;
     }
 }
 
@@ -59,7 +72,11 @@ sub get_logger {
         # Record each null adapter that we return, so that we can override
         # them later if and when Log::Any::Adapter->set is called
         #
-        $NullAdapters{$category} ||= $NullAdapterClass->new();
+        my $adapter_class =
+             $OverrideDefaultClass
+          || $DefaultAdapterClasses{$category}
+          || 'Log::Any::Adapter::Null';
+        $NullAdapters{$category} ||= $adapter_class->new();
         return $NullAdapters{$category};
     }
 }
@@ -98,6 +115,25 @@ sub make_method {
     *{ $pkg . "::$method" } = $code;
 }
 
+sub get_adapter_class {
+    my ( $class, $adapter_name ) = @_;
+    $adapter_name =~ s/^Log:://;    # Log::Dispatch -> Dispatch, etc.
+    my $adapter_class = (
+          substr( $adapter_name, 0, 1 ) eq '+'
+        ? substr( $adapter_name, 1 )
+        : "Log::Any::Adapter::$adapter_name"
+    );
+    return $adapter_class;
+}
+
+sub require_dynamic {
+    my ( $class, $pkg ) = @_;
+
+    unless ( defined( eval "require $pkg" ) )
+    {    ## no critic (ProhibitStringyEval)
+        die $@;
+    }
+}
 
 # For backward compatibility
 sub set_adapter {
@@ -251,6 +287,15 @@ the detection methods will always return 1.
 
 In contrast, the default logging mechanism - Null - will return 0 for all
 detection methods.
+
+=head2 Setting an alternate default logger
+
+To choose something other than Null as the default, pass it as a parameter when
+loading C<Log::Any>
+
+    use Log::Any '$log', default => 'Stderr';
+
+The name of the default class follows the same rules as used by L<Log::Any::Adapter>.
 
 =head2 Testing
 
