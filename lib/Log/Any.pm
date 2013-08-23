@@ -37,7 +37,7 @@ sub _export_to_caller {
         if ( $param eq '$log' ) {
             $saw_log_param = 1;    # defer until later
         }
-        elsif ( $param eq 'default' ) {
+        elsif ( $param eq 'default_adapter' ) {
             my $adapter_class = Log::Any->get_adapter_class( shift @_ );
             Log::Any->require_dynamic($adapter_class);
             $DefaultAdapterClasses{$caller} ||= $adapter_class;
@@ -293,7 +293,7 @@ detection methods.
 To choose something other than Null as the default, pass it as a parameter when
 loading C<Log::Any>
 
-    use Log::Any '$log', default => 'Stderr';
+    use Log::Any '$log', default_adapter => 'Stderr';
 
 The name of the default class follows the same rules as used by L<Log::Any::Adapter>.
 

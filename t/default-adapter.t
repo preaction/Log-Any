@@ -1,6 +1,7 @@
 #!perl
 use Test::Simple tests => 4;
-use Log::Any '$log', default => 'Test';
+use Log::Any '$log', default_adapter => 'Test';
+
 use strict;
 use warnings;
 

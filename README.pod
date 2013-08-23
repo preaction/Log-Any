@@ -155,7 +155,7 @@ detection methods.
 To choose something other than Null as the default, pass it as a parameter when
 loading C<Log::Any>
 
-    use Log::Any '$log', default => 'Stderr';
+    use Log::Any '$log', default_adapter => 'Stderr';
 
 The name of the default class follows the same rules as used by L<Log::Any::Adapter>.
 

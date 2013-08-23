@@ -1,7 +1,7 @@
 #!perl
 use Test::Simple tests => 4;
 use Log::Any::Test;
-use Log::Any '$log', default => 'Null';
+use Log::Any '$log', default_adapter => 'Null';
 use strict;
 use warnings;
 
