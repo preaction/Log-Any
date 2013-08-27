@@ -7,6 +7,7 @@ use warnings;
 
 # Require rather than use, because it depends on subroutines defined below
 #
+require Log::Any::Proxy;
 require Log::Any::Adapter::Null;
 
 # This is accessed in Log::Any::Adapter::Manager::new
@@ -16,7 +17,8 @@ our %NullAdapters;
 our %DefaultAdapterClasses;
 
 # This is overridden in Log::Any::Test
-our $OverrideDefaultClass;
+our $OverrideDefaultAdapterClass;
+our $OverrideDefaultProxyClass;
 
 sub import {
     my $class  = shift;
@@ -33,6 +35,7 @@ sub _export_to_caller {
     # Parse parameters passed to 'use Log::Any'
     #
     my $saw_log_param;
+    my $proxy_class;
     while ( my $param = shift @_ ) {
         if ( $param eq '$log' ) {
             $saw_log_param = 1;    # defer until later
@@ -42,6 +45,9 @@ sub _export_to_caller {
             Log::Any->require_dynamic($adapter_class);
             $DefaultAdapterClasses{$caller} ||= $adapter_class;
         }
+        elsif ( $param eq 'proxy_class' ) {
+            $proxy_class = shift @_;
+        }
         else {
             die "invalid import '$param' - valid imports are '\$log'";
         }
@@ -50,22 +56,27 @@ sub _export_to_caller {
     # get logger after any default has been set
     #
     if ($saw_log_param) {
-        my $log = $class->get_logger( category => $caller );
+        my $proxy = $class->get_logger(
+            category    => $caller,
+            proxy_class => $proxy_class
+        );
         no strict 'refs';
         my $varname = "$caller\::log";
-        *$varname = \$log;
+        *$varname = \$proxy;
     }
 }
 
 sub get_logger {
     my ( $class, %params ) = @_;
+    no warnings 'once';
 
+    my $adapter;
     my $category = delete( $params{'category'} );
     if ( !defined($category) ) {
         $category = caller();
     }
     if ($Log::Any::Adapter::Initialized) {
-        return Log::Any::Adapter->get_logger( $category, %params );
+        $adapter = Log::Any::Adapter->get_logger( $category, %params );
     }
     else {
 
@@ -73,12 +84,15 @@ sub get_logger {
         # them later if and when Log::Any::Adapter->set is called
         #
         my $adapter_class =
-             $OverrideDefaultClass
+             $OverrideDefaultAdapterClass
           || $DefaultAdapterClasses{$category}
           || 'Log::Any::Adapter::Null';
         $NullAdapters{$category} ||= $adapter_class->new();
-        return $NullAdapters{$category};
+        $adapter = $NullAdapters{$category};
     }
+    my $proxy_class = $class->get_proxy_class($params{proxy_class});
+    Log::Any->require_dynamic($proxy_class);
+    return $proxy_class->new( adapter => $adapter );
 }
 
 my ( %log_level_aliases, @logging_methods, @logging_aliases, @detection_methods,
@@ -124,6 +138,18 @@ sub get_adapter_class {
         : "Log::Any::Adapter::$adapter_name"
     );
     return $adapter_class;
+}
+
+sub get_proxy_class {
+    my ( $class, $proxy_name ) = @_;
+    return $OverrideDefaultProxyClass if $OverrideDefaultProxyClass;
+    return "Log::Any::Proxy" unless $proxy_name;
+    my $proxy_class = (
+          substr( $proxy_name, 0, 1 ) eq '+'
+        ? substr( $proxy_name, 1 )
+        : "Log::Any::Proxy::$proxy_name"
+    );
+    return $proxy_class;
 }
 
 sub require_dynamic {

@@ -73,5 +73,6 @@ foreach my $name ( Log::Any->logging_methods, keys(%aliases) ) {
     );
 }
 
+
 1;
 

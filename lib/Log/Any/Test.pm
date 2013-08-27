@@ -7,8 +7,10 @@ no warnings 'once';
 # VERSION
 
 require Log::Any::Adapter::Test;
+require Log::Any::Proxy::Test;
 
-$Log::Any::OverrideDefaultClass = 'Log::Any::Adapter::Test';
+$Log::Any::OverrideDefaultAdapterClass = 'Log::Any::Adapter::Test';
+$Log::Any::OverrideDefaultProxyClass   = 'Log::Any::Proxy::Test';
 
 1;
 
