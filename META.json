@@ -44,6 +44,7 @@
          "requires" : {
             "Data::Dumper" : "0",
             "Test::Builder" : "0",
+            "base" : "0",
             "perl" : "5.006",
             "strict" : "0",
             "warnings" : "0"
@@ -70,6 +71,14 @@
       },
       "Log::Any::Adapter::Test" : {
          "file" : "lib/Log/Any/Adapter/Test.pm",
+         "version" : "0.16"
+      },
+      "Log::Any::Proxy" : {
+         "file" : "lib/Log/Any/Proxy.pm",
+         "version" : "0.16"
+      },
+      "Log::Any::Proxy::Test" : {
+         "file" : "lib/Log/Any/Proxy/Test.pm",
          "version" : "0.16"
       },
       "Log::Any::Test" : {

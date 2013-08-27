@@ -34,6 +34,8 @@ sub new {
 
 sub init { }
 
+sub adapter { return shift->{adapter} }
+
 my %aliases = Log::Any->log_level_aliases;
 
 # Set up methods/aliases and detection methods/aliases
