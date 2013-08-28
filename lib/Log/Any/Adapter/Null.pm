@@ -1,6 +1,8 @@
-package Log::Any::Adapter::Null;
+use 5.008001;
 use strict;
 use warnings;
+
+package Log::Any::Adapter::Null;
 
 # ABSTRACT: Discards all log messages
 # VERSION
@@ -44,16 +46,5 @@ loaded.
 =head1 SEE ALSO
 
 L<Log::Any|Log::Any>, L<Log::Any::Adapter|Log::Any::Adapter>
-
-=head1 AUTHOR
-
-Jonathan Swartz
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright (C) 2009 Jonathan Swartz, all rights reserved.
-
-This program is free software; you can redistribute it and/or modify it under
-the same terms as Perl itself.
 
 =cut

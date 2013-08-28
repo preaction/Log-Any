@@ -1,6 +1,8 @@
-package Log::Any;
+use 5.008001;
 use strict;
 use warnings;
+
+package Log::Any;
 
 # ABSTRACT: Bringing loggers and listeners together
 # VERSION
@@ -43,7 +45,7 @@ sub _export_to_caller {
             $saw_log_param = 1;    # defer until later
             next;                  # singular
         }
-        elsif( $_valid_keys{$param} ) {
+        elsif ( $_valid_keys{$param} ) {
             push @params, $param, shift @_;    # pairwise
         }
         else {
@@ -83,7 +85,8 @@ sub get_logger {
 
 sub _get_proxy_class {
     my ( $self, $proxy_name ) = @_;
-    return $Log::Any::OverrideDefaultProxyClass if $Log::Any::OverrideDefaultProxyClass;
+    return $Log::Any::OverrideDefaultProxyClass
+      if $Log::Any::OverrideDefaultProxyClass;
     return "Log::Any::Proxy" unless $proxy_name;
     my $proxy_class = (
           substr( $proxy_name, 0, 1 ) eq '+'

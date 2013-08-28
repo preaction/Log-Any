@@ -1,7 +1,5 @@
-
-=head1 NAME
-
-Log::Any::Adapter::Development -- Manual for developing new Log::Any adapters
+# PODNAME: Log::Any::Adapter::Development
+# ABSTRACT: Manual for developing new Log::Any adapters
 
 =head1 SYNOPSIS
 

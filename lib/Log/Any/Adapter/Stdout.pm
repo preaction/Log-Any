@@ -1,6 +1,11 @@
-package Log::Any::Adapter::Stdout;
+use 5.008001;
 use strict;
 use warnings;
+
+package Log::Any::Adapter::Stdout;
+
+# ABSTRACT: Simple adapter for logging to STDOUT
+# VERSION
 
 use base qw/Log::Any::Adapter::Base/;
 
@@ -9,7 +14,7 @@ foreach my $method ( Log::Any->logging_methods() ) {
     *{$method} = sub {
         my ( $self, $text ) = @_;
         print STDOUT "$text\n";
-    }
+      }
 }
 
 foreach my $method ( Log::Any->detection_methods() ) {
@@ -22,10 +27,6 @@ foreach my $method ( Log::Any->detection_methods() ) {
 __END__
 
 =pod
-
-=head1 NAME
-
-Log::Any::Adapter::Stdout - Simple adapter for logging to STDOUT
 
 =head1 SYNOPSIS
 
@@ -41,4 +42,8 @@ Log::Any::Adapter::Stdout - Simple adapter for logging to STDOUT
 
 This simple built-in L<Log::Any|Log::Any> adapter logs each message to STDOUT
 with a newline appended. Category and log level are ignored.
+
+=head1 SEE ALSO
+
+L<Log::Any|Log::Any>, L<Log::Any::Adapter|Log::Any::Adapter>
 

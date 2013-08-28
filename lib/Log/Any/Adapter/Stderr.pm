@@ -1,6 +1,11 @@
-package Log::Any::Adapter::Stderr;
+use 5.008001;
 use strict;
 use warnings;
+
+package Log::Any::Adapter::Stderr;
+
+# ABSTRACT: Simple adapter for logging to STDERR
+# VERSION
 
 use base qw/Log::Any::Adapter::Base/;
 
@@ -9,7 +14,7 @@ foreach my $method ( Log::Any->logging_methods() ) {
     *{$method} = sub {
         my ( $self, $text ) = @_;
         print STDERR "$text\n";
-    }
+      }
 }
 
 foreach my $method ( Log::Any->detection_methods() ) {
@@ -22,10 +27,6 @@ foreach my $method ( Log::Any->detection_methods() ) {
 __END__
 
 =pod
-
-=head1 NAME
-
-Log::Any::Adapter::Stderr - Simple adapter for logging to STDERR
 
 =head1 SYNOPSIS
 
@@ -40,5 +41,9 @@ Log::Any::Adapter::Stderr - Simple adapter for logging to STDERR
 =head1 DESCRIPTION
 
 This simple built-in L<Log::Any|Log::Any> adapter logs each message to STDERR
-with a newline appended.  Category and log level are ignored.
+with a newline appended. Category and log level are ignored.
+
+=head1 SEE ALSO
+
+L<Log::Any|Log::Any>, L<Log::Any::Adapter|Log::Any::Adapter>
 

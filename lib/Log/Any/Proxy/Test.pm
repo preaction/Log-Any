@@ -1,6 +1,8 @@
-package Log::Any::Proxy::Test;
+use 5.008001;
 use strict;
 use warnings;
+
+package Log::Any::Proxy::Test;
 
 # ABSTRACT: Log::Any testing proxy
 # VERSION

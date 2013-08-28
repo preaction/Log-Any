@@ -1,6 +1,8 @@
-package Log::Any::Proxy;
+use 5.008001;
 use strict;
 use warnings;
+
+package Log::Any::Proxy;
 
 # ABSTRACT: Log::Any generator proxy object
 # VERSION

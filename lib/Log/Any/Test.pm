@@ -1,11 +1,13 @@
-package Log::Any::Test;
+use 5.008001;
 use strict;
 use warnings;
-no warnings 'once';
+
+package Log::Any::Test;
 
 # ABSTRACT: Test what you're logging with Log::Any
 # VERSION
 
+no warnings 'once';
 $Log::Any::OverrideDefaultAdapterClass = 'Log::Any::Adapter::Test';
 $Log::Any::OverrideDefaultProxyClass   = 'Log::Any::Proxy::Test';
 
@@ -107,16 +109,5 @@ Clears the log buffer.
 =head1 SEE ALSO
 
 L<Log::Any|Log::Any>, L<Test::Log::Dispatch|Test::Log::Dispatch>
-
-=head1 AUTHOR
-
-Jonathan Swartz
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright (C) 2009 Jonathan Swartz, all rights reserved.
-
-This program is free software; you can redistribute it and/or modify it under
-the same terms as Perl itself.
 
 =cut

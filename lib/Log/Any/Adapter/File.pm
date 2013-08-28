@@ -1,7 +1,13 @@
-package Log::Any::Adapter::File;
-use IO::File;
+use 5.008001;
 use strict;
 use warnings;
+
+package Log::Any::Adapter::File;
+
+# ABSTRACT: Simple adapter for logging to files
+# VERSION
+
+use IO::File;
 
 use base qw/Log::Any::Adapter::Base/;
 
@@ -24,7 +30,7 @@ foreach my $method ( Log::Any->logging_methods() ) {
         my ( $self, $text ) = @_;
         my $msg = sprintf( "[%s] %s\n", scalar(localtime), $text );
         $self->{fh}->print($msg);
-    }
+      }
 }
 
 foreach my $method ( Log::Any->detection_methods() ) {
@@ -35,12 +41,6 @@ foreach my $method ( Log::Any->detection_methods() ) {
 1;
 
 __END__
-
-=pod
-
-=head1 NAME
-
-Log::Any::Adapter::File - Simple adapter for logging to files
 
 =head1 SYNOPSIS
 
@@ -57,4 +57,8 @@ Log::Any::Adapter::File - Simple adapter for logging to files
 This simple built-in L<Log::Any|Log::Any> adapter logs each message to the
 specified file, with a datestamp prefix and newline appended. The file is
 opened for append with autoflush on. Category and log level are ignored.
+
+=head1 SEE ALSO
+
+L<Log::Any|Log::Any>, L<Log::Any::Adapter|Log::Any::Adapter>
 

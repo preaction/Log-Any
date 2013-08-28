@@ -1,9 +1,11 @@
-package Log::Any::Adapter::Test;
+use 5.008001;
 use strict;
 use warnings;
 
-# VERSION
+package Log::Any::Adapter::Test;
+
 # ABSTRACT: Backend adapter for Log::Any::Test
+# VERSION
 
 use Data::Dumper;
 use Log::Any;
@@ -164,3 +166,8 @@ sub _first_index {
 }
 
 1;
+
+=head1 SEE ALSO
+
+L<Log::Any|Log::Any>, L<Log::Any::Adapter|Log::Any::Adapter>
+

@@ -1,6 +1,8 @@
-package Log::Any::Adapter::Base;
+use 5.008001;
 use strict;
 use warnings;
+
+package Log::Any::Adapter::Base;
 
 # ABSTRACT: Base class for Log::Any adapters
 # VERSION
@@ -27,7 +29,7 @@ sub delegate_method_to_slot {
 }
 
 sub dump_one_line {
-    my ($self, $value) = @_;
+    my ( $self, $value ) = @_;
 
     return Data::Dumper->new( [$value] )->Indent(0)->Sortkeys(1)->Quotekeys(0)
       ->Terse(1)->Useqq(1)->Dump();
@@ -37,12 +39,10 @@ sub dump_one_line {
 #
 my %aliases = Log::Any->log_level_aliases;
 while ( my ( $alias, $realname ) = each(%aliases) ) {
-    make_method( $alias,
-        sub { my $self = shift; $self->$realname(@_) } );
+    make_method( $alias, sub { my $self = shift; $self->$realname(@_) } );
     my $is_alias    = "is_$alias";
     my $is_realname = "is_$realname";
-    make_method( $is_alias,
-        sub { my $self = shift; $self->$is_realname(@_) } );
+    make_method( $is_alias, sub { my $self = shift; $self->$is_realname(@_) } );
 }
 
 # Add printf-style versions of all logging methods and aliases - e.g. errorf, debugf
@@ -70,22 +70,3 @@ foreach my $name ( Log::Any->logging_methods, keys(%aliases) ) {
 
 __END__
 
-=pod
-
-=head1 DESCRIPTION
-
-This is the base class for both real Log::Any adapters and
-Log::Any::Adapter::Null.
-
-=head1 AUTHOR
-
-Jonathan Swartz
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright (C) 2009 Jonathan Swartz, all rights reserved.
-
-This program is free software; you can redistribute it and/or modify it under
-the same terms as Perl itself.
-
-=cut

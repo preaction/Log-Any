@@ -1,7 +1,13 @@
-package Log::Any::Adapter::Util;
-use Data::Dumper;
+use 5.008001;
 use strict;
 use warnings;
+
+package Log::Any::Adapter::Util;
+
+# ABSTRACT: Common utility functions for Log::Any
+# VERSION
+
+use Data::Dumper;
 use base qw(Exporter);
 
 our @EXPORT_OK = qw(

@@ -1,6 +1,12 @@
-package Log::Any::Manager;
+use 5.008001;
 use strict;
 use warnings;
+
+package Log::Any::Manager;
+
+# ABSTRACT: Internal class to manage category/adapter mappings
+# VERSION
+
 use Carp qw(croak);
 use Log::Any::Adapter::Util qw(require_dynamic);
 

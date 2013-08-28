@@ -1,8 +1,13 @@
-package Log::Any::Adapter;
-use 5.006;
-use Log::Any;
+use 5.008001;
 use strict;
 use warnings;
+
+package Log::Any::Adapter;
+
+# ABSTRACT: Tell Log::Any where to send its logs
+# VERSION
+
+use Log::Any;
 
 sub import {
     my $pkg = shift;
@@ -24,10 +29,6 @@ sub remove {
 __END__
 
 =pod
-
-=head1 NAME
-
-Log::Any::Adapter -- Tell Log::Any where to send its logs
 
 =head1 SYNOPSIS
 
