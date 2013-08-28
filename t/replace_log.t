@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Test::More;
-use Log::Any qw($log);
+use Log::Any qw($log), proxy_class => 'Test';
 use Log::Any::Adapter ();
 
 Log::Any::Adapter->set('Test');

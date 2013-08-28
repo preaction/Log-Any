@@ -9,12 +9,7 @@ use Data::Dumper;
 use Log::Any;
 use Test::Builder;
 
-# Pretend to inherit from Base so we look like a real Adapter class,
-# but really inherit from Core which has the functionality we need
-#
-use Log::Any::Adapter::Core ();
-{ package Log::Any::Adapter::Base }    # so perl knows about it for @ISA
-our @ISA = qw(Log::Any::Adapter::Base Log::Any::Adapter::Core);
+use base qw/Log::Any::Adapter::Base/;
 
 my $tb = Test::Builder->new();
 my @msgs;

@@ -1,12 +1,69 @@
 package Log::Any::Adapter::Base;
 use strict;
 use warnings;
-use Log::Any::Adapter::Core 0.16 ();    # In the Log-Any distribution
-our @ISA = qw(Log::Any::Adapter::Core);
 
-# This is an empty wrapper around Log::Any::Adapter::Core.  That module
-# is part of Log-Any and is not indexed.  Adapters should inherit from
-# this module and thereby depend on Log-Any-Adapter
+# ABSTRACT: Base class for Log::Any adapters
+# VERSION
+
+use Log::Any;
+
+sub new {
+    my $class = shift;
+    my $self  = {@_};
+    bless $self, $class;
+    $self->init(@_);
+    return $self;
+}
+
+sub init { }
+
+sub delegate_method_to_slot {
+    my ( $class, $slot, $method, $adapter_method ) = @_;
+
+    Log::Any->make_method( $method,
+        sub { my $self = shift; return $self->{$slot}->$adapter_method(@_) },
+        $class );
+}
+
+sub dump_one_line {
+    my ($self, $value) = @_;
+
+    return Data::Dumper->new( [$value] )->Indent(0)->Sortkeys(1)->Quotekeys(0)
+      ->Terse(1)->Useqq(1)->Dump();
+}
+
+# Forward 'warn' to 'warning', 'is_warn' to 'is_warning', and so on for all aliases
+#
+my %aliases = Log::Any->log_level_aliases;
+while ( my ( $alias, $realname ) = each(%aliases) ) {
+    Log::Any->make_method( $alias,
+        sub { my $self = shift; $self->$realname(@_) } );
+    my $is_alias    = "is_$alias";
+    my $is_realname = "is_$realname";
+    Log::Any->make_method( $is_alias,
+        sub { my $self = shift; $self->$is_realname(@_) } );
+}
+
+# Add printf-style versions of all logging methods and aliases - e.g. errorf, debugf
+#
+foreach my $name ( Log::Any->logging_methods, keys(%aliases) ) {
+    my $methodf = $name . "f";
+    my $method = $aliases{$name} || $name;
+    Log::Any->make_method(
+        $methodf,
+        sub {
+            my ( $self, $format, @params ) = @_;
+            my @new_params =
+              map {
+                   !defined($_) ? '<undef>'
+                  : ref($_)     ? $self->dump_one_line($_)
+                  : $_
+              } @params;
+            my $new_message = sprintf( $format, @new_params );
+            $self->$method($new_message);
+        }
+    );
+}
 
 1;
 
@@ -14,13 +71,20 @@ __END__
 
 =pod
 
-=head1 NAME
-
-Log::Any::Adapter::Base - Base class for Log::Any adapters
-
 =head1 DESCRIPTION
 
-This is the base class for Log::Any adapters. See
-L<Log::Any::Adapter::Development|Log::Any::Adapter::Development> for
-information on developing Log::Any adapters.
+This is the base class for both real Log::Any adapters and
+Log::Any::Adapter::Null.
 
+=head1 AUTHOR
+
+Jonathan Swartz
+
+=head1 COPYRIGHT & LICENSE
+
+Copyright (C) 2009 Jonathan Swartz, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.
+
+=cut

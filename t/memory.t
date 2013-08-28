@@ -1,8 +1,13 @@
 #!/usr/bin/perl
 use Test::More;
+use Log::Any;
 use Log::Any::Adapter::Util qw(cmp_deeply);
 use strict;
 use warnings;
+
+BEGIN { 
+    $Log::Any::OverrideDefaultProxyClass = 'Log::Any::Proxy::Test';
+}
 
 {
 
@@ -29,36 +34,36 @@ require Log::Any::Adapter;
 
 $Baz::log = Log::Any->get_logger( category => 'Baz' );
 my $main_log = Log::Any->get_logger();
-is( $main_log, Log::Any->get_logger(), "memoization - no cat" );
-is( $main_log, Log::Any->get_logger( category => 'main' ),
+is( $main_log->adapter, Log::Any->get_logger()->adapter, "memoization - no cat" );
+is( $main_log->adapter, Log::Any->get_logger( category => 'main' )->adapter,
     "memoization - cat" );
 
 my $memclass  = 'Log::Any::Adapter::Test';
 my $nullclass = 'Log::Any::Adapter::Null';
 
-isa_ok( $Foo::log, $nullclass, 'Foo::log before set' );
-isa_ok( $Bar::log, $nullclass, 'Bar::log before set' );
-isa_ok( $Baz::log, $nullclass, 'Baz::log before set' );
-isa_ok( $main_log, $nullclass, 'main_log before set' );
+isa_ok( $Foo::log->adapter, $nullclass, 'Foo::log before set' );
+isa_ok( $Bar::log->adapter, $nullclass, 'Bar::log before set' );
+isa_ok( $Baz::log->adapter, $nullclass, 'Baz::log before set' );
+isa_ok( $main_log->adapter, $nullclass, 'main_log before set' );
 
 my $entry = Log::Any::Adapter->set( { category => qr/Foo|Bar/ }, "+$memclass" );
 
-isa_ok( $Foo::log, $memclass,  'Foo::log after first set' );
-isa_ok( $Bar::log, $memclass,  'Bar::log after first set' );
-isa_ok( $Baz::log, $nullclass, 'Baz::log after first set' );
-isa_ok( $main_log, $nullclass, 'main_log after first set' );
+isa_ok( $Foo::log->adapter, $memclass,  'Foo::log after first set' );
+isa_ok( $Bar::log->adapter, $memclass,  'Bar::log after first set' );
+isa_ok( $Baz::log->adapter, $nullclass, 'Baz::log after first set' );
+isa_ok( $main_log->adapter, $nullclass, 'main_log after first set' );
 
 my $entry2 =
   Log::Any::Adapter->set( { category => qr/Baz|main/ }, "+$memclass" );
 
-isa_ok( $Foo::log, $memclass, 'Foo::log after second set' );
-isa_ok( $Bar::log, $memclass, 'Bar::log after second set' );
-isa_ok( $Baz::log, $memclass, 'Baz::log after second set' );
-isa_ok( $main_log, $memclass, 'main_log after second set' );
+isa_ok( $Foo::log->adapter, $memclass, 'Foo::log after second set' );
+isa_ok( $Bar::log->adapter, $memclass, 'Bar::log after second set' );
+isa_ok( $Baz::log->adapter, $memclass, 'Baz::log after second set' );
+isa_ok( $main_log->adapter, $memclass, 'main_log after second set' );
 
 ok( $Foo::log ne $Bar::log, 'Foo::log and Bar::log are different' );
-is( $main_log, Log::Any->get_logger(), "memoization - no cat" );
-is( $main_log, Log::Any->get_logger( category => 'main' ),
+is( $main_log->adapter, Log::Any->get_logger()->adapter, "memoization - no cat" );
+is( $main_log->adapter, Log::Any->get_logger( category => 'main' )->adapter,
     "memoization - cat" );
 
 cmp_deeply( $Foo::log->msgs, [], 'Foo::log has empty buffer' );
@@ -87,23 +92,23 @@ $main_log->category_contains_ok(
 
 Log::Any::Adapter->remove($entry);
 
-isa_ok( $Foo::log, $nullclass, 'Foo::log' );
-isa_ok( $Bar::log, $nullclass, 'Bar::log' );
-isa_ok( $Baz::log, $memclass,  'Baz::log' );
-isa_ok( $main_log, $memclass,  'main_log' );
+isa_ok( $Foo::log->adapter, $nullclass, 'Foo::log' );
+isa_ok( $Bar::log->adapter, $nullclass, 'Bar::log' );
+isa_ok( $Baz::log->adapter, $memclass,  'Baz::log' );
+isa_ok( $main_log->adapter, $memclass,  'main_log' );
 
 Log::Any::Adapter->remove($entry2);
 
-isa_ok( $Foo::log, $nullclass, 'Foo::log' );
-isa_ok( $Bar::log, $nullclass, 'Bar::log' );
-isa_ok( $Baz::log, $nullclass, 'Baz::log' );
-isa_ok( $main_log, $nullclass, 'main_log' );
+isa_ok( $Foo::log->adapter, $nullclass, 'Foo::log' );
+isa_ok( $Bar::log->adapter, $nullclass, 'Bar::log' );
+isa_ok( $Baz::log->adapter, $nullclass, 'Baz::log' );
+isa_ok( $main_log->adapter, $nullclass, 'main_log' );
 
 {
     Log::Any::Adapter->set( { category => 'Foo', lexically => \my $lex },
         "+$memclass" );
-    isa_ok( $Foo::log, $memclass, 'Foo::log in lexical scope' );
+    isa_ok( $Foo::log->adapter, $memclass, 'Foo::log in lexical scope' );
 }
-isa_ok( $Foo::log, $nullclass, 'Foo::log outside lexical scope' );
+isa_ok( $Foo::log->adapter, $nullclass, 'Foo::log outside lexical scope' );
 
 done_testing;
