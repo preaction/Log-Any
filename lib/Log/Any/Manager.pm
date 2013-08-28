@@ -2,7 +2,6 @@ package Log::Any::Manager;
 use strict;
 use warnings;
 use Carp qw(croak);
-use Devel::GlobalDestruction;
 use Log::Any::Adapter::Util qw(require_dynamic);
 
 sub new {
@@ -97,8 +96,7 @@ sub set {
 
     if ( my $lex_ref = $options->{lexically} ) {
         $$lex_ref = Log::Any::Manager::_Guard->new(
-          sub { $self->remove($entry) if !in_global_destruction }
-        );
+            sub { $self->remove($entry) unless _in_global_destruction() } );
     }
 
     return $entry;
@@ -128,7 +126,7 @@ sub _new_entry {
 sub _reselect_matching_adapters {
     my ( $self, $pattern ) = @_;
 
-    return if in_global_destruction;
+    return if _in_global_destruction();
 
     # Reselect adapter for each category matching $pattern
     #
@@ -146,10 +144,28 @@ sub _reselect_matching_adapters {
     }
 }
 
-package # hide from PAUSE
-    Log::Any::Manager::_Guard;
+# This is adapted from the pure perl parts of Devel::GlobalDestruction
+if ( defined ${^GLOBAL_PHASE} ) {
+    eval 'sub _in_global_destruction () { ${^GLOBAL_PHASE} eq q[DESTRUCT] }; 1'
+      or die $@;
+}
+else {
+    require B;
+    my $started = !B::main_start()->isa(q[B::NULL]);
+    unless ($started) {
+        eval '0 && $started; CHECK { $started = 1 }; 1'
+          or die $@;
+    }
+    eval
+      '0 && $started; sub _in_global_destruction () { $started && B::main_start()->isa(q[B::NULL]) }; 1'
+      or die $@;
+}
+
+package    # hide from PAUSE
+  Log::Any::Manager::_Guard;
 
 sub new { bless $_[1], $_[0] }
+
 sub DESTROY { $_[0]->() }
 
 1;
