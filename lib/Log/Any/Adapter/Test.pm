@@ -17,26 +17,25 @@ my @msgs;
 # All detection methods return true
 #
 foreach my $method ( Log::Any->detection_methods() ) {
-    Log::Any->make_method( $method, sub { 1 } );
+    no strict 'refs';
+    *{$method} = sub { 1 };
 }
 
 # All logging methods push onto msgs array
 #
 foreach my $method ( Log::Any->logging_methods() ) {
-    Log::Any->make_method(
-        $method,
-        sub {
-            my ( $self, $msg ) = @_;
-            push(
-                @msgs,
-                {
-                    message  => $msg,
-                    level    => $method,
-                    category => $self->{category}
-                }
-            );
-        }
-    );
+    no strict 'refs';
+    *{$method} = sub {
+        my ( $self, $msg ) = @_;
+        push(
+            @msgs,
+            {
+                message  => $msg,
+                level    => $method,
+                category => $self->{category}
+            }
+        );
+    };
 }
 
 # Testing methods below

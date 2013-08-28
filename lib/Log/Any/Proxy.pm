@@ -44,37 +44,28 @@ foreach my $name ( Log::Any->logging_methods, keys(%aliases) ) {
     my $namef       = $name . "f";
     my $is_name     = "is_$name";
     my $is_realname = "is_$realname";
-    Log::Any->make_method(
-        $is_name,
-        sub {
-            my ($self) = @_;
-            return $self->{adapter}->$is_realname;
-        }
-    );
-    Log::Any->make_method(
-        $name,
-        sub {
-            my ( $self, $message ) = @_;
-            return unless defined $message and length $message;
-            $message = $self->{filter}->($message) if defined $self->{filter};
-            return unless defined $message and length $message;
-            $message = "$self->{prefix}$message"
-              if defined $self->{prefix} && length $self->{prefix};
-            return $self->{adapter}->$realname($message);
-        }
-    );
-    Log::Any->make_method(
-        $namef,
-        sub {
-            my ( $self, @args ) = @_;
-            return unless $self->{adapter}->$is_realname;
-            my $message = $self->{formatter}->(@args);
-            return unless defined $message and length $message;
-            return $self->$name($message);
-        }
-    );
+    no strict 'refs';
+    *{$is_name} = sub {
+        my ($self) = @_;
+        return $self->{adapter}->$is_realname;
+    };
+    *{$name} = sub {
+        my ( $self, $message ) = @_;
+        return unless defined $message and length $message;
+        $message = $self->{filter}->($message) if defined $self->{filter};
+        return unless defined $message and length $message;
+        $message = "$self->{prefix}$message"
+          if defined $self->{prefix} && length $self->{prefix};
+        return $self->{adapter}->$realname($message);
+    };
+    *{$namef} = sub {
+        my ( $self, @args ) = @_;
+        return unless $self->{adapter}->$is_realname;
+        my $message = $self->{formatter}->(@args);
+        return unless defined $message and length $message;
+        return $self->$name($message);
+    };
 }
-
 
 1;
 

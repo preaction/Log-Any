@@ -19,8 +19,11 @@ my @test_methods = qw(
 );
 
 foreach my $name (@test_methods) {
-    Log::Any->make_method( $name,
-        sub { my $self = shift; $self->{adapter}->$name(@_) } );
+    no strict 'refs';
+    *{$name} = sub {
+        my $self = shift;
+        $self->{adapter}->$name(@_);
+    };
 }
 
 1;

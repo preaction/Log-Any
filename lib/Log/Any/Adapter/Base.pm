@@ -6,6 +6,7 @@ use warnings;
 # VERSION
 
 use Log::Any;
+use Log::Any::Adapter::Util qw/make_method/;
 
 sub new {
     my $class = shift;
@@ -20,7 +21,7 @@ sub init { }
 sub delegate_method_to_slot {
     my ( $class, $slot, $method, $adapter_method ) = @_;
 
-    Log::Any->make_method( $method,
+    make_method( $method,
         sub { my $self = shift; return $self->{$slot}->$adapter_method(@_) },
         $class );
 }
@@ -36,11 +37,11 @@ sub dump_one_line {
 #
 my %aliases = Log::Any->log_level_aliases;
 while ( my ( $alias, $realname ) = each(%aliases) ) {
-    Log::Any->make_method( $alias,
+    make_method( $alias,
         sub { my $self = shift; $self->$realname(@_) } );
     my $is_alias    = "is_$alias";
     my $is_realname = "is_$realname";
-    Log::Any->make_method( $is_alias,
+    make_method( $is_alias,
         sub { my $self = shift; $self->$is_realname(@_) } );
 }
 
@@ -49,7 +50,7 @@ while ( my ( $alias, $realname ) = each(%aliases) ) {
 foreach my $name ( Log::Any->logging_methods, keys(%aliases) ) {
     my $methodf = $name . "f";
     my $method = $aliases{$name} || $name;
-    Log::Any->make_method(
+    make_method(
         $methodf,
         sub {
             my ( $self, $format, @params ) = @_;

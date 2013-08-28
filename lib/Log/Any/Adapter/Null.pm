@@ -21,7 +21,8 @@ my @all_methods = (
 # All methods are no-ops and return false
 #
 foreach my $method (@all_methods) {
-    Log::Any->make_method( $method, sub { return undef } );    ## no critic
+    no strict 'refs';
+    *{$method} = sub { return undef };
 }
 
 1;

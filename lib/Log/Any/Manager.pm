@@ -6,31 +6,20 @@ use Log::Any::Adapter::Util qw(require_dynamic);
 
 sub new {
     my $class = shift;
-    my $self = { entries => [] };
+    my $self  = {
+        entries         => [],
+        category_cache  => {},
+        default_adapter => {},
+    };
     bless $self, $class;
 
-    # Create the initial Null entry (this is always present)
-    #
+    # Create the initial default entry (this is always present); usually Null
     $self->set('Null');
-    my $null_entry = $self->{entries}->[0];
-
-    # Start our category cache with any null adapters already returned from raw Log::Any
-    #
-    $self->{category_cache} = {
-        map {
-            (
-                $_ => {
-                    adapter => $Log::Any::NullAdapters{$_},
-                    entry   => $null_entry
-                }
-              )
-        } keys(%Log::Any::NullAdapters)
-    };
 
     return $self;
 }
 
-sub get_logger {
+sub get_adapter {
     my ( $self, $category ) = @_;
 
     # Create a new adapter for this category if it is not already in cache
@@ -42,6 +31,11 @@ sub get_logger {
         $category_cache->{$category} = { entry => $entry, adapter => $adapter };
     }
     return $category_cache->{$category}->{adapter};
+}
+
+{
+    no warnings 'once';
+    *get_logger = \&get_adapter;    # backwards compatibility
 }
 
 sub _choose_entry_for_category {
@@ -60,6 +54,11 @@ sub _new_adapter_for_entry {
 
     return $entry->{adapter_class}
       ->new( @{ $entry->{adapter_params} }, category => $category );
+}
+
+sub set_default {
+    my ( $self, $category, $adapter ) = @_;
+    $self->{default_adapter}{$category} = $adapter;
 }
 
 sub set {
@@ -81,12 +80,7 @@ sub set {
         $pattern = qr/^\Q$pattern\E$/;
     }
 
-    $adapter_name =~ s/^Log:://;    # Log::Dispatch -> Dispatch, etc.
-    my $adapter_class = (
-          substr( $adapter_name, 0, 1 ) eq '+'
-        ? substr( $adapter_name, 1 )
-        : "Log::Any::Adapter::$adapter_name"
-    );
+    my $adapter_class = $self->_get_adapter_class($adapter_name);
     require_dynamic($adapter_class);
 
     my $entry = $self->_new_entry( $pattern, $adapter_class, \@adapter_params );
@@ -142,6 +136,18 @@ sub _reselect_matching_adapters {
             $category_info->{entry} = $new_entry;
         }
     }
+}
+
+sub _get_adapter_class {
+    my ( $self, $adapter_name ) = @_;
+    return $Log::Any::OverrideDefaultAdapterClass if $Log::Any::OverrideDefaultAdapterClass;
+    $adapter_name =~ s/^Log:://;    # Log::Dispatch -> Dispatch, etc.
+    my $adapter_class = (
+          substr( $adapter_name, 0, 1 ) eq '+'
+        ? substr( $adapter_name, 1 )
+        : "Log::Any::Adapter::$adapter_name"
+    );
+    return $adapter_class;
 }
 
 # This is adapted from the pure perl parts of Devel::GlobalDestruction

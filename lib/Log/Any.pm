@@ -5,20 +5,21 @@ use warnings;
 # ABSTRACT: Bringing loggers and listeners together
 # VERSION
 
-# Require rather than use, because it depends on subroutines defined below
-#
-require Log::Any::Proxy;
-require Log::Any::Adapter::Null;
-
-# This is accessed in Log::Any::Adapter::Manager::new
-#
-our %NullAdapters;
+use Carp ();
+use Log::Any::Manager;
+use Log::Any::Adapter::Util qw/require_dynamic/;
 
 our %DefaultAdapterClasses;
 
 # This is overridden in Log::Any::Test
 our $OverrideDefaultAdapterClass;
 our $OverrideDefaultProxyClass;
+
+# singleton and accessor
+{
+    my $manager = Log::Any::Manager->new();
+    sub _manager { return $manager }
+}
 
 sub import {
     my $class  = shift;
@@ -28,39 +29,35 @@ sub import {
     $class->_export_to_caller(@export_params);
 }
 
+my %_valid_keys = map { $_ => 1 } qw/proxy_class default_adapter/;
+
 sub _export_to_caller {
     my $class  = shift;
     my $caller = shift;
 
     # Parse parameters passed to 'use Log::Any'
-    #
     my $saw_log_param;
-    my $proxy_class;
+    my @params;
     while ( my $param = shift @_ ) {
         if ( $param eq '$log' ) {
             $saw_log_param = 1;    # defer until later
+            next;                  # singular
         }
-        elsif ( $param eq 'default_adapter' ) {
-            my $adapter_class = Log::Any->get_adapter_class( shift @_ );
-            Log::Any->require_dynamic($adapter_class);
-            $DefaultAdapterClasses{$caller} ||= $adapter_class;
-        }
-        elsif ( $param eq 'proxy_class' ) {
-            $proxy_class = shift @_;
+        elsif( $_valid_keys{$param} ) {
+            push @params, $param, shift @_;    # pairwise
         }
         else {
-            die "invalid import '$param' - valid imports are '\$log'";
+            Carp::croak("invalid import '$param'");
         }
     }
 
-    # get logger after any default has been set
-    #
+    Carp::croak("Argument list not balanced: @params")
+      unless @params % 2 == 0;
+
+    # get logger if one was requested
     if ($saw_log_param) {
-        my $proxy = $class->get_logger(
-            category    => $caller,
-            proxy_class => $proxy_class
-        );
         no strict 'refs';
+        my $proxy = $class->get_logger( category => $caller, @params );
         my $varname = "$caller\::log";
         *$varname = \$proxy;
     }
@@ -70,29 +67,30 @@ sub get_logger {
     my ( $class, %params ) = @_;
     no warnings 'once';
 
-    my $adapter;
-    my $category = delete( $params{'category'} );
-    if ( !defined($category) ) {
-        $category = caller();
-    }
-    if ($Log::Any::Adapter::Initialized) {
-        $adapter = Log::Any::Adapter->get_logger( $category, %params );
-    }
-    else {
+    my $proxy_class = $class->_get_proxy_class( delete $params{proxy_class} );
+    my $category =
+      defined $params{category} ? delete $params{'category'} : caller;
 
-        # Record each null adapter that we return, so that we can override
-        # them later if and when Log::Any::Adapter->set is called
-        #
-        my $adapter_class =
-             $OverrideDefaultAdapterClass
-          || $DefaultAdapterClasses{$category}
-          || 'Log::Any::Adapter::Null';
-        $NullAdapters{$category} ||= $adapter_class->new();
-        $adapter = $NullAdapters{$category};
+    if ( my $default = delete $params{'default_adapter'} ) {
+        $class->_manager->set( { category => $category }, $default );
     }
-    my $proxy_class = $class->get_proxy_class($params{proxy_class});
-    Log::Any->require_dynamic($proxy_class);
+
+    my $adapter = $class->_manager->get_adapter( $category, %params );
+
+    require_dynamic($proxy_class);
     return $proxy_class->new( adapter => $adapter );
+}
+
+sub _get_proxy_class {
+    my ( $self, $proxy_name ) = @_;
+    return $Log::Any::OverrideDefaultProxyClass if $Log::Any::OverrideDefaultProxyClass;
+    return "Log::Any::Proxy" unless $proxy_name;
+    my $proxy_class = (
+          substr( $proxy_name, 0, 1 ) eq '+'
+        ? substr( $proxy_name, 1 )
+        : "Log::Any::Proxy::$proxy_name"
+    );
+    return $proxy_class;
 }
 
 my ( %log_level_aliases, @logging_methods, @logging_aliases, @detection_methods,
@@ -121,51 +119,10 @@ sub detection_methods             { @detection_methods }
 sub detection_aliases             { @detection_aliases }
 sub logging_and_detection_methods { @logging_and_detection_methods }
 
-sub make_method {
-    my ( $class, $method, $code, $pkg ) = @_;
-
-    $pkg ||= caller();
-    no strict 'refs';
-    *{ $pkg . "::$method" } = $code;
-}
-
-sub get_adapter_class {
-    my ( $class, $adapter_name ) = @_;
-    $adapter_name =~ s/^Log:://;    # Log::Dispatch -> Dispatch, etc.
-    my $adapter_class = (
-          substr( $adapter_name, 0, 1 ) eq '+'
-        ? substr( $adapter_name, 1 )
-        : "Log::Any::Adapter::$adapter_name"
-    );
-    return $adapter_class;
-}
-
-sub get_proxy_class {
-    my ( $class, $proxy_name ) = @_;
-    return $OverrideDefaultProxyClass if $OverrideDefaultProxyClass;
-    return "Log::Any::Proxy" unless $proxy_name;
-    my $proxy_class = (
-          substr( $proxy_name, 0, 1 ) eq '+'
-        ? substr( $proxy_name, 1 )
-        : "Log::Any::Proxy::$proxy_name"
-    );
-    return $proxy_class;
-}
-
-sub require_dynamic {
-    my ( $class, $pkg ) = @_;
-
-    unless ( defined( eval "require $pkg" ) )
-    {    ## no critic (ProhibitStringyEval)
-        die $@;
-    }
-}
-
 # For backward compatibility
 sub set_adapter {
     my $class = shift;
-    require Log::Any::Adapter;
-    Log::Any::Adapter->set(@_);
+    Log::Any->_manager->set(@_);
 }
 
 1;

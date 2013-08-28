@@ -1,30 +1,22 @@
 package Log::Any::Adapter;
 use 5.006;
 use Log::Any;
-use Log::Any::Manager;
-use Log::Any::Adapter::Util qw(make_method);
 use strict;
 use warnings;
 
-# Checked by Log::Any to see if get_logger should be forwarded here
-#
-our $Initialized = 1;
-
-my $manager = Log::Any::Manager->new();
-
-foreach my $method (qw(get_logger set remove)) {
-    make_method(
-        $method,
-        sub {
-            my $class = shift;
-            return $manager->$method(@_);
-        }
-    );
-}
-
 sub import {
     my $pkg = shift;
-    $pkg->set(@_) if (@_);
+    Log::Any->_manager->set(@_) if (@_);
+}
+
+sub set {
+    my $pkg = shift;
+    Log::Any->_manager->set(@_)
+}
+
+sub remove {
+    my $pkg = shift;
+    Log::Any->_manager->remove(@_)
 }
 
 1;
