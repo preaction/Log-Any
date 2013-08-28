@@ -2,7 +2,8 @@ package Log::Any::Adapter::File;
 use IO::File;
 use strict;
 use warnings;
-use base qw(Log::Any::Adapter::FileScreenBase);
+
+use base qw/Log::Any::Adapter::Base/;
 
 sub new {
     my ( $class, $file ) = @_;
@@ -17,13 +18,19 @@ sub init {
     $self->{fh}->autoflush(1);
 }
 
-__PACKAGE__->make_logging_methods(
-    sub {
+foreach my $method ( Log::Any->logging_methods() ) {
+    no strict 'refs';
+    *{$method} = sub {
         my ( $self, $text ) = @_;
         my $msg = sprintf( "[%s] %s\n", scalar(localtime), $text );
         $self->{fh}->print($msg);
     }
-);
+}
+
+foreach my $method ( Log::Any->detection_methods() ) {
+    no strict 'refs';
+    *{$method} = sub { 1 };
+}
 
 1;
 

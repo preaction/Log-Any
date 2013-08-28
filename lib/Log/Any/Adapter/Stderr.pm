@@ -1,14 +1,21 @@
 package Log::Any::Adapter::Stderr;
 use strict;
 use warnings;
-use base qw(Log::Any::Adapter::FileScreenBase);
 
-__PACKAGE__->make_logging_methods(
-    sub {
+use base qw/Log::Any::Adapter::Base/;
+
+foreach my $method ( Log::Any->logging_methods() ) {
+    no strict 'refs';
+    *{$method} = sub {
         my ( $self, $text ) = @_;
         print STDERR "$text\n";
     }
-);
+}
+
+foreach my $method ( Log::Any->detection_methods() ) {
+    no strict 'refs';
+    *{$method} = sub { 1 };
+}
 
 1;
 
