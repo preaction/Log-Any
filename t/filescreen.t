@@ -2,7 +2,6 @@
 use Test::More;
 use File::Temp qw(tempdir);
 use Log::Any::Adapter::Util qw(cmp_deeply read_file);
-use Capture::Tiny qw(capture_stdout capture_stderr);
 use strict;
 use warnings;
 
@@ -18,17 +17,21 @@ require Log::Any::Adapter;
 }
 
 {
+    open my $fh, ">", \my $buf;
+    local *STDOUT = $fh;
     Log::Any::Adapter->set('Stdout');
     my $log = Log::Any->get_logger();
-    like( capture_stdout( sub { $log->debug("to stdout") } ),
-        qr/^to stdout\n$/, "stdout" );
+    $log->debug("to stdout");
+    like( $buf, qr/^to stdout\n$/, "stdout" );
 }
 
 {
+    open my $fh, ">", \my $buf;
+    local *STDERR = $fh;
     Log::Any::Adapter->set('Stderr');
     my $log = Log::Any->get_logger();
-    like( capture_stderr( sub { $log->debug("to stderr") } ),
-        qr/^to stderr\n$/, "stderr" );
+    $log->debug("to stderr");
+    like( $buf, qr/^to stderr\n$/, "stderr" );
 }
 
 done_testing;

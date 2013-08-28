@@ -56,7 +56,6 @@
       },
       "test" : {
          "requires" : {
-            "Capture::Tiny" : "0",
             "ExtUtils::MakeMaker" : "0",
             "File::Spec::Functions" : "0",
             "File::Temp" : "0",
