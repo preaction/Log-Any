@@ -158,17 +158,17 @@ sub _get_adapter_class {
 
 # This is adapted from the pure perl parts of Devel::GlobalDestruction
 if ( defined ${^GLOBAL_PHASE} ) {
-    eval 'sub _in_global_destruction () { ${^GLOBAL_PHASE} eq q[DESTRUCT] }; 1'
+    eval 'sub _in_global_destruction () { ${^GLOBAL_PHASE} eq q[DESTRUCT] }; 1' ## no critic
       or die $@;
 }
 else {
     require B;
     my $started = !B::main_start()->isa(q[B::NULL]);
     unless ($started) {
-        eval '0 && $started; CHECK { $started = 1 }; 1'
+        eval '0 && $started; CHECK { $started = 1 }; 1' ## no critic
           or die $@;
     }
-    eval
+    eval ## no critic
       '0 && $started; sub _in_global_destruction () { $started && B::main_start()->isa(q[B::NULL]) }; 1'
       or die $@;
 }

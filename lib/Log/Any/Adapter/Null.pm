@@ -24,7 +24,7 @@ my @all_methods = (
 #
 foreach my $method (@all_methods) {
     no strict 'refs';
-    *{$method} = sub { return undef };
+    *{$method} = sub { return undef }; ## no critic: intentional explict undef ?!
 }
 
 1;
