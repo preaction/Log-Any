@@ -24,8 +24,7 @@
       "package" : [
          "DB",
          "Log::Any::Manager",
-         "Log::Any::Manager::_Guard",
-         "Log::Any::Adapter::Util"
+         "Log::Any::Manager::_Guard"
       ]
    },
    "prereqs" : {
@@ -96,6 +95,10 @@
       },
       "Log::Any::Adapter::Test" : {
          "file" : "lib/Log/Any/Adapter/Test.pm",
+         "version" : "0.16"
+      },
+      "Log::Any::Adapter::Util" : {
+         "file" : "lib/Log/Any/Adapter/Util.pm",
          "version" : "0.16"
       },
       "Log::Any::Proxy" : {
