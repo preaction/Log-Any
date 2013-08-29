@@ -11,8 +11,6 @@ use Carp ();
 use Log::Any::Manager;
 use Log::Any::Adapter::Util qw/require_dynamic/;
 
-our %DefaultAdapterClasses;
-
 # This is overridden in Log::Any::Test
 our $OverrideDefaultAdapterClass;
 our $OverrideDefaultProxyClass;
