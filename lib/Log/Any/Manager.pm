@@ -19,9 +19,6 @@ sub new {
     };
     bless $self, $class;
 
-    # Create the initial default entry (this is always present); usually Null
-    $self->set('Null');
-
     return $self;
 }
 
@@ -52,7 +49,15 @@ sub _choose_entry_for_category {
             return $entry;
         }
     }
-    die "no entries matched '$category' - should not get here!";
+    # nothing requested so fallback to default
+    my $default = $self->{default_adapter}{$category}
+        || [ $self->_get_adapter_class("Null"), [] ];
+    my ($adapter_class, $adapter_params) = @$default;
+    require_dynamic($adapter_class);
+    return {
+        adapter_class  => $adapter_class,
+        adapter_params => $adapter_params,
+    };
 }
 
 sub _new_adapter_for_entry {
@@ -63,8 +68,9 @@ sub _new_adapter_for_entry {
 }
 
 sub set_default {
-    my ( $self, $category, $adapter ) = @_;
-    $self->{default_adapter}{$category} = $adapter;
+    my ( $self, $category, $adapter_name, @adapter_params ) = @_;
+    my $adapter_class = $self->_get_adapter_class($adapter_name);
+    $self->{default_adapter}{$category} = [$adapter_class, \@adapter_params];
 }
 
 sub set {
@@ -106,9 +112,6 @@ sub remove {
     my ( $self, $entry ) = @_;
 
     my $pattern = $entry->{pattern};
-    my $size    = scalar( @{ $self->{entries} } );
-    die "cannot remove bottom entry"
-      if $entry eq $self->{entries}->[ $size - 1 ];
     $self->{entries} = [ grep { $_ ne $entry } @{ $self->{entries} } ];
     $self->_reselect_matching_adapters($pattern);
 }
