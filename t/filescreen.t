@@ -1,9 +1,8 @@
-#!/usr/bin/perl
-use Test::More;
-use File::Temp qw(tempdir);
-use Log::Any::Adapter::Util qw(cmp_deeply read_file);
 use strict;
 use warnings;
+use Test::More tests => 3;;
+use File::Temp qw(tempdir);
+use Log::Any::Adapter::Util qw(cmp_deeply read_file);
 
 require Log::Any::Adapter;
 
@@ -34,4 +33,3 @@ require Log::Any::Adapter;
     like( $buf, qr/^to stderr\n$/, "stderr" );
 }
 
-done_testing;

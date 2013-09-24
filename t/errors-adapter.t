@@ -1,8 +1,7 @@
-#!/usr/bin/perl
-use Test::More tests => 3;
-use Log::Any::Adapter;
 use strict;
 use warnings;
+use Test::More tests => 3;
+use Log::Any::Adapter;
 
 eval { Log::Any::Adapter->set('Blah') };
 like( $@, qr{Can't locate Log/Any/Adapter/Blah}, "adapter = Blah" );

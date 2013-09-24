@@ -1,8 +1,7 @@
-#!perl
-use Test::Simple tests => 2;
-use Log::Any;
 use strict;
 use warnings;
+use Test::More tests => 2;
+use Log::Any;
 
 eval {
     package Foo;

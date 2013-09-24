@@ -1,8 +1,7 @@
-#!perl
-use Test::Simple tests => 87;
-use Log::Any qw($log);
 use strict;
 use warnings;
+use Test::More tests => 87;
+use Log::Any qw($log);
 
 my @logs;
 push( @logs, $log );

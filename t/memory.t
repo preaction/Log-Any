@@ -1,9 +1,8 @@
-#!/usr/bin/perl
-use Test::More;
-use Log::Any;
-use Log::Any::Adapter::Util qw(cmp_deeply);
 use strict;
 use warnings;
+use Test::More tests => 34;
+use Log::Any;
+use Log::Any::Adapter::Util qw(cmp_deeply);
 
 BEGIN { 
     $Log::Any::OverrideDefaultProxyClass = 'Log::Any::Proxy::Test';
@@ -110,5 +109,3 @@ isa_ok( $main_log->adapter, $nullclass, 'main_log' );
     isa_ok( $Foo::log->adapter, $memclass, 'Foo::log in lexical scope' );
 }
 isa_ok( $Foo::log->adapter, $nullclass, 'Foo::log outside lexical scope' );
-
-done_testing;

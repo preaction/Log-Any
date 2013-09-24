@@ -18,7 +18,6 @@ on 'test' => sub {
   requires "IPC::Open3" => "0";
   requires "List::Util" => "0";
   requires "Test::More" => "0";
-  requires "Test::Simple" => "0";
 };
 
 on 'configure' => sub {

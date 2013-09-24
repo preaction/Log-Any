@@ -1,9 +1,7 @@
-#!perl
-use Test::Simple tests => 4;
-use Log::Any '$log', proxy_class => 'Test', default_adapter => 'Test';
-
 use strict;
 use warnings;
+use Test::More tests => 4;
+use Log::Any '$log', proxy_class => 'Test', default_adapter => 'Test';
 
 $log->err("this is an error") if $log->is_error;
 $log->debugf( "this is a %s with a defined (%s) value and an %s value",

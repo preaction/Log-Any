@@ -1,10 +1,9 @@
-#!/usr/bin/perl
+use strict;
+use warnings;
 use Test::More;
 use Log::Any::Test;
 use Log::Any::Adapter 'Test';
 use Log::Any::Adapter::Util qw(cmp_deeply);
-use strict;
-use warnings;
 
 my $log = Log::Any->get_logger();
 my @params = ( "args for %s: %s", 'app', [ 'foo', { 'bar' => 5 } ] );
