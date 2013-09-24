@@ -36,7 +36,10 @@ sub new {
 
 sub init { }
 
-sub adapter { return shift->{adapter} }
+for my $attr ( qw/adapter filter formatter prefix/ ) {
+    no strict 'refs';
+    *{$attr} = sub { return $_[0]->{$attr} };
+}
 
 my %aliases = Log::Any->log_level_aliases;
 
