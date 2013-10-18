@@ -139,16 +139,28 @@ In a CPAN or other module:
     package Foo;
     use Log::Any qw($log);
 
+    # log a string
     $log->error("an error occurred");
-    $log->debugf("arguments are: %s", \@_)
-        if $log->is_debug();
 
-    my $log2 = Log::Any->get_logger(category => 'My::Class');
+    # log a string and data using a formatting filter
+    $log->debugf("arguments are: %s", \@_);
+
+In a Moo/Moose-based module:
+
+    package Foo;
+    use Moo;
+
+    has log => (
+        is => 'ro',
+        isa => 'Log::Any::Proxy',
+        default => sub { Log::Any->get_logger },
+    );
 
 In your application:
 
+    use Foo;
     use Log::Any::Adapter;
-    
+
     # Send all logs to Log::Log4perl
     Log::Any::Adapter->set('Log4perl');
 
@@ -164,7 +176,7 @@ C<Log::Any> allows CPAN modules to safely and efficiently log messages, while
 letting the application choose (or decline to choose) a logging mechanism such
 as C<Log::Dispatch> or C<Log::Log4perl>.
 
-C<Log::Any> has a very tiny footprint and no dependencies beyond Perl 5.6,
+C<Log::Any> has a very tiny footprint and no dependencies beyond Perl 5.8.1,
 which makes it appropriate for even small CPAN modules to use. It defaults to
 'null' logging activity, so a module can safely log without worrying about
 whether the application has chosen (or will ever choose) a logging mechanism.
@@ -189,7 +201,8 @@ inclusive of the major logging packages:
 
 Levels are translated as appropriate to the underlying logging mechanism. For
 example, log4perl only has six levels, so we translate 'notice' to 'info' and
-the top three levels to 'fatal'.
+the top three levels to 'fatal'.  See the documentation of an adapter class
+for specifics.
 
 =head1 CATEGORIES
 
@@ -208,13 +221,16 @@ The most convenient way to get a logger in your module is:
 This creates a package variable I<$log> and assigns it to the logger for the
 current package. It is equivalent to
 
-    our $log = Log::Any->get_logger(category => __PACKAGE__);
+    our $log = Log::Any->get_logger;
 
 In general, to get a logger for a specified category:
 
     my $log = Log::Any->get_logger(category => $category)
 
 If no category is specified, the caller package is used.
+
+A logger object is an instance of L<Log::Any::Proxy>, which passed
+on messages to the L<Log::Any::Adapter> handling its category.
 
 =head2 Logging
 
@@ -227,13 +243,15 @@ To log a message, use any of the log levels or aliases. e.g.
 You should B<not> include a newline in your message; that is the responsibility
 of the logging mechanism, which may or may not want the newline.
 
-There are also printf-style versions of each of these methods:
+There are also versions of each of these methods with an additional "f" suffix
+(C<infof>, C<errorf>, C<debugf>, etc.) that format a list of arguments.  The
+specific formatting mechanism and meaning of the arguments is controlled by the
+L<Log::Any::Proxy> object.
 
     $log->errorf("an error occurred: %s", $@);
     $log->debugf("called with %d params: %s", $param_count, \@params);
 
-The printf-style methods have a few advantages, besides being arguably more
-readable:
+By default it renders like <sprintf>, with the following additional features:
 
 =over
 
@@ -245,11 +263,6 @@ single-line strings with C<Data::Dumper>.
 =item *
 
 Any undefined values are automatically converted to the string "<undef>".
-
-=item *
-
-A logging mechanism could potentially use the unchanging format string (or a
-digest thereof) to group related log messages together.
 
 =back
 
@@ -265,6 +278,8 @@ levels or aliases. e.g.
 This is important for efficiency, as you can avoid the work of putting together
 the logging message (in the above case, stringifying C<@_>) if the log level is
 not active.
+
+The formatting methods (C<infof>, C<errorf>, etc.) check the log level for you.
 
 Some logging mechanisms don't support detection of log levels. In these cases
 the detection methods will always return 1.
@@ -283,15 +298,20 @@ The name of the default class follows the same rules as used by L<Log::Any::Adap
 
 =head2 Testing
 
-L<Log::Any::Test|Log::Any::Test> provides a mechanism to test code that uses
-C<Log::Any>.
+L<Log::Any::Test> provides a mechanism to test code that uses C<Log::Any>.
 
 =head1 CONSUMING LOGS (FOR APPLICATIONS)
 
-To direct logs somewhere - a file, the screen, etc. - you must use
-L<Log::Any::Adapter|Log::Any::Adapter>. This is intentionally kept in a
-separate distributions to keep C<Log::Any> as simple and unchanging as
-possible.
+Log::Any and L<Log::Any::Proxy> are log producers.  To consume their output
+and direct it where you want (a file, the screen, syslog, etc.), you use
+L<Log::Any::Adapter> along with a destination-specific subclass.
+
+For example, to send output to a file via L<Log::Any::Adapter::File>, your
+appliation could do this:
+
+    use Log::Any::Adapter ('File', '/path/to/file.log');
+
+See the L<Log::Any::Adapter> documentation for more details.
 
 =head1 MOTIVATION
 
@@ -346,8 +366,7 @@ created and cannot (for whatever reason) stop using.
 Our intent is to keep C<Log::Any> minimal, and change it only when absolutely
 necessary. Most of the "innovation", if any, is expected to occur in
 C<Log::Any::Adapter>, which your module should not have to depend on (unless it
-wants to direct logs somewhere specific). C<Log::Any> has no module
-dependencies other than L<Test::Simple|Test::Simple> for testing.
+wants to direct logs somewhere specific). C<Log::Any> has no non-core dependencies.
 
 =item Why doesn't Log::Any use I<insert modern Perl technique>?
 
