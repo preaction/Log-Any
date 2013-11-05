@@ -64,12 +64,9 @@ __END__
 
 =head1 DESCRIPTION
 
-The C<Log-Any-Adapter> distribution implements L<Log::Any|Log::Any> class
-methods to specify where logs should be sent. It is a separate distribution so
-as to keep C<Log::Any> itself as simple and unchanging as possible.
-
-You do not have to use anything in this distribution explicitly. It will be
-auto-loaded when you call one of the methods below.
+Log::Any::Adapter connects log producers and log consumers.  Its methods
+instantiate a logging adapter (a subclass of L<Log::Any::Adapter::Base>)
+and route log messages from one or more categories to it.
 
 =head1 ADAPTERS
 
@@ -151,8 +148,9 @@ are:
 
 =item category
 
-A string containing a category name, or a regex (created with qr//) matching
-multiple categories.  If not specified, all categories will be affected.
+A string containing a category name, or a regex (created with C<qr//>) matching
+multiple categories.  If not specified, all categories will be routed to the
+adapter.
 
 =item lexically
 
