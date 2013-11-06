@@ -10,7 +10,7 @@ The adapter module:
    use warnings;
    use Log::Any::Adapter::Util qw(make_method);
    use base qw(Log::Any::Adapter::Base);
-   
+
    # Optionally initialize object
    #
    sub init {
@@ -18,13 +18,13 @@ The adapter module:
 
        $self->{attr} = ...;
    }
-   
+
    # Create logging methods: debug, info, etc.
    #
    foreach my $method ( Log::Any->logging_methods() ) {
        make_method($method, sub { ... });
    }
-   
+
    # Create detection methods: is_debug, is_info, etc.
    #
    foreach my $method ( Log::Any->detection_methods() ) {
@@ -177,7 +177,8 @@ any necessary validation or initialization here.
 
 =head2 Support methods
 
-The following methods are useful for defining adapters:
+The following L<Log::Any::Adapter::Base> method may be useful for defining
+adapters via delegation:
 
 =over
 
@@ -190,6 +191,9 @@ See L<Log::Any::Adapter::Dispatch|Log::Any::Adapter::Dispatch> and
 L<Log::Any::Adapter::Log4perl|Log::Any::Adapter::Log4perl> for examples of
 usage.
 
+=back
+
+The following L<Log::Any> methods give you a list
 =item Log::Any->logging_methods
 
 Returns a list of logging methods: debug, info, etc.
