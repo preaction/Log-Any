@@ -130,9 +130,11 @@ your subclass:
 These methods log a message at the specified level.
 
 To help generate these methods programmatically, you can get a list of the sub
-names with #__METHOD
+names with the C<logging_methods> class method.
 
     Log::Any->logging_methods
+
+=over
 
 =item is_debug ()
 
@@ -154,7 +156,7 @@ These methods return a boolean indicating whether the specified level is
 active.
 
 To help generate these methods programmatically, you can get a list of the sub
-names with #__METHOD
+names with the C<detection_methods> class method.
 
     Log::Any->detection_methods
 

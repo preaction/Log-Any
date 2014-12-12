@@ -172,17 +172,41 @@ In your application:
 
 =head1 DESCRIPTION
 
-C<Log::Any> allows CPAN modules to safely and efficiently log messages, while
-letting the application choose (or decline to choose) a logging mechanism such
-as C<Log::Dispatch> or C<Log::Log4perl>.
+C<Log::Any> provides a standard log production API for modules.
+L<Log::Any::Adapter> allows applications to choose the mechanism for log
+consumption, whether screen, file or another logging mechanism like
+L<Log::Dispatch> or L<Log::Log4perl>.
+
+Many modules have something interesting to say. Unfortunately there is no
+standard way for them to say it - some output to STDERR, others to C<warn>,
+others to custom file logs. And there is no standard way to get a module to
+start talking - sometimes you must call a uniquely named method, other times
+set a package variable.
+
+This being Perl, there are many logging mechanisms available on CPAN.  Each has
+their pros and cons. Unfortunately, the existence of so many mechanisms makes
+it difficult for a CPAN author to commit his/her users to one of them. This may
+be why many CPAN modules invent their own logging or choose not to log at all.
+
+To untangle this situation, we must separate the two parts of a logging API.
+The first, I<log production>, includes methods to output logs (like
+C<$log-E<gt>debug>) and methods to inspect whether a log level is activated
+(like C<$log-E<gt>is_debug>). This is generally all that CPAN modules care
+about. The second, I<log consumption>, includes a way to configure where
+logging goes (a file, the screen, etc.) and the code to send it there. This
+choice generally belongs to the application.
+
+A CPAN module uses C<Log::Any> to get a log producer object.  An application,
+in turn, may choose one or more logging mechanisms via L<Log::Any::Adapter>, or
+none at all.
 
 C<Log::Any> has a very tiny footprint and no dependencies beyond Perl 5.8.1,
 which makes it appropriate for even small CPAN modules to use. It defaults to
 'null' logging activity, so a module can safely log without worrying about
 whether the application has chosen (or will ever choose) a logging mechanism.
 
-The application, in turn, may choose one or more logging mechanisms via
-L<Log::Any::Adapter|Log::Any::Adapter>.
+See L<http://www.openswartz.com/2007/09/06/standard-logging-api/> for the
+original post proposing this module.
 
 =head1 LOG LEVELS
 
@@ -227,9 +251,9 @@ In general, to get a logger for a specified category:
 
     my $log = Log::Any->get_logger(category => $category)
 
-If no category is specified, the caller package is used.
+If no category is specified, the calling package is used.
 
-A logger object is an instance of L<Log::Any::Proxy>, which passed
+A logger object is an instance of L<Log::Any::Proxy>, which passes
 on messages to the L<Log::Any::Adapter> handling its category.
 
 =head2 Logging
@@ -302,9 +326,10 @@ L<Log::Any::Test> provides a mechanism to test code that uses C<Log::Any>.
 
 =head1 CONSUMING LOGS (FOR APPLICATIONS)
 
-Log::Any and L<Log::Any::Proxy> are log producers.  To consume their output
-and direct it where you want (a file, the screen, syslog, etc.), you use
-L<Log::Any::Adapter> along with a destination-specific subclass.
+Log::Any provides modules with a L<Log::Any::Proxy> object, which is the log
+producer.  To consume its output and direct it where you want (a file, the
+screen, syslog, etc.), you use L<Log::Any::Adapter> along with a
+destination-specific subclass.
 
 For example, to send output to a file via L<Log::Any::Adapter::File>, your
 application could do this:
@@ -313,43 +338,15 @@ application could do this:
 
 See the L<Log::Any::Adapter> documentation for more details.
 
-=head1 MOTIVATION
-
-Many modules have something interesting to say. Unfortunately there is no
-standard way for them to say it - some output to STDERR, others to C<warn>,
-others to custom file logs. And there is no standard way to get a module to
-start talking - sometimes you must call a uniquely named method, other times
-set a package variable.
-
-This being Perl, there are many logging mechanisms available on CPAN.  Each has
-their pros and cons. Unfortunately, the existence of so many mechanisms makes
-it difficult for a CPAN author to commit his/her users to one of them. This may
-be why many CPAN modules invent their own logging or choose not to log at all.
-
-To untangle this situation, we must separate the two parts of a logging API.
-The first, I<log production>, includes methods to output logs (like
-C<$log-E<gt>debug>) and methods to inspect whether a log level is activated
-(like C<$log-E<gt>is_debug>). This is generally all that CPAN modules care
-about. The second, I<log consumption>, includes a way to configure where
-logging goes (a file, the screen, etc.) and the code to send it there. This
-choice generally belongs to the application.
-
-C<Log::Any> provides a standard log production API for modules.
-C<Log::Any::Adapter> allows applications to choose the mechanism for log
-consumption.
-
-See http://www.openswartz.com/2007/09/06/standard-logging-api/ for the original
-post proposing this module.
-
 =head1 Q & A
 
 =over
 
 =item Isn't Log::Any just yet another logging mechanism?
 
-No. C<Log::Any> does not, and never will, include code that knows how to log to
-a particular place (file, screen, etc.) It can only forward logging requests to
-another logging mechanism.
+No. C<Log::Any> does not include code that knows how to log to a particular
+place (file, screen, etc.) It can only forward logging requests to another
+logging mechanism.
 
 =item Why don't you just pick the best logging mechanism, and use and promote it?
 
@@ -376,7 +373,4 @@ other niceties.
 
 =back
 
-=head1 SEE ALSO
-
-L<Log::Any::Adapter>, the many Log:: modules on CPAN
-
+=cut
