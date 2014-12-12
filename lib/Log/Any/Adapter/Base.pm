@@ -5,7 +5,7 @@ use warnings;
 package Log::Any::Adapter::Base;
 
 # ABSTRACT: Base class for Log::Any adapters
-# VERSION
+our $VERSION = "0.90";
 
 use Log::Any;
 use Log::Any::Adapter::Util qw/make_method/;

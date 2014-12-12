@@ -5,7 +5,7 @@ use warnings;
 package Log::Any;
 
 # ABSTRACT: Bringing loggers and listeners together
-# VERSION
+our $VERSION = "0.90";
 
 use Carp ();
 use Log::Any::Manager;
@@ -307,7 +307,7 @@ and direct it where you want (a file, the screen, syslog, etc.), you use
 L<Log::Any::Adapter> along with a destination-specific subclass.
 
 For example, to send output to a file via L<Log::Any::Adapter::File>, your
-appliation could do this:
+application could do this:
 
     use Log::Any::Adapter ('File', '/path/to/file.log');
 

@@ -194,6 +194,9 @@ usage.
 =back
 
 The following L<Log::Any> methods give you a list
+
+=over
+
 =item Log::Any->logging_methods
 
 Returns a list of logging methods: debug, info, etc.

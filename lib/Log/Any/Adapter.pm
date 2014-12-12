@@ -5,7 +5,7 @@ use warnings;
 package Log::Any::Adapter;
 
 # ABSTRACT: Tell Log::Any where to send its logs
-# VERSION
+our $VERSION = "0.90";
 
 use Log::Any;
 
