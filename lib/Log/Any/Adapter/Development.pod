@@ -134,8 +134,6 @@ names with the C<logging_methods> class method.
 
     Log::Any->logging_methods
 
-=over
-
 =item is_debug ()
 
 =item is_info ()

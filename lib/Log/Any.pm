@@ -9,7 +9,15 @@ our $VERSION = "0.90";
 
 use Carp ();
 use Log::Any::Manager;
-use Log::Any::Adapter::Util qw/require_dynamic/;
+use Log::Any::Adapter::Util qw(
+  require_dynamic
+  detection_aliases
+  detection_methods
+  log_level_aliases
+  logging_aliases
+  logging_and_detection_methods
+  logging_methods
+);
 
 # This is overridden in Log::Any::Test
 our $OverrideDefaultAdapterClass;
@@ -29,8 +37,6 @@ sub import {
     $class->_export_to_caller(@export_params);
 }
 
-my %_valid_keys = map { $_ => 1 } qw/proxy_class default_adapter/;
-
 sub _export_to_caller {
     my $class  = shift;
     my $caller = shift;
@@ -43,11 +49,8 @@ sub _export_to_caller {
             $saw_log_param = 1;    # defer until later
             next;                  # singular
         }
-        elsif ( $_valid_keys{$param} ) {
-            push @params, $param, shift @_;    # pairwise
-        }
         else {
-            Carp::croak("invalid import '$param'");
+            push @params, $param, shift @_;    # pairwise
         }
     }
 
@@ -75,10 +78,12 @@ sub get_logger {
         $class->_manager->set_default( $category, $default );
     }
 
-    my $adapter = $class->_manager->get_adapter( $category, %params );
+    my $adapter = $class->_manager->get_adapter( $category );
 
     require_dynamic($proxy_class);
-    return $proxy_class->new( adapter => $adapter );
+    return $proxy_class->new(
+        %params, adapter => $adapter, category => $category,
+    );
 }
 
 sub _get_proxy_class {
@@ -93,32 +98,6 @@ sub _get_proxy_class {
     );
     return $proxy_class;
 }
-
-my ( %log_level_aliases, @logging_methods, @logging_aliases, @detection_methods,
-    @detection_aliases, @logging_and_detection_methods );
-
-BEGIN {
-    %log_level_aliases = (
-        inform => 'info',
-        warn   => 'warning',
-        err    => 'error',
-        crit   => 'critical',
-        fatal  => 'critical'
-    );
-    @logging_methods =
-      qw(trace debug info notice warning error critical alert emergency);
-    @logging_aliases               = keys(%log_level_aliases);
-    @detection_methods             = map { "is_$_" } @logging_methods;
-    @detection_aliases             = map { "is_$_" } @logging_aliases;
-    @logging_and_detection_methods = ( @logging_methods, @detection_methods );
-}
-
-sub log_level_aliases             { %log_level_aliases }
-sub logging_methods               { @logging_methods }
-sub logging_aliases               { @logging_aliases }
-sub detection_methods             { @detection_methods }
-sub detection_aliases             { @detection_aliases }
-sub logging_and_detection_methods { @logging_and_detection_methods }
 
 # For backward compatibility
 sub set_adapter {
@@ -275,7 +254,7 @@ L<Log::Any::Proxy> object.
     $log->errorf("an error occurred: %s", $@);
     $log->debugf("called with %d params: %s", $param_count, \@params);
 
-By default it renders like <sprintf>, with the following additional features:
+By default it renders like C<sprintf>, with the following additional features:
 
 =over
 
@@ -319,6 +298,13 @@ loading C<Log::Any>
     use Log::Any '$log', default_adapter => 'Stderr';
 
 The name of the default class follows the same rules as used by L<Log::Any::Adapter>.
+
+=head2 Configuring the proxy
+
+Any parameter passed on the import line or via the C<get_logger> method
+are passed on the the L<Log::Any::Proxy> constructor.
+
+    use Log::Any '$log', filter => \&myfilter;
 
 =head2 Testing
 

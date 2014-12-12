@@ -28,6 +28,7 @@ my %WriteMakefileArgs = (
     "IO::File" => 0,
     "Test::Builder" => 0,
     "base" => 0,
+    "constant" => 0,
     "strict" => 0,
     "warnings" => 0
   },
@@ -56,6 +57,7 @@ my %FallbackPrereqs = (
   "Test::Builder" => 0,
   "Test::More" => 0,
   "base" => 0,
+  "constant" => 0,
   "strict" => 0,
   "warnings" => 0
 );
