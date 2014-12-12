@@ -1,8 +1,10 @@
 use strict;
 use warnings;
-use Test::More 0.88;
+use Test::More;
 use Log::Any::Test;
 use Log::Any::Adapter 'Test';
+
+plan tests => 4;
 
 my $log;
 
@@ -25,5 +27,3 @@ $log = Log::Any->get_logger( category => 'Foo', filter => sub { "@_"}  );
 $log->info("test");
 $log->contains_ok(qr/^Foo 6 test$/, 'category override');
 $log->clear;
-
-done_testing;
