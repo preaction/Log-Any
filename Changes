@@ -4,6 +4,8 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+0.90      2014-12-12 17:08:22-05:00 America/New_York (TRIAL RELEASE)
+
     [Added]
 
     - Logging now goes via a Log::Any::Proxy object instead of directly to

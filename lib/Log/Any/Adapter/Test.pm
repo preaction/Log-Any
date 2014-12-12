@@ -5,7 +5,7 @@ use warnings;
 package Log::Any::Adapter::Test;
 
 # ABSTRACT: Backend adapter for Log::Any::Test
-our $VERSION = "0.90";
+our $VERSION = '0.91'; # TRIAL
 
 use Data::Dumper;
 use Log::Any;
