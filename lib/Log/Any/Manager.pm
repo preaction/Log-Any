@@ -4,7 +4,6 @@ use warnings;
 
 package Log::Any::Manager;
 
-# ABSTRACT: Internal class to manage category/adapter mappings
 our $VERSION = "0.90";
 
 use Carp qw(croak);
