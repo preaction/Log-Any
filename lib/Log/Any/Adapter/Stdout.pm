@@ -25,7 +25,7 @@ sub init {
     }
 }
 
-foreach my $method ( Log::Any->logging_methods() ) {
+foreach my $method ( Log::Any::Adapter::Util::logging_methods() ) {
     no strict 'refs';
     my $method_level = Log::Any::Adapter::Util::numeric_level($method);
     *{$method} = sub {
@@ -35,7 +35,7 @@ foreach my $method ( Log::Any->logging_methods() ) {
     };
 }
 
-foreach my $method ( Log::Any->detection_methods() ) {
+foreach my $method ( Log::Any::Adapter::Util::detection_methods() ) {
     no strict 'refs';
     my $base = substr( $method, 3 );
     my $method_level = Log::Any::Adapter::Util::numeric_level($base);

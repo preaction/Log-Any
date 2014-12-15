@@ -9,22 +9,13 @@ our $VERSION = '0.92'; # TRIAL
 
 use base qw/Log::Any::Adapter::Base/;
 
-# Collect all logging and detection methods, including aliases and printf variants
-#
-my %aliases     = Log::Any->log_level_aliases;
-my @alias_names = keys(%aliases);
-my @all_methods = (
-    Log::Any->logging_and_detection_methods(),
-    @alias_names,
-    ( map { "is_$_" } @alias_names ),
-    ( map { $_ . "f" } ( Log::Any->logging_methods, @alias_names ) ),
-);
+use Log::Any::Adapter::Util ();
 
 # All methods are no-ops and return false
-#
-foreach my $method (@all_methods) {
+
+foreach my $method (Log::Any::Adapter::Util::logging_and_detection_methods()) {
     no strict 'refs';
-    *{$method} = sub { return undef }; ## no critic: intentional explict undef ?!
+    *{$method} = sub { return '' }; # false
 }
 
 1;

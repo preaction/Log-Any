@@ -6,8 +6,7 @@ package Log::Any::Adapter::Test;
 
 our $VERSION = '0.92'; # TRIAL
 
-use Data::Dumper;
-use Log::Any;
+use Log::Any::Adapter::Util qw/dump_one_line/;
 use Test::Builder;
 
 use base qw/Log::Any::Adapter::Base/;
@@ -17,14 +16,14 @@ my @msgs;
 
 # All detection methods return true
 #
-foreach my $method ( Log::Any->detection_methods() ) {
+foreach my $method ( Log::Any::Adapter::Util::detection_methods() ) {
     no strict 'refs';
     *{$method} = sub { 1 };
 }
 
 # All logging methods push onto msgs array
 #
-foreach my $method ( Log::Any->logging_methods() ) {
+foreach my $method ( Log::Any::Adapter::Util::logging_methods() ) {
     no strict 'refs';
     *{$method} = sub {
         my ( $self, $msg ) = @_;
