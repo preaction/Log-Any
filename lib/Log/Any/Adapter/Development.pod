@@ -8,7 +8,7 @@ The adapter module:
    package Log::Any::Adapter::YAL;
    use strict;
    use warnings;
-   use Log::Any::Adapter::Util qw(make_method);
+   use Log::Any::Adapter::Util ();
    use base qw(Log::Any::Adapter::Base);
 
    # Optionally initialize object
@@ -21,14 +21,14 @@ The adapter module:
 
    # Create logging methods: debug, info, etc.
    #
-   foreach my $method ( Log::Any->logging_methods() ) {
-       make_method($method, sub { ... });
+   foreach my $method ( Log::Any::Adapter::Util::logging_methods() ) {
+       Log::Any::Adapter::Util::make_method($method, sub { ... });
    }
 
    # Create detection methods: is_debug, is_info, etc.
    #
-   foreach my $method ( Log::Any->detection_methods() ) {
-       make_method($method, sub { ... });
+   foreach my $method ( Log::Any::Adapter::Util::detection_methods() ) {
+       Log::Any::Adapter::Util::make_method($method, sub { ... });
    }
 
 and the application:
@@ -130,9 +130,9 @@ your subclass:
 These methods log a message at the specified level.
 
 To help generate these methods programmatically, you can get a list of the sub
-names with the C<logging_methods> class method.
+names with the C<logging_methods> function.
 
-    Log::Any->logging_methods
+    Log::Any::Adapter::Util::ogging_methods
 
 =item is_debug ()
 
@@ -154,9 +154,9 @@ These methods return a boolean indicating whether the specified level is
 active.
 
 To help generate these methods programmatically, you can get a list of the sub
-names with the C<detection_methods> class method.
+names with the C<detection_methods> function.
 
-    Log::Any->detection_methods
+    Log::Any::Adapter::Util::detection_methods
 
 =back
 
@@ -193,19 +193,19 @@ usage.
 
 =back
 
-The following L<Log::Any> methods give you a list
+The following L<Log::Any::Adapter::Util> functions give you a list
 
 =over
 
-=item Log::Any->logging_methods
+=item Log::Any::Adapter::Util::logging_methods
 
 Returns a list of logging methods: debug, info, etc.
 
-=item Log::Any->detection_methods
+=item Log::Any::Adapter::Util::detection_methods
 
 Returns a list of detection methods: is_debug, is_info, etc.
 
-=item Log::Any->logging_and_detection_methods
+=item Log::Any::Adapter::Util::logging_and_detection_methods
 
 Returns a combined list of logging and detection methods.
 
