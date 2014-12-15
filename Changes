@@ -17,6 +17,10 @@ Revision history for Log-Any
 
     - File will flock the handle when writing (if flock is avaiable).
 
+    - Won't die if adapters aren't loadable modules as long as they
+      provide a constructor.  This allows using private adapters
+      defined in another file.
+
     [Documented]
 
     - Revised docs for creating adapters

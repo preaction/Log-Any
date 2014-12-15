@@ -158,15 +158,18 @@ sub make_method {
 
 =func require_dynamic (DEPRECATED)
 
-Given a class name, attempts to load it via require.  Throws an error
-on failure. Used internally and may become private in the future.
+Given a class name, attempts to load it via require unless the class
+already has a constructor available.  Throws an error on failure. Used
+internally and may become private in the future.
 
 =cut
 
 sub require_dynamic {
     my ($class) = @_;
 
-    unless ( defined( eval "require $class" ) )
+    return 1 if $class->can('new'); # duck-type that class is loaded
+
+    unless ( defined( eval "require $class; 1" ) )
     {    ## no critic (ProhibitStringyEval)
         die $@;
     }
