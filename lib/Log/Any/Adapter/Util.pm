@@ -25,7 +25,7 @@ BEGIN {
     );
 }
 
-use constant %LOG_LEVELS;
+use constant \%LOG_LEVELS;
 
 our @EXPORT_OK = qw(
   cmp_deeply
@@ -39,10 +39,11 @@ our @EXPORT_OK = qw(
   make_method
   read_file
   require_dynamic
-  :levels
 );
 
-our %EXPORT_TAGS = ( ':levels' => [ keys %LOG_LEVELS ] );
+push @EXPORT_OK, keys %LOG_LEVELS;
+
+our %EXPORT_TAGS = ( 'levels' => [ keys %LOG_LEVELS ] );
 
 my ( %LOG_LEVEL_ALIASES, @logging_methods, @logging_aliases, @detection_methods,
     @detection_aliases, @logging_and_detection_methods );

@@ -8,6 +8,11 @@ Revision history for Log-Any
 
     - Deprecated some methods in Log::Any::Adapter::Util
 
+    [Added]
+
+    - File, Stdout, and Stderr adapters now support a minimum
+      log level parameter.
+
     [Documented]
 
     - Revised docs for creating adapters
