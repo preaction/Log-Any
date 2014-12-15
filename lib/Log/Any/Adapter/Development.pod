@@ -11,7 +11,7 @@ The adapter module:
    use Log::Any::Adapter::Util ();
    use base qw(Log::Any::Adapter::Base);
 
-   # Optionally initialize object
+   # Optionally initialize object, e.g. for delegation
    #
    sub init {
        my ($self) = @_;
@@ -22,13 +22,15 @@ The adapter module:
    # Create logging methods: debug, info, etc.
    #
    foreach my $method ( Log::Any::Adapter::Util::logging_methods() ) {
-       Log::Any::Adapter::Util::make_method($method, sub { ... });
+       no strict 'refs';
+       *$method = sub { ... };
    }
 
    # Create detection methods: is_debug, is_info, etc.
    #
    foreach my $method ( Log::Any::Adapter::Util::detection_methods() ) {
-       Log::Any::Adapter::Util::make_method($method, sub { ... });
+       no strict 'refs';
+       *$method = sub { ... };
    }
 
 and the application:
@@ -57,7 +59,33 @@ If it's an internal driver, you can call it whatever you like and use it like
 =head1 BASE CLASS
 
 All adapters must directly or indirectly inherit from
-L<Log::Any::Adapter::Base|Log::Any::Adapter::Base>.
+L<Log::Any::Adapter::Base>.
+
+=head1 LOG LEVELS
+
+Log::Any supports the following log levels:
+
+=for :list
+* trace
+* debug
+* info
+* notice
+* warning
+* error
+* critical
+* alert
+* emergency
+
+If the logging mechanism used by your adapter supports different levels,
+it's your responsibility to map them appropriately when you implement the
+logging and detection methods described below.  For example, if your
+mechanism only supports "debug", "normal" and "fatal" levels, you might map
+the levels like this:
+
+=for :list
+* debug: trace, debug
+* normal: info, notice, warning
+* fatal: error, critical, alert, emergency
 
 =head1 METHODS
 
@@ -66,21 +94,10 @@ L<Log::Any::Adapter::Base|Log::Any::Adapter::Base>.
 The constructor (C<new>) is provided by
 L<Log::Any::Adapter::Base|Log::Any::Adapter::Base>. It will:
 
-=over
-
-=item *
-
-place any adapter arguments into a hash, along with the category
-
-=item *
-
-bless the hash into your subclass
-
-=item *
-
-call L</init> which may be optionally provided by your subclass
-
-=back
+=for :list
+* place any adapter arguments into a hash, along with the category
+* bless the hash into your subclass
+* call L</init> which may be optionally provided by your subclass
 
 At this point, overriding the default constructor is not supported. Hopefully
 it will not be needed.
@@ -104,61 +121,56 @@ through a separate C<get_logger> call, the same object will be returned.
 Therefore, you should try to avoid anything non-deterministic in your L</init>
 function.
 
-=head2 Required methods
+=head2 Logging methods (required)
 
 The following methods have no default implementation, and MUST be defined by
 your subclass:
 
-=over
+=for :list
+* debug ($msg)
+* info ($msg)
+* notice ($msg)
+* warning ($msg)
+* error ($msg)
+* critical ($msg)
+* alert ($msg)
+* emergency ($msg)
 
-=item debug ($msg)
+These methods must log a message at the specified level.
 
-=item info ($msg)
+To help generate these methods programmatically, you can get a list of the
+sub names with the
+L<Log::Any::Adapter::Util::logging_methods|Log::Any::Adapter::Util/logging_methods>
+function.
 
-=item notice ($msg)
+=head2 Log-level detection methods (required)
 
-=item warning ($msg)
+The following methods have no default implementation, and MUST be defined by
+your subclass:
 
-=item error ($msg)
+=for :list
+* is_debug ()
+* is_info ()
+* is_notice ()
+* is_warning ()
+* is_error ()
+* is_critical ()
+* is_alert ()
+* is_emergency ()
 
-=item critical ($msg)
+These methods must return a boolean indicating whether the specified level is
+active, i.e. whether the adapter is listening for messages of that level.
 
-=item alert ($msg)
+To help generate these methods programmatically, you can get a list of the
+sub names with the
+L<Log::Any::Adapter::Util::detection_methods|Log::Any::Adapter::Util/detection_methods>
+function.
 
-=item emergency ($msg)
+=head2 Aliases
 
-These methods log a message at the specified level.
-
-To help generate these methods programmatically, you can get a list of the sub
-names with the C<logging_methods> function.
-
-    Log::Any::Adapter::Util::ogging_methods
-
-=item is_debug ()
-
-=item is_info ()
-
-=item is_notice ()
-
-=item is_warning ()
-
-=item is_error ()
-
-=item is_critical ()
-
-=item is_alert ()
-
-=item is_emergency ()
-
-These methods return a boolean indicating whether the specified level is
-active.
-
-To help generate these methods programmatically, you can get a list of the sub
-names with the C<detection_methods> function.
-
-    Log::Any::Adapter::Util::detection_methods
-
-=back
+Aliases (e.g. "err" for "error") are handled by L<Log::Any::Proxy> and will
+call the corresponding real name in your adapter class.  You do not need to
+implement them in your adapter.
 
 =head2 Optional methods
 
@@ -167,11 +179,12 @@ your subclass:
 
 =over
 
-=item init ()
+=item init
 
 This is called after the adapter object is created and blessed into your class.
-It will be a hash containing the parameters that were passed to new(). Perform
-any necessary validation or initialization here.
+Perform any necessary validation or initialization here.  For example, you
+would use C<init> to create a logging object for delegation, or open a file
+or socket, etc.
 
 =back
 
@@ -184,34 +197,23 @@ adapters via delegation:
 
 =item delegate_method_to_slot ($slot, $method, $adapter_method)
 
-Handle the specified $method by calling $adapter_method on the object contained
-in $self->{$slot}.
+Handle the specified C<$method> by calling C<$adapter_method> on the object
+contained in C<< $self->{$slot} >>.
 
-See L<Log::Any::Adapter::Dispatch|Log::Any::Adapter::Dispatch> and
-L<Log::Any::Adapter::Log4perl|Log::Any::Adapter::Log4perl> for examples of
-usage.
-
-=back
-
-The following L<Log::Any::Adapter::Util> functions give you a list
-
-=over
-
-=item Log::Any::Adapter::Util::logging_methods
-
-Returns a list of logging methods: debug, info, etc.
-
-=item Log::Any::Adapter::Util::detection_methods
-
-Returns a list of detection methods: is_debug, is_info, etc.
-
-=item Log::Any::Adapter::Util::logging_and_detection_methods
-
-Returns a combined list of logging and detection methods.
+See L<Log::Any::Adapter::Dispatch> and L<Log::Any::Adapter::Log4perl> for
+examples of usage.
 
 =back
 
-=head1 SEE ALSO
+The following L<Log::Any::Adapter::Util> functions give you a list of
+methods that you need to implement.  You can get logging methods, detection
+methods or both:
 
-L<Log::Any>
+=for :list
+* L<Log::Any::Adapter::Util::logging_methods|Log::Any::Adapter::Util/logging_methods>
+* L<Log::Any::Adapter::Util::detection_methods|Log::Any::Adapter::Util/detection_methods>
+* L<Log::Any::Adapter::Util::logging_and_detection_methods|Log::Any::Adapter::Util/logging_and_detection_methods>
 
+=cut
+
+# vim: ts=4 sts=4 sw=4 et tw=75:

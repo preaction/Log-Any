@@ -4,6 +4,10 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+    [Documented]
+
+    - Revised docs for creating adapters
+
 0.91      2014-12-14 22:13:09-05:00 America/New_York (TRIAL RELEASE)
 
     [Changed]
