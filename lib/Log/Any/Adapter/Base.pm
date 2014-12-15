@@ -4,7 +4,6 @@ use warnings;
 
 package Log::Any::Adapter::Base;
 
-# ABSTRACT: Base class for Log::Any adapters
 our $VERSION = '0.91'; # TRIAL
 
 use Log::Any;
@@ -67,6 +66,3 @@ foreach my $name ( Log::Any->logging_methods, keys(%aliases) ) {
 }
 
 1;
-
-__END__
-

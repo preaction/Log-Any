@@ -4,7 +4,6 @@ use warnings;
 
 package Log::Any::Adapter::Test;
 
-# ABSTRACT: Backend adapter for Log::Any::Test
 our $VERSION = '0.91'; # TRIAL
 
 use Data::Dumper;
@@ -166,8 +165,3 @@ sub _first_index {
 }
 
 1;
-
-=head1 SEE ALSO
-
-L<Log::Any|Log::Any>, L<Log::Any::Adapter|Log::Any::Adapter>
-
