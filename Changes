@@ -13,6 +13,10 @@ Revision history for Log-Any
     - File, Stdout, and Stderr adapters now support a minimum
       log level parameter.
 
+    [Fixed]
+
+    - File will flock the handle when writing (if flock is avaiable).
+
     [Documented]
 
     - Revised docs for creating adapters

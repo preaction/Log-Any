@@ -7,10 +7,14 @@ package Log::Any::Adapter::File;
 # ABSTRACT: Simple adapter for logging to files
 our $VERSION = '0.92'; # TRIAL
 
+use Config;
+use Fcntl qw/:flock/;
 use IO::File;
 use Log::Any::Adapter::Util ();
 
 use base qw/Log::Any::Adapter::Base/;
+
+my $HAS_FLOCK = $Config{d_flock} || $Config{d_fcntl_can_lock} || $Config{d_lockf};
 
 my $trace_level = Log::Any::Adapter::Util::numeric_level('trace');
 sub new {
@@ -40,7 +44,9 @@ foreach my $method ( Log::Any->logging_methods() ) {
         my ( $self, $text ) = @_;
         return if $method_level > $self->{log_level};
         my $msg = sprintf( "[%s] %s\n", scalar(localtime), $text );
+        flock($self->{fh}, LOCK_EX) if $HAS_FLOCK;
         $self->{fh}->print($msg);
+        flock($self->{fh}, LOCK_UN) if $HAS_FLOCK;
       }
 }
 
@@ -77,9 +83,12 @@ __END__
 
 This simple built-in L<Log::Any|Log::Any> adapter logs each message to the
 specified file, with a datestamp prefix and newline appended. The file is
-opened for append with autoflush on. Category is ignored.
+opened for append with autoflush on.  If C<flock> is available, the handle
+will be locked when writing.
 
 The C<log_level> attribute may be set to define a minimum level to log.
+
+Category is ignored.
 
 =head1 SEE ALSO
 
