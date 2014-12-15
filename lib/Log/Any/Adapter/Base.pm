@@ -4,11 +4,9 @@ use warnings;
 
 package Log::Any::Adapter::Base;
 
-our $VERSION = '0.92'; # TRIAL
+our $VERSION = '0.92';    # TRIAL
 
-use Log::Any;
-
-# we import dump_one_line in case anything uses it
+# we import dump_one_line in case anything uses it from this package
 use Log::Any::Adapter::Util qw/make_method dump_one_line/;
 
 sub new {
@@ -21,22 +19,25 @@ sub new {
 
 sub init { }
 
-# we have this in case anything uses it
+# Create stub logging methods
+for my $method ( Log::Any::Adapter::Util::logging_and_detection_methods() ) {
+    no strict 'refs';
+    *$method = sub {
+        my $class = ref( $_[0] ) || $_[0];
+        die "$class does not implement $method";
+    };
+}
+
+# Create aliases
+Log::Any::Adapter::Util::create_aliases();
+
+# This methods installs a method that delegates to an object attribute
 sub delegate_method_to_slot {
     my ( $class, $slot, $method, $adapter_method ) = @_;
 
     make_method( $method,
         sub { my $self = shift; return $self->{$slot}->$adapter_method(@_) },
         $class );
-}
-
-# Forward 'warn' to 'warning', 'is_warn' to 'is_warning', and so on for all aliases
-my %aliases = Log::Any->log_level_aliases;
-while ( my ( $alias, $realname ) = each(%aliases) ) {
-    make_method( $alias, sub { my $self = shift; $self->$realname(@_) } );
-    my $is_alias    = "is_$alias";
-    my $is_realname = "is_$realname";
-    make_method( $is_alias, sub { my $self = shift; $self->$is_realname(@_) } );
 }
 
 1;

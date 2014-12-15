@@ -113,6 +113,31 @@ Returns a list of logging and detection methods (but not aliases).
 
 sub logging_and_detection_methods { @logging_and_detection_methods }
 
+=func create_aliases
+
+Creates logging and detection aliases in the calling package.  E.g. forwards
+"warn" to "warning", "is_warn" to "is_warning" and so on for all aliases.
+
+=cut
+
+sub create_aliases {
+    my $caller  = caller;
+    my %aliases = Log::Any->log_level_aliases;
+    while ( my ( $alias, $real ) = each(%aliases) ) {
+        for my $pre ( '', "is_" ) {
+            no strict 'refs';
+            $real  = $pre . $real;
+            $alias = $pre . $alias;
+            my $qual_real  = "${caller}::${real}";
+            my $qual_alias = "${caller}::${alias}";
+            if ( !*{$qual_real}{CODE} ) {
+                die "$caller does not have a $real function to alias as $alias";
+            }
+            *{$qual_alias} = \&{$qual_real};
+        }
+    }
+}
+
 =func cmp_deeply
 
 Used for testing; compares one-line L<Data::Dumper> dumps for two references.
