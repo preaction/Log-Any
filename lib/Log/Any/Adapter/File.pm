@@ -5,7 +5,7 @@ use warnings;
 package Log::Any::Adapter::File;
 
 # ABSTRACT: Simple adapter for logging to files
-our $VERSION = '0.91'; # TRIAL
+our $VERSION = '0.92'; # TRIAL
 
 use IO::File;
 

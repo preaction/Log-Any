@@ -4,7 +4,7 @@ use warnings;
 
 package Log::Any::Adapter::Test;
 
-our $VERSION = '0.91'; # TRIAL
+our $VERSION = '0.92'; # TRIAL
 
 use Data::Dumper;
 use Log::Any;

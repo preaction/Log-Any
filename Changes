@@ -4,6 +4,8 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+0.91      2014-12-14 22:13:09-05:00 America/New_York (TRIAL RELEASE)
+
     [Changed]
 
     - Removed dead code from Log::Any::Adapter::Base; particularly this
