@@ -4,7 +4,7 @@ use warnings;
 
 package Log::Any::Adapter::Base;
 
-our $VERSION = '0.92';    # TRIAL
+our $VERSION = '0.93'; # TRIAL
 
 # we import these in case any legacy adapter uses them as class methods
 use Log::Any::Adapter::Util qw/make_method dump_one_line/;
