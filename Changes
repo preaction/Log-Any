@@ -4,6 +4,10 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+    [Deprecated]
+
+    - Deprecated some methods in Log::Any::Adapter::Util
+
     [Documented]
 
     - Revised docs for creating adapters
