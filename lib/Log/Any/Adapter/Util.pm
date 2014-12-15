@@ -63,6 +63,30 @@ BEGIN {
     @logging_and_detection_methods = ( @logging_methods, @detection_methods );
 }
 
+=func logging_methods
+
+Returns a list of all logging method. E.g. "trace", "info", etc.
+
+=cut
+
+sub logging_methods               { @logging_methods }
+
+=func detection_methods
+
+Returns a list of detection methods.  E.g. "is_trace", "is_info", etc.
+
+=cut
+
+sub detection_methods             { @detection_methods }
+
+=func logging_and_detection_methods
+
+Returns a list of logging and detection methods (but not aliases).
+
+=cut
+
+sub logging_and_detection_methods { @logging_and_detection_methods }
+
 =func log_level_aliases
 
 Returns key/value pairs mapping aliases to "official" names.  E.g. "err" maps
@@ -71,14 +95,6 @@ to "error".
 =cut
 
 sub log_level_aliases             { %LOG_LEVEL_ALIASES }
-
-=func logging_methods
-
-Returns a list of all logging method. E.g. "trace", "info", etc.
-
-=cut
-
-sub logging_methods               { @logging_methods }
 
 =func logging_aliases
 
@@ -89,14 +105,6 @@ L</log_level_aliases>.
 
 sub logging_aliases               { @logging_aliases }
 
-=func detection_methods
-
-Returns a list of detection methods.  E.g. "is_trace", "is_info", etc.
-
-=cut
-
-sub detection_methods             { @detection_methods }
-
 =func detection_aliases
 
 Returns a list of detection aliases.  E.g. "is_err", "is_fatal", etc.
@@ -105,51 +113,18 @@ Returns a list of detection aliases.  E.g. "is_err", "is_fatal", etc.
 
 sub detection_aliases             { @detection_aliases }
 
-=func logging_and_detection_methods
+=func numeric_level
 
-Returns a list of logging and detection methods (but not aliases).
-
-=cut
-
-sub logging_and_detection_methods { @logging_and_detection_methods }
-
-=func create_aliases
-
-Creates logging and detection aliases in the calling package.  E.g. forwards
-"warn" to "warning", "is_warn" to "is_warning" and so on for all aliases.
+Given a level name (or alias), returns the numeric value described above under
+log level constants.  E.g. "err" would return 3.
 
 =cut
 
-sub create_aliases {
-    my $caller  = caller;
-    my %aliases = Log::Any->log_level_aliases;
-    while ( my ( $alias, $real ) = each(%aliases) ) {
-        for my $pre ( '', "is_" ) {
-            no strict 'refs';
-            $real  = $pre . $real;
-            $alias = $pre . $alias;
-            my $qual_real  = "${caller}::${real}";
-            my $qual_alias = "${caller}::${alias}";
-            if ( !*{$qual_real}{CODE} ) {
-                die "$caller does not have a $real function to alias as $alias";
-            }
-            *{$qual_alias} = \&{$qual_real};
-        }
-    }
-}
-
-=func cmp_deeply
-
-Used for testing; compares one-line L<Data::Dumper> dumps for two references.
-Also takes a test label as a third argument.
-
-=cut
-
-sub cmp_deeply {
-    my ( $ref1, $ref2, $name ) = @_;
-
-    my $tb = Test::Builder->new();
-    $tb->is_eq( dump_one_line($ref1), dump_one_line($ref2), $name );
+sub numeric_level {
+    my ($level) = @_;
+    my $canonical =
+      exists $LOG_LEVEL_ALIASES{$level} ? $LOG_LEVEL_ALIASES{$level} : $level;
+    return $LOG_LEVELS{ uc($canonical) };
 }
 
 =func dump_one_line
@@ -180,9 +155,26 @@ sub make_method {
     *{ $pkg . "::$method" } = $code;
 }
 
-=func read_file
+=func require_dynamic (DEPRECATED)
 
-Slurp a file.  Does *not* apply any layers.
+Given a class name, attempts to load it via require.  Throws an error
+on failure. Used internally and may become private in the future.
+
+=cut
+
+sub require_dynamic {
+    my ($class) = @_;
+
+    unless ( defined( eval "require $class" ) )
+    {    ## no critic (ProhibitStringyEval)
+        die $@;
+    }
+}
+
+=func read_file (DEPRECATED)
+
+Slurp a file.  Does *not* apply any layers.  Used for testing and may
+become private in the future.
 
 =cut
 
@@ -196,34 +188,19 @@ sub read_file {
     return $contents;
 }
 
-=func require_dynamic
+=func cmp_deeply (DEPRECATED)
 
-Given a class name, attempts to load it via require.  Throws an error
-on failure.
-
-=cut
-
-sub require_dynamic {
-    my ($class) = @_;
-
-    unless ( defined( eval "require $class" ) )
-    {    ## no critic (ProhibitStringyEval)
-        die $@;
-    }
-}
-
-=func numeric_level
-
-Given a level name (or alias), returns the numeric value described above under
-log level constants.  E.g. "err" would return 3.
+Compares L<dump_one_line> results for two references.  Also takes a test
+label as a third argument.  Used for testing and may become private in the
+future.
 
 =cut
 
-sub numeric_level {
-    my ($level) = @_;
-    my $canonical =
-      exists $LOG_LEVEL_ALIASES{$level} ? $LOG_LEVEL_ALIASES{$level} : $level;
-    return $LOG_LEVELS{ uc($canonical) };
+sub cmp_deeply {
+    my ( $ref1, $ref2, $name ) = @_;
+
+    my $tb = Test::Builder->new();
+    $tb->is_eq( dump_one_line($ref1), dump_one_line($ref2), $name );
 }
 
 1;
