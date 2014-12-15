@@ -6,7 +6,7 @@ package Log::Any::Adapter::Base;
 
 our $VERSION = '0.92';    # TRIAL
 
-# we import dump_one_line in case anything uses it from this package
+# we import these in case any legacy adapter uses them as class methods
 use Log::Any::Adapter::Util qw/make_method dump_one_line/;
 
 sub new {
@@ -27,9 +27,6 @@ for my $method ( Log::Any::Adapter::Util::logging_and_detection_methods() ) {
         die "$class does not implement $method";
     };
 }
-
-# Create aliases
-Log::Any::Adapter::Util::create_aliases();
 
 # This methods installs a method that delegates to an object attribute
 sub delegate_method_to_slot {
