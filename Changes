@@ -4,16 +4,19 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
-0.92      2014-12-15 07:12:38-05:00 America/New_York (TRIAL RELEASE)
-
-    [Deprecated]
-
-    - Deprecated some methods in Log::Any::Adapter::Util
-
     [Added]
+
+    - Logging now goes via a Log::Any::Proxy object instead of directly to
+      an adapter. This allows easy customization of the message production.
 
     - File, Stdout, and Stderr adapters now support a minimum
       log level parameter.
+
+    [Changed]
+
+    - Removed dead code from Log::Any::Adapter::Base; particularly this
+      was the formatting code, since this is now handled by
+      Log::Any::Proxy.
 
     [Fixed]
 
@@ -27,25 +30,12 @@ Revision history for Log-Any
 
     - Revised docs for creating adapters
 
-0.91      2014-12-14 22:13:09-05:00 America/New_York (TRIAL RELEASE)
-
-    [Changed]
-
-    - Removed dead code from Log::Any::Adapter::Base; particularly this
-      was the formatting code, since this is now handled by
-      Log::Any::Proxy.
-
-    [Documented]
-
     - Fixed typos and improved docs for Log::Any::Adapter::Util; removed
       stub docs for modules that didn't need it.
 
-0.90      2014-12-12 17:08:22-05:00 America/New_York (TRIAL RELEASE)
+    [Deprecated]
 
-    [Added]
-
-    - Logging now goes via a Log::Any::Proxy object instead of directly to
-      an adapter. This allows easy customization of the message production.
+    - Deprecated some methods in Log::Any::Adapter::Util
 
     [Internal]
 
@@ -54,6 +44,12 @@ Revision history for Log-Any
 
     - Eliminates all non-core dependencies (as of Perl 5.8.1), including
       Capture::Tiny, Devel::GlobalDestruction and Guard
+
+0.92      2014-12-15 07:12:38-05:00 America/New_York (TRIAL RELEASE)
+
+0.91      2014-12-14 22:13:09-05:00 America/New_York (TRIAL RELEASE)
+
+0.90      2014-12-12 17:08:22-05:00 America/New_York (TRIAL RELEASE)
 
 0.15  Apr 10, 2013
 
