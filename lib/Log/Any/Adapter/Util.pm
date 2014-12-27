@@ -37,6 +37,7 @@ our @EXPORT_OK = qw(
   logging_and_detection_methods
   logging_methods
   make_method
+  numeric_level
   read_file
   require_dynamic
 );
