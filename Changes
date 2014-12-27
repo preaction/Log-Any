@@ -4,6 +4,8 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+1.01      2014-12-26 22:25:13-05:00 America/New_York
+
     [Fixed]
 
     - 'numeric_level' was not exported properly from

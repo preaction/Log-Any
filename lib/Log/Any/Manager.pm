@@ -4,7 +4,7 @@ use warnings;
 
 package Log::Any::Manager;
 
-our $VERSION = '1.01';
+our $VERSION = '1.02';
 
 use Carp qw(croak);
 use Log::Any::Adapter::Util qw(require_dynamic);
