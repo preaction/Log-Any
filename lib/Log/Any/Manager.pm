@@ -7,7 +7,6 @@ package Log::Any::Manager;
 our $VERSION = '1.02';
 
 use Carp qw(croak);
-use Log::Any::Adapter::Util qw(require_dynamic);
 
 sub new {
     my $class = shift;
@@ -52,7 +51,7 @@ sub _choose_entry_for_category {
     my $default = $self->{default_adapter}{$category}
         || [ $self->_get_adapter_class("Null"), [] ];
     my ($adapter_class, $adapter_params) = @$default;
-    require_dynamic($adapter_class);
+    _require_dynamic($adapter_class);
     return {
         adapter_class  => $adapter_class,
         adapter_params => $adapter_params,
@@ -92,7 +91,7 @@ sub set {
     }
 
     my $adapter_class = $self->_get_adapter_class($adapter_name);
-    require_dynamic($adapter_class);
+    _require_dynamic($adapter_class);
 
     my $entry = $self->_new_entry( $pattern, $adapter_class, \@adapter_params );
     unshift( @{ $self->{entries} }, $entry );
@@ -173,6 +172,18 @@ else {
     eval ## no critic
       '0 && $started; sub _in_global_destruction () { $started && B::main_start()->isa(q[B::NULL]) }; 1'
       or die $@;
+}
+
+# XXX not DRY and not a great way to do this, but oh, well.
+sub _require_dynamic {
+    my ($class) = @_;
+
+    return 1 if $class->can('new'); # duck-type that class is loaded
+
+    unless ( defined( eval "require $class; 1" ) )
+    {    ## no critic (ProhibitStringyEval)
+        die $@;
+    }
 }
 
 package    # hide from PAUSE
