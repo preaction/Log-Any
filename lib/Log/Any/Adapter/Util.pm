@@ -208,6 +208,11 @@ sub cmp_deeply {
     $tb->is_eq( dump_one_line($ref1), dump_one_line($ref2), $name );
 }
 
+# 0.XX version loaded Log::Any and some adapters relied on this happening
+# behind the scenes.  Since Log::Any now uses this module, we load Log::Any
+# via require after compilation to mitigate circularity.
+require Log::Any;
+
 1;
 
 =head1 DESCRIPTION
