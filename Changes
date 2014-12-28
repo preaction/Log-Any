@@ -4,6 +4,8 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+1.02      2014-12-28 07:06:49-05:00 America/New_York
+
     [Fixed]
 
     - Some adapters relied on Log::Any::Adapter::Util also loading
