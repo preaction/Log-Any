@@ -4,13 +4,18 @@ use Test::More;
 use Log::Any::Test;
 use Log::Any::Adapter 'Test';
 
-plan tests => 4;
+plan tests => 5;
 
 my $log;
 
 $log = Log::Any->get_logger( prefix => 'Foo: ' );
 $log->info("test");
 $log->contains_ok(qr/^Foo: test$/, 'prefix added');
+$log->clear;
+
+$log = Log::Any->get_logger;
+$log->info(qw/one two three four/);
+$log->contains_ok(qr/^one two three four$/, 'arguments concatenated');
 $log->clear;
 
 $log = Log::Any->get_logger( filter => sub { "@_"} );

@@ -237,7 +237,7 @@ on messages to the L<Log::Any::Adapter> handling its category.
 
 =head2 Logging
 
-To log a message, use any of the log levels or aliases. e.g.
+To log a message, pass a single string to any of the log levels or aliases. e.g.
 
     $log->error("this is an error");
     $log->warn("this is a warning");

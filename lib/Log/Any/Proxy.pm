@@ -59,8 +59,9 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
         return $self->{adapter}->$is_realname;
     };
     *{$name} = sub {
-        my ( $self, $message ) = @_;
-        return unless defined $message and length $message;
+        my ( $self, @parts ) = @_;
+        my $message = join(" ", grep { defined($_) && length($_) } @parts );
+        return unless length $message;
         $message = $self->{filter}->( $self->{category}, $numeric, $message )
           if defined $self->{filter};
         return unless defined $message and length $message;
@@ -124,6 +125,13 @@ Pass a string to be logged.  Do not include a newline.
 
 The log string will be tranformed via the C<filter> attribute (if any) and
 the C<prefix> (if any) will be prepended.
+
+B<NOTE>: While you are encouraged to pass a single string to be logged, if
+multiple arguments are passed, they are concatenated with a space character
+into a single string before processing.  This ensures consistency across
+adapters, some of which may support multiple arguments to their logging
+functions (and which concatenate in different ways) and some of which do
+not.
 
 =head2 Advanced logging
 

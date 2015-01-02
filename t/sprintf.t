@@ -9,13 +9,13 @@ plan tests => 1;
 
 my $log = Log::Any->get_logger();
 my @params = ( "args for %s: %s", 'app', [ 'foo', { 'bar' => 5 } ] );
-$log->info(@params);
+$log->info("not %s", "sprintf");
 $log->debugf(@params);
 cmp_deeply(
     $log->msgs,
     [
         {
-            message     => "args for %s: %s",
+            message     => "not \%s sprintf",
             level    => 'info',
             category => 'main'
         },

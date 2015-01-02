@@ -4,6 +4,13 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+    [Changed]
+
+    - Log::Any::Proxy concatenates arguments to basic logging functions
+      with a space character before passing them to adapters as a single
+      string.  This ensures consistency across adapters that handle
+      multiple arguments differently.
+
 1.02      2014-12-28 07:06:49-05:00 America/New_York
 
     [Fixed]
