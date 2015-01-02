@@ -4,7 +4,7 @@ use warnings;
 
 package Log::Any::Proxy::Test;
 
-our $VERSION = '1.03';
+our $VERSION = '1.04';
 
 use base qw/Log::Any::Proxy/;
 

@@ -4,6 +4,8 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+1.03      2015-01-01 22:39:41-05:00 America/New_York
+
     [Changed]
 
     - Log::Any::Proxy concatenates arguments to basic logging functions
