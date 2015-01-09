@@ -75,8 +75,8 @@ adapter class for it. Typically this is named Log::Any::Adapter::I<something>.
 
 =head2 Adapters in this distribution
 
-Three basic adapters come with this distribution -- L<File>, L<Stdout> and
-L<Stderr>:
+Three basic adapters come with this distribution -- L<Log::Any::Adapter::File>,
+L<Log::Any::Adapter::Stdout> and L<Log::Any::Adapter::Stderr>:
 
     use Log::Any::Adapter ('File', '/path/to/file.log');
     use Log::Any::Adapter ('Stdout');
