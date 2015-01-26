@@ -28,6 +28,18 @@ for my $method ( Log::Any::Adapter::Util::logging_and_detection_methods() ) {
     };
 }
 
+# Create relay method for each alias
+{
+    my %aliases = Log::Any::Adapter::Util::log_level_aliases();
+    for (keys %aliases) {
+        my $dest    = $aliases{$_};
+        my $is_dest = "is_$dest";
+        no strict 'refs';
+        *$_        = sub { goto $_[0]->can($dest) };
+        *{"is_$_"} = sub { goto $_[0]->can($is_dest) };
+    }
+}
+
 # This methods installs a method that delegates to an object attribute
 sub delegate_method_to_slot {
     my ( $class, $slot, $method, $adapter_method ) = @_;
