@@ -7,7 +7,6 @@ package Log::Any;
 # ABSTRACT: Bringing loggers and listeners together
 our $VERSION = '1.04';
 
-use Carp ();
 use Log::Any::Manager;
 use Log::Any::Adapter::Util qw(
   require_dynamic
@@ -54,8 +53,10 @@ sub _export_to_caller {
         }
     }
 
-    Carp::croak("Argument list not balanced: @params")
-      unless @params % 2 == 0;
+    unless ( @params % 2 == 0 ) {
+        require Carp;
+        Carp::croak("Argument list not balanced: @params");
+    }
 
     # get logger if one was requested
     if ($saw_log_param) {

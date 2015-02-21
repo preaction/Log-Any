@@ -27,10 +27,14 @@ sub _dump_one_line {
 sub new {
     my $class = shift;
     my $self = { formatter => \&_default_formatter, @_ };
-    Carp::croak("$class requires an 'adapter' parameter")
-      unless $self->{adapter};
-    Carp::croak("$class requires an 'category' parameter")
-      unless $self->{category};
+    unless ( $self->{adapter} ) {
+        require Carp;
+        Carp::croak("$class requires an 'adapter' parameter");
+    }
+    unless ( $self->{category} ) {
+        require Carp;
+        Carp::croak("$class requires an 'category' parameter")
+    }
     bless $self, $class;
     $self->init(@_);
     return $self;

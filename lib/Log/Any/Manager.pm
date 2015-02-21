@@ -6,8 +6,6 @@ package Log::Any::Manager;
 
 our $VERSION = '1.04';
 
-use Carp qw(croak);
-
 sub new {
     my $class = shift;
     my $self  = {
@@ -79,8 +77,10 @@ sub set {
     }
     my ( $adapter_name, @adapter_params ) = @_;
 
-    croak "expected adapter name"
-      unless defined($adapter_name) && $adapter_name =~ /\S/;
+    unless ( defined($adapter_name) && $adapter_name =~ /\S/ ) {
+        require Carp;
+        Carp::croak("expected adapter name");
+    }
 
     my $pattern = $options->{category};
     if ( !defined($pattern) ) {
