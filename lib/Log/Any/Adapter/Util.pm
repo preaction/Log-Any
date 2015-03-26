@@ -5,7 +5,7 @@ use warnings;
 package Log::Any::Adapter::Util;
 
 # ABSTRACT: Common utility functions for Log::Any
-our $VERSION = '1.04';
+our $VERSION = '1.032'; # TRIAL
 
 use Data::Dumper;
 use base qw(Exporter);
