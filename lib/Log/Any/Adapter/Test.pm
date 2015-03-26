@@ -14,6 +14,24 @@ use base qw/Log::Any::Adapter::Base/;
 my $tb = Test::Builder->new();
 my @msgs;
 
+# Ignore arguments for the original adapter if we're overriding, but recover
+# category from argument list; this depends on category => $category being put
+# at the end of the list in Log::Any::Manager. If not overriding, allow
+# arguments as usual.
+
+sub new {
+    my $class = shift;
+    if ( defined $Log::Any::OverrideDefaultAdapterClass
+        && $Log::Any::OverrideDefaultAdapterClass eq __PACKAGE__ )
+    {
+        my $category = pop @_;
+        return $class->SUPER::new( category => $category );
+    }
+    else {
+        return $class->SUPER::new(@_);
+    }
+}
+
 # All detection methods return true
 #
 foreach my $method ( Log::Any::Adapter::Util::detection_methods() ) {
