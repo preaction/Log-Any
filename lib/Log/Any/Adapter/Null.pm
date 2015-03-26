@@ -5,7 +5,7 @@ use warnings;
 package Log::Any::Adapter::Null;
 
 # ABSTRACT: Discards all log messages
-our $VERSION = '1.032'; # TRIAL
+our $VERSION = '1.033';
 
 use base qw/Log::Any::Adapter::Base/;
 

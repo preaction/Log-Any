@@ -4,7 +4,7 @@ use warnings;
 
 package Log::Any::Adapter::Test;
 
-our $VERSION = '1.032'; # TRIAL
+our $VERSION = '1.033';
 
 use Log::Any::Adapter::Util qw/dump_one_line/;
 use Test::Builder;
