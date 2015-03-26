@@ -9,7 +9,8 @@ Revision history for Log-Any
     - Log::Any::Adapter::Test passed through all constructor arguments,
       which could be fatal when mocking adapters without all key-value
       pairs (like Log::Any::Adapter::File); now this only passes through
-      the category and ignores other parameters.
+      the category and ignores other parameters when used as an
+      adapter class override.
 
 1.03      2015-01-01 22:39:41-05:00 America/New_York
 
