@@ -4,6 +4,11 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+    [Fixed]
+
+    - does_not_contain_ok test adapter function now gives proper
+      diagnostic message
+
 1.032     2015-03-26 17:23:37-04:00 America/New_York
 
     - no changes from 1.031
