@@ -132,7 +132,6 @@ In a Moo/Moose-based module:
 
     has log => (
         is => 'ro',
-        isa => 'Log::Any::Proxy',
         default => sub { Log::Any->get_logger },
     );
 
