@@ -128,6 +128,7 @@ In a CPAN or other module:
 In a Moo/Moose-based module:
 
     package Foo;
+    use Log::Any ();
     use Moo;
 
     has log => (
