@@ -4,6 +4,13 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+    [Added]
+
+    - The default formatter now expands code references.  If the first
+      argument is a code reference, it is expanded and returned.  If an
+      argument to "sprintf" style formatting is a code reference, it is
+      expanded.
+
     [Fixed]
 
     - does_not_contain_ok test adapter function now gives proper

@@ -4,7 +4,7 @@ use Test::More;
 use Log::Any::Test;
 use Log::Any::Adapter 'Test';
 
-plan tests => 5;
+plan tests => 7;
 
 my $log;
 
@@ -16,6 +16,16 @@ $log->clear;
 $log = Log::Any->get_logger;
 $log->info(qw/one two three four/);
 $log->contains_ok(qr/^one two three four$/, 'arguments concatenated');
+$log->clear;
+
+$log = Log::Any->get_logger;
+$log->infof(sub { "ran sub" } );
+$log->contains_ok(qr/^ran sub$/, 'default formatter expands coderefs');
+$log->clear;
+
+$log = Log::Any->get_logger;
+$log->infof("got %s %s", "coderef", sub { "expanded" } );
+$log->contains_ok(qr/^got coderef expanded$/, 'default formatter expands coderefs as sprintf args');
 $log->clear;
 
 $log = Log::Any->get_logger( filter => sub { "@_"} );

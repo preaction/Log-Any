@@ -11,9 +11,15 @@ use Log::Any::Adapter::Util ();
 
 sub _default_formatter {
     my ( $cat, $lvl, $format, @params ) = @_;
+    return $format->() if ref($format) eq 'CODE';
     my @new_params =
-      map { !defined($_) ? '<undef>' : ref($_) ? _dump_one_line($_) : $_ }
-      @params;
+      map {
+        my $type = ref($_);
+        !defined($_)        ? '<undef>'
+          : $type eq 'CODE' ? $_->()
+          : $type           ? _dump_one_line($_)
+          : $_
+      } @params;
     return sprintf( $format, @new_params );
 }
 
@@ -157,10 +163,14 @@ When these methods are called, the adapter is first checked to see if it is
 logging at that level.  If not, the method returns without logging.
 
 Next, arguments are transformed to a message string via the C<formatter>
-attribute.  The default acts like C<sprintf> with some helpful formatting.
+attribute.
 
-Finally, the message string is logged via the simple logging functions, which
-can transform or prefix as described above.
+The default formatter first checks if the first log argument is a code
+reference.  If so, it will evaluated and returned. Otherwise, the formatter
+acts like C<sprintf> with some helpful formatting.
+
+Finally, the message string is logged via the simple logging functions,
+which can transform or prefix as described above.
 
 =attr adapter
 
@@ -203,9 +213,14 @@ be logged.
         return sprintf($format, @args);
     }
 
-The default formatter acts like C<sprintf>, except that undef arguments are
-changed to C<< <undef> >> and any references or objects are dumped via
-L<Data::Dumper> (but without newlines).
+The default formatter does the following:
+
+=for :list
+* if the first argument is a code reference, it is executed and the result
+  returned
+* otherwise, it acts like C<sprintf>, except that undef arguments are
+  changed to C<< <undef> >>, any coderefs are run, and any references or
+  objects are dumped via L<Data::Dumper> (but without newlines).
 
 Numeric levels range from 0 (emergency) to 8 (trace).  Constant functions
 for these levels are available from L<Log::Any::Adapter::Util>.
