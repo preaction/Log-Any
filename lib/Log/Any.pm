@@ -236,6 +236,18 @@ If no category is specified, the calling package is used.
 A logger object is an instance of L<Log::Any::Proxy>, which passes
 on messages to the L<Log::Any::Adapter> handling its category.
 
+If the C<proxy_class> argument is passed, an alternative to
+L<Log::Any::Proxy> (such as a subclass) will be instantiated and returned
+instead.  The argument is automatically prepended with "Log::Any::Proxy::".
+If instead you want to pass the full name of a proxy class, prefix it with
+a "+". E.g.
+
+    # Log::Any::Proxy::Foo
+    my $log = Log::Any->get_logger(proxy_class => 'Foo');
+
+    # MyLog::Proxy
+    my $log = Log::Any->get_logger(proxy_class => '+MyLog::Proxy');
+
 =head2 Logging
 
 To log a message, pass a single string to any of the log levels or aliases. e.g.
