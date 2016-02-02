@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 4;
+use Test::More tests => 5;
 use Log::Any::Test;
 use Log::Any qw($log);
 
@@ -15,3 +15,8 @@ $log->contains_ok(
     'got debug' );
 $log->contains_ok( qr/this is a \["multi\\nline"\] value/, 'got multi-line' );
 $log->empty_ok();
+
+TODO: {
+    local $TODO = 'to do';
+    $log->contains_ok(qr/should not be there/, "this is TODO on purpose");
+}

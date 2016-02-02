@@ -74,6 +74,8 @@ sub clear {
 sub contains_ok {
     my ( $self, $regex, $test_name ) = @_;
 
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
     $test_name ||= "log contains '$regex'";
     my $found =
       _first_index( sub { $_->{message} =~ /$regex/ }, @{ $self->msgs } );
@@ -90,6 +92,8 @@ sub contains_ok {
 
 sub category_contains_ok {
     my ( $self, $category, $regex, $test_name ) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     $test_name ||= "log for $category contains '$regex'";
     my $found =
@@ -111,6 +115,8 @@ sub category_contains_ok {
 sub does_not_contain_ok {
     my ( $self, $regex, $test_name ) = @_;
 
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
     $test_name ||= "log does not contain '$regex'";
     my $found =
       _first_index( sub { $_->{message} =~ /$regex/ }, @{ $self->msgs } );
@@ -125,6 +131,8 @@ sub does_not_contain_ok {
 
 sub category_does_not_contain_ok {
     my ( $self, $category, $regex, $test_name ) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     $test_name ||= "log for $category contains '$regex'";
     my $found =
@@ -144,6 +152,8 @@ sub category_does_not_contain_ok {
 sub empty_ok {
     my ( $self, $test_name ) = @_;
 
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
     $test_name ||= "log is empty";
     if ( !@{ $self->msgs } ) {
         $tb->ok( 1, $test_name );
@@ -158,6 +168,8 @@ sub empty_ok {
 
 sub contains_only_ok {
     my ( $self, $regex, $test_name ) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     $test_name ||= "log contains only '$regex'";
     my $count = scalar( @{ $self->msgs } );
@@ -180,5 +192,6 @@ sub _first_index {
     }
     return -1;
 }
+
 
 1;
