@@ -11,6 +11,11 @@ Revision history for Log-Any
       argument to "sprintf" style formatting is a code reference, it is
       expanded.
 
+    [Changed]
+
+    - The File adapter now opens files with the ":utf8" layer.  It also
+      takes a 'binmode' attribute to change the default.
+
     [Fixed]
 
     - does_not_contain_ok test adapter function now gives proper

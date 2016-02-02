@@ -4,7 +4,7 @@ use Test::More;
 use File::Temp qw(tempdir);
 use Log::Any::Adapter::Util qw(cmp_deeply read_file);
 
-plan tests => 15;
+plan tests => 16;
 
 require Log::Any::Adapter;
 
@@ -19,6 +19,8 @@ require Log::Any::Adapter;
     is( scalar( read_file($file) ), '', "debug not logged to file" );
     $log->warn("to file");
     like( scalar( read_file($file) ), qr/^\[.*\] to file\n$/, "warn logged to file" );
+    $log->warn("\N{WHITE STAR} \N{BLACK STAR}");
+    like( scalar( read_file($file) ), qr/\N{WHITE STAR} \N{BLACK STAR}$/ms, "warn logged UTF-8 to file" );
     {
         my $file = "$tempdir/temp2.log";
         Log::Any::Adapter->set({lexically => \my $lex}, 'File', $file);

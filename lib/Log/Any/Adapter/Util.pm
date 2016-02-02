@@ -187,7 +187,7 @@ sub read_file {
     my ($file) = @_;
 
     local $/ = undef;
-    open( my $fh, '<', $file )
+    open( my $fh, '<:utf8', $file )
       or die "cannot open '$file': $!";
     my $contents = <$fh>;
     return $contents;

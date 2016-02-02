@@ -32,7 +32,9 @@ sub init {
         $self->{log_level} = $trace_level;
     }
     my $file = $self->{file};
-    open( $self->{fh}, ">>", $file )
+    my $binmode ||= ':utf8';
+    $binmode = ":$binmode" unless substr($binmode,0,1) eq ':';
+    open( $self->{fh}, ">>$binmode", $file )
       or die "cannot open '$file' for append: $!";
     $self->{fh}->autoflush(1);
 }
@@ -87,6 +89,9 @@ opened for append with autoflush on.  If C<flock> is available, the handle
 will be locked when writing.
 
 The C<log_level> attribute may be set to define a minimum level to log.
+
+The C<binmode> attribute may be set to define a PerlIO layer string to use
+when opening the file.  The default is C<:utf8>.
 
 Category is ignored.
 
