@@ -51,15 +51,13 @@ my %aliases = Log::Any::Adapter::Util::log_level_aliases();
 # Set up methods/aliases and detection methods/aliases
 foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
 {
-    my $realname    = $aliases{$name} || $name;
     my $namef       = $name . "f";
     my $is_name     = "is_$name";
-    my $is_realname = "is_$realname";
-    my $numeric     = Log::Any::Adapter::Util::numeric_level($realname);
+    my $numeric     = Log::Any::Adapter::Util::numeric_level($name);
     no strict 'refs';
     *{$is_name} = sub {
         my ($self) = @_;
-        return $self->{adapter}->$is_realname;
+        return $self->{adapter}->$is_name;
     };
     *{$name} = sub {
         my ( $self, @parts ) = @_;
@@ -70,11 +68,11 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
         return unless defined $message and length $message;
         $message = "$self->{prefix}$message"
           if defined $self->{prefix} && length $self->{prefix};
-        return $self->{adapter}->$realname($message);
+        return $self->{adapter}->$name($message);
     };
     *{$namef} = sub {
         my ( $self, @args ) = @_;
-        return unless $self->{adapter}->$is_realname;
+        return unless $self->{adapter}->$is_name;
         my $message =
           $self->{formatter}->( $self->{category}, $numeric, @args );
         return unless defined $message and length $message;
