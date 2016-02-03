@@ -198,7 +198,7 @@ sub read_file {
     my ($file) = @_;
 
     local $/ = undef;
-    open( my $fh, '<:utf8', $file )
+    open( my $fh, '<:utf8', $file ) ## no critic
       or die "cannot open '$file': $!";
     my $contents = <$fh>;
     return $contents;
