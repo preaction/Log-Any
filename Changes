@@ -25,6 +25,11 @@ Revision history for Log-Any
 
     - documented the 'proxy_class' argument to `get_logger`
 
+    [~Internal~]
+
+    - Data::Dumper is loaded lazily, to reduce module load times
+      for programs that don't need it.
+
 1.032     2015-03-26 17:23:37-04:00 America/New_York
 
     - no changes from 1.031

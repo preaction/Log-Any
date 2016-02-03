@@ -7,7 +7,8 @@ package Log::Any::Adapter::Null;
 # ABSTRACT: Discards all log messages
 our $VERSION = '1.033';
 
-use base qw/Log::Any::Adapter::Base/;
+use Log::Any::Adapter::Base;
+our @ISA = qw/Log::Any::Adapter::Base/;
 
 use Log::Any::Adapter::Util ();
 

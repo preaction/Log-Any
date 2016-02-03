@@ -9,7 +9,8 @@ our $VERSION = '1.033';
 
 use Log::Any::Adapter::Util ();
 
-use base qw/Log::Any::Adapter::Base/;
+use Log::Any::Adapter::Base;
+our @ISA = qw/Log::Any::Adapter::Base/;
 
 my $trace_level = Log::Any::Adapter::Util::numeric_level('trace');
 

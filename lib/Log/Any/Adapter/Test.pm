@@ -9,7 +9,8 @@ our $VERSION = '1.033';
 use Log::Any::Adapter::Util qw/dump_one_line/;
 use Test::Builder;
 
-use base qw/Log::Any::Adapter::Base/;
+use Log::Any::Adapter::Base;
+our @ISA = qw/Log::Any::Adapter::Base/;
 
 my $tb = Test::Builder->new();
 my @msgs;

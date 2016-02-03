@@ -7,8 +7,8 @@ package Log::Any::Adapter::Util;
 # ABSTRACT: Common utility functions for Log::Any
 our $VERSION = '1.033';
 
-use Data::Dumper;
-use base qw(Exporter);
+use Exporter;
+our @ISA = qw/Exporter/;
 
 my %LOG_LEVELS;
 BEGIN {
@@ -135,12 +135,23 @@ Given a reference, returns a one-line L<Data::Dumper> dump with keys sorted.
 
 =cut
 
-sub dump_one_line {
-    my ($value) = @_;
+# lazy trampoline to load Data::Dumper only on demand but then not try to
+# require it pointlessly each time
+*dump_one_line = sub {
+    require Data::Dumper;
 
-    return Data::Dumper->new( [$value] )->Indent(0)->Sortkeys(1)->Quotekeys(0)
-      ->Terse(1)->Dump();
-}
+    my $dumper = sub {
+        my ($value) = @_;
+
+        return Data::Dumper->new( [$value] )->Indent(0)->Sortkeys(1)->Quotekeys(0)
+        ->Terse(1)->Useqq(1)->Dump();
+    };
+
+    my $string = $dumper->(@_);
+    no warnings 'redefine';
+    *dump_one_line = $dumper;
+    return $string;
+};
 
 =func make_method
 

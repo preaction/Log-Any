@@ -6,7 +6,8 @@ package Log::Any::Proxy::Test;
 
 our $VERSION = '1.033';
 
-use base qw/Log::Any::Proxy/;
+use Log::Any::Proxy;
+our @ISA = qw/Log::Any::Proxy/;
 
 my @test_methods = qw(
   msgs

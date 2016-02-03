@@ -17,17 +17,10 @@ sub _default_formatter {
         my $type = ref($_);
         !defined($_)        ? '<undef>'
           : $type eq 'CODE' ? $_->()
-          : $type           ? _dump_one_line($_)
+          : $type           ? Log::Any::Adapter::Util::dump_one_line($_)
           : $_
       } @params;
     return sprintf( $format, @new_params );
-}
-
-sub _dump_one_line {
-    my ($value) = @_;
-
-    return Data::Dumper->new( [$value] )->Indent(0)->Sortkeys(1)->Quotekeys(0)
-      ->Terse(1)->Useqq(1)->Dump();
 }
 
 sub new {

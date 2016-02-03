@@ -12,7 +12,8 @@ use Fcntl qw/:flock/;
 use IO::File;
 use Log::Any::Adapter::Util ();
 
-use base qw/Log::Any::Adapter::Base/;
+use Log::Any::Adapter::Base;
+our @ISA = qw/Log::Any::Adapter::Base/;
 
 my $HAS_FLOCK = $Config{d_flock} || $Config{d_fcntl_can_lock} || $Config{d_lockf};
 
