@@ -86,8 +86,8 @@ sub contains_ok {
     }
     else {
         $tb->ok( 0, $test_name );
-        $tb->diag( "could not find message matching $regex; log contains: "
-              . $self->dump_one_line( $self->msgs ) );
+        $tb->diag( "could not find message matching $regex" );
+        _diag_msgs();
     }
 }
 
@@ -107,9 +107,8 @@ sub category_contains_ok {
     }
     else {
         $tb->ok( 0, $test_name );
-        $tb->diag(
-            "could not find $category message matching $regex; log contains: "
-              . $self->dump_one_line( $self->msgs ) );
+        $tb->diag( "could not find $category message matching $regex" );
+        _diag_msgs();
     }
 }
 
@@ -161,8 +160,8 @@ sub empty_ok {
     }
     else {
         $tb->ok( 0, $test_name );
-        $tb->diag( "log is not empty; contains "
-              . $self->dump_one_line( $self->msgs ) );
+        $tb->diag( "log is not empty" );
+        _diag_msgs();
         $self->clear();
     }
 }
@@ -180,8 +179,18 @@ sub contains_only_ok {
     }
     else {
         $tb->ok( 0, $test_name );
-        $tb->diag( "log contains $count messages: "
-              . $self->dump_one_line( $self->msgs ) );
+        _diag_msgs();
+    }
+}
+
+sub _diag_msgs {
+    my $count = @msgs;
+    if ( ! $count ) {
+        $tb->diag("log contains no messages");
+    }
+    else {
+        $tb->diag("log contains $count message" . ( $count > 1 ? "s:" : ":"));
+        $tb->diag(dump_one_line($_)) for @msgs;
     }
 }
 

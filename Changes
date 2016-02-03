@@ -21,6 +21,9 @@ Revision history for Log-Any
     - does_not_contain_ok test adapter function now gives proper
       diagnostic message
 
+    - all diagnostic messages that output the captured log now
+      correctly dump the log with pretty formatting
+
     [Documented]
 
     - documented the 'proxy_class' argument to `get_logger`
