@@ -4,6 +4,8 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+1.033     2016-02-03 10:32:57-05:00 America/New_York (TRIAL RELEASE)
+
     [Added]
 
     - The default formatter now expands code references.  If the first
