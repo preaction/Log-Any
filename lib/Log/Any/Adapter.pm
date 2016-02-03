@@ -167,7 +167,10 @@ adapter setting will be removed. e.g.
 
 =back
 
-C<set> returns an entry object, which can be passed to C<remove>.
+C<set> returns an entry object, which can be passed to C<remove>.  If you
+call C<set> repeatedly without calling C<remove> you will leak memory.  For
+most programs that set an adapter once until the end of the program, this
+shouldn't matter.
 
 =item use Log::Any::Adapter (...)
 
@@ -180,11 +183,19 @@ Remove an I<entry> previously returned by C<set>.
 
 =back
 
-=head1 MULTIPLE ADAPTER SETTINGS
+=head1 USING MORE THAN ONE ADAPTER
 
-C<Log::Any> maintains a stack of entries created via C<set>.
+C<Log::Any> maintains a stack of entries created via C<set>.  If you call
+C<set> repeatedly, you will leak memory unless you do one of the
+following:
 
-When you get a logger for a particular category, C<Log::Any> will work its way
+=for :list
+* call C<remove> on the adapter returned from C<set> when you are done with
+  it
+* use the C<lexically> feature to set a guard variable that will clean it
+  up when it goes out of scope
+
+When getting a logger for a particular category, C<Log::Any> will work its way
 down the stack and use the first matching entry.
 
 Whenever the stack changes, any C<Log::Any> loggers that have previously been

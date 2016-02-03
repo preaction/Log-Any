@@ -4,6 +4,11 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+    [Documented]
+
+    - Noted that repeatedly calling 'set' to set an adapter without calling
+      'remove' or using the 'lexically' feature will leak memory.
+
 1.033     2016-02-03 10:32:57-05:00 America/New_York (TRIAL RELEASE)
 
     [Added]
