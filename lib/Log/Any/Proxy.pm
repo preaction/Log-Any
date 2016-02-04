@@ -14,10 +14,8 @@ sub _default_formatter {
     return $format->() if ref($format) eq 'CODE';
     my @new_params =
       map {
-        my $type = ref($_);
-        !defined($_)        ? '<undef>'
-          : $type eq 'CODE' ? $_->()
-          : $type           ? Log::Any::Adapter::Util::dump_one_line($_)
+           !defined($_) ? '<undef>'
+          : ref($_)     ? Log::Any::Adapter::Util::dump_one_line($_)
           : $_
       } @params;
     return sprintf( $format, @new_params );
@@ -159,8 +157,9 @@ Next, arguments are transformed to a message string via the C<formatter>
 attribute.
 
 The default formatter first checks if the first log argument is a code
-reference.  If so, it will evaluated and returned. Otherwise, the formatter
-acts like C<sprintf> with some helpful formatting.
+reference.  If so, it will executed and the result used as the formatted
+message. Otherwise, the formatter acts like C<sprintf> with some helpful
+formatting.
 
 Finally, the message string is logged via the simple logging functions,
 which can transform or prefix as described above.
@@ -212,8 +211,8 @@ The default formatter does the following:
 * if the first argument is a code reference, it is executed and the result
   returned
 * otherwise, it acts like C<sprintf>, except that undef arguments are
-  changed to C<< <undef> >>, any coderefs are run, and any references or
-  objects are dumped via L<Data::Dumper> (but without newlines).
+  changed to C<< <undef> >> and any references or objects are dumped via
+  L<Data::Dumper> (but without newlines).
 
 Numeric levels range from 0 (emergency) to 8 (trace).  Constant functions
 for these levels are available from L<Log::Any::Adapter::Util>.

@@ -25,7 +25,7 @@ $log->clear;
 
 $log = Log::Any->get_logger;
 $log->infof("got %s %s", "coderef", sub { "expanded" } );
-$log->contains_ok(qr/^got coderef expanded$/, 'default formatter expands coderefs as sprintf args');
+$log->contains_ok(qr/DUMMY/, 'default formatter does not expand coderefs as sprintf args');
 $log->clear;
 
 $log = Log::Any->get_logger( filter => sub { "@_"} );

@@ -4,6 +4,14 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+    [Changed]
+
+    - The default formatter now replaces a code reference argument with
+      the results of calling the code reference ONLY when it is the first
+      argument (in place of a format string).  Code references in
+      subsequent arguments (to sprintf) are not executed, as this would
+      break backwards compatibility.
+
     [Documented]
 
     - Noted that repeatedly calling 'set' to set an adapter without calling
