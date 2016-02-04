@@ -5,7 +5,7 @@ use warnings;
 package Log::Any::Adapter::Util;
 
 # ABSTRACT: Common utility functions for Log::Any
-our $VERSION = '1.034';
+our $VERSION = '1.036';
 
 use Exporter;
 our @ISA = qw/Exporter/;
