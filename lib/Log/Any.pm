@@ -312,6 +312,15 @@ loading C<Log::Any>
 
 The name of the default class follows the same rules as used by L<Log::Any::Adapter>.
 
+=head2 Setting an alternate proxy class
+
+To choose a proxy class other than the default L<Log::Any::Proxy>, pass it as a
+parameter when loading C<Log::Any>
+
+    use Log::Any '$log', proxy_class => 'My::Log::Any::Proxy';
+
+Alternate proxy classes can define different logging methods.
+
 =head2 Configuring the proxy
 
 Any parameter passed on the import line or via the C<get_logger> method
