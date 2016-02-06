@@ -4,6 +4,11 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+    [Fixed]
+
+    - Fixed t/filescreen.t Unicode string tests to use a backwards
+      compatible form.  Should fix tests before 5.16.
+
 1.035     2016-02-04 14:47:20-05:00 America/New_York (TRIAL RELEASE)
 
     [Changed]
