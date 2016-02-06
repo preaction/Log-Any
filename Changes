@@ -4,6 +4,8 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+1.037     2016-02-05 20:22:34-05:00 America/New_York (TRIAL RELEASE)
+
     [Fixed]
 
     - Fixed t/filescreen.t Unicode string tests to use a backwards
