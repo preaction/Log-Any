@@ -124,7 +124,7 @@ Pass a string to be logged.  Do not include a newline.
 
     $log->info("Got some new for you.");
 
-The log string will be tranformed via the C<filter> attribute (if any) and
+The log string will be transformed via the C<filter> attribute (if any) and
 the C<prefix> (if any) will be prepended.
 
 B<NOTE>: While you are encouraged to pass a single string to be logged, if
