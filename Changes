@@ -4,6 +4,10 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+    [Fixed]
+
+    - Fixed duplicated documentation sections.
+
 1.038     2016-02-10 14:15:31-07:00 America/Mazatlan
 
     - No changes from 1.037
