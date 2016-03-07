@@ -13,13 +13,38 @@ use File::Basename ();
 
 my $log_params;
 
+
+# Build log level priorities
+my @logging_methods = Log::Any->logging_methods;
+our %logging_levels;
+for my $i (0..@logging_methods-1) {
+    $logging_levels{$logging_methods[$i]} = $i;
+}
+# some common typos
+$logging_levels{warn} = $logging_levels{warning};
+$logging_levels{inform} = $logging_levels{info};
+$logging_levels{err} = $logging_levels{error};
+
+sub _min_level {
+    my $self = shift;
+
+    return $ENV{LOG_LEVEL}
+        if $ENV{LOG_LEVEL} && defined $logging_levels{$ENV{LOG_LEVEL}};
+    return 'trace' if $ENV{TRACE};
+    return 'debug' if $ENV{DEBUG};
+    return 'info'  if $ENV{VERBOSE};
+    return 'error' if $ENV{QUIET};
+    return 'trace';
+}
+
 # When initialized we connect to syslog.
 sub init {
     my ($self) = @_;
-
+    
     $self->{name}     ||= File::Basename::basename($0) || 'perl';
     $self->{options}  ||= LOG_PID;
     $self->{facility} ||= LOG_LOCAL7;
+    $self->{min_level}||= $self->_min_level;
 
     # We want to avoid re-opening the syslog unnecessarily, so only do it if
     # the parameters have changed.
@@ -59,13 +84,23 @@ foreach my $method (Log::Any->logging_methods()) {
     }->{$method};
     defined($priority) or $priority = LOG_ERR; # unknown, take a guess.
 
-    make_method($method, sub { shift; syslog($priority, '%s', join('', @_)) });
+    make_method($method, sub { 
+        my $self = shift;
+        return if $logging_levels{$method} <
+                $logging_levels{$self->{min_level}};
+
+        syslog($priority, '%s', join('', @_)) 
+    });
 }
 
 # Create detection methods: is_debug, is_info, etc.
-my $always_on = sub { 1; };
 foreach my $method (Log::Any->detection_methods()) {
-    make_method($method, $always_on);
+    my $level = $method; $level =~ s/^is_//;
+    make_method($method, sub {
+        my $self = shift;
+        return $logging_levels{$level} >= $logging_levels{$self->{min_level}};
+    });
+
 }
 
 
@@ -134,6 +169,17 @@ C<LOCAL7>, which is not the most useful value ever, but is less bad than
 assuming the fixed facilities.
 
 See L<Unix::Syslog> and L<syslog(3)> for details on the available facilities.
+
+=item min_level
+
+Minimum syslog level. All messages below the selected level will be silently
+discarded. Default is debug. 
+
+If LOG_LEVEL environment variable is set, it will be used instead. If TRACE
+environment variable is set to true, level will be set to 'trace'. If DEBUG
+environment variable is set to true, level will be set to 'debug'. If VERBOSE
+environment variable is set to true, level will be set to 'info'.If QUIET
+environment variable is set to true, level will be set to 'error'.
 
 =back
 
