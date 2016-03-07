@@ -40,7 +40,7 @@ sub _min_level {
 # When initialized we connect to syslog.
 sub init {
     my ($self) = @_;
-    
+
     $self->{name}     ||= File::Basename::basename($0) || 'perl';
     $self->{options}  ||= LOG_PID;
     $self->{facility} ||= LOG_LOCAL7;
@@ -84,12 +84,12 @@ foreach my $method (Log::Any->logging_methods()) {
     }->{$method};
     defined($priority) or $priority = LOG_ERR; # unknown, take a guess.
 
-    make_method($method, sub { 
+    make_method($method, sub {
         my $self = shift;
         return if $logging_levels{$method} <
                 $logging_levels{$self->{min_level}};
 
-        syslog($priority, '%s', join('', @_)) 
+        syslog($priority, '%s', join('', @_))
     });
 }
 
@@ -173,7 +173,7 @@ See L<Unix::Syslog> and L<syslog(3)> for details on the available facilities.
 =item min_level
 
 Minimum syslog level. All messages below the selected level will be silently
-discarded. Default is debug. 
+discarded. Default is debug.
 
 If LOG_LEVEL environment variable is set, it will be used instead. If TRACE
 environment variable is set to true, level will be set to 'trace'. If DEBUG
