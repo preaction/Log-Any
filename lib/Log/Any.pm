@@ -76,7 +76,13 @@ sub get_logger {
       defined $params{category} ? delete $params{'category'} : caller;
 
     if ( my $default = delete $params{'default_adapter'} ) {
-        $class->_manager->set_default( $category, $default );
+        my @default_adapter_params = ();
+        if (ref $default eq 'ARRAY') {
+            ($default, @default_adapter_params) = @{ $default };
+        }
+        $class->_manager->set_default(
+            $category, $default, @default_adapter_params
+        );
     }
 
     my $adapter = $class->_manager->get_adapter( $category );
