@@ -18,6 +18,12 @@ sub _default_formatter {
           : ref($_)     ? Log::Any::Adapter::Util::dump_one_line($_)
           : $_
       } @params;
+    # Perl 5.22 adds a 'redundant' warning if the number parameters exceeds
+    # the number of sprintf placeholders.  If a user does this, the warning
+    # is issued from here, which isn't very helpful.  Doing something
+    # clever would be expensive, so instead we just disable warnings for
+    # the final line of this subroutine.
+    no warnings;
     return sprintf( $format, @new_params );
 }
 

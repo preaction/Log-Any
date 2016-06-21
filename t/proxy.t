@@ -4,7 +4,7 @@ use Test::More;
 use Log::Any::Test;
 use Log::Any::Adapter 'Test';
 
-plan tests => 7;
+plan tests => 9;
 
 my $log;
 
@@ -27,6 +27,17 @@ $log = Log::Any->get_logger;
 $log->infof("got %s %s", "coderef", sub { "expanded" } );
 $log->contains_ok(qr/DUMMY/, 'default formatter does not expand coderefs as sprintf args');
 $log->clear;
+
+{
+    # check that redundant parameters don't issue warnings (only on 5.22+)
+    my $w = '';
+    local $SIG{__WARN__} = sub { $w = shift };
+    $log = Log::Any->get_logger;
+    $log->infof("got %s", qw/Einstein Feynman/ );
+    $log->contains_ok(qr/Einstein/);
+    is( $w, '', 'no warning' );
+    $log->clear;
+}
 
 $log = Log::Any->get_logger( filter => sub { "@_"} );
 $log->emergency("test");

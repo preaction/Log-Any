@@ -4,6 +4,11 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+    [Fixed]
+
+    - Suppress 'redundant argument' warnings if too many arguments are
+      given to a log formatting string.
+
 1.040     2016-02-24 17:47:00-05:00 America/New_York
 
     [Fixed]
