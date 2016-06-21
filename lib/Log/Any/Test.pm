@@ -42,8 +42,12 @@ C<Log::Any::Test> is a simple module that allows you to test what has been
 logged with Log::Any. Most of its API and implementation have been taken from
 L<Log::Any::Dispatch|Log::Any::Dispatch>.
 
-Using C<Log::Any::Test> sends all subsequent Log::Any log messages to a single
-global in-memory buffer.  It should be used before L<Log::Any|Log::Any>.
+Using C<Log::Any::Test> signals C<Log::Any> to send all subsequent log
+messages to a single global in-memory buffer and to make the log proxy
+provide a number of testing functions.  To use it, load C<Log::Any::Test>
+before anything that loads C<Log::Any>.  To actually use the test methods,
+you need to load C<Log::Any> and get a log object from it, as shown in the
+L</SYNOPSIS>.
 
 =head1 METHODS
 
