@@ -125,6 +125,9 @@ In a CPAN or other module:
     # log a string and data using a formatting filter
     $log->debugf("arguments are: %s", \@_);
 
+    # log an error and throw an exception
+    die $log->fatal("a fatal error occurred");
+
 In a Moo/Moose-based module:
 
     package Foo;
@@ -255,6 +258,9 @@ To log a message, pass a single string to any of the log levels or aliases. e.g.
     $log->error("this is an error");
     $log->warn("this is a warning");
     $log->warning("this is also a warning");
+
+The log string will be returned so that it can be used further (e.g. for a C<die> or
+C<warn> call).
 
 You should B<not> include a newline in your message; that is the responsibility
 of the logging mechanism, which may or may not want the newline.

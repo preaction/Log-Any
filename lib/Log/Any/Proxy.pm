@@ -68,13 +68,16 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
     *{$name} = sub {
         my ( $self, @parts ) = @_;
         my $message = join(" ", grep { defined($_) && length($_) } @parts );
-        return unless length $message;
-        $message = $self->{filter}->( $self->{category}, $numeric, $message )
-          if defined $self->{filter};
-        return unless defined $message and length $message;
-        $message = "$self->{prefix}$message"
-          if defined $self->{prefix} && length $self->{prefix};
-        return $self->{adapter}->$realname($message);
+        if ( length $message ) {
+            $message = $self->{filter}->( $self->{category}, $numeric, $message )
+              if defined $self->{filter};
+            if ( defined $message and length $message ) {
+                $message = "$self->{prefix}$message"
+                  if defined $self->{prefix} && length $self->{prefix};
+                $self->{adapter}->$realname($message);
+            }
+        }
+        return $message if defined wantarray;
     };
     *{$namef} = sub {
         my ( $self, @args ) = @_;
@@ -131,7 +134,7 @@ Pass a string to be logged.  Do not include a newline.
     $log->info("Got some new for you.");
 
 The log string will be transformed via the C<filter> attribute (if any) and
-the C<prefix> (if any) will be prepended.
+the C<prefix> (if any) will be prepended. Returns the transformed log string.
 
 B<NOTE>: While you are encouraged to pass a single string to be logged, if
 multiple arguments are passed, they are concatenated with a space character
@@ -168,7 +171,8 @@ message. Otherwise, the formatter acts like C<sprintf> with some helpful
 formatting.
 
 Finally, the message string is logged via the simple logging functions,
-which can transform or prefix as described above.
+which can transform or prefix as described above. The transformed log
+string is then returned.
 
 =attr adapter
 
