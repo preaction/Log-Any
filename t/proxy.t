@@ -4,28 +4,32 @@ use Test::More;
 use Log::Any::Test;
 use Log::Any::Adapter 'Test';
 
-plan tests => 9;
+plan tests => 16;
 
-my $log;
+my ( $log, $out );
 
 $log = Log::Any->get_logger( prefix => 'Foo: ' );
-$log->info("test");
+$out = $log->info("test");
 $log->contains_ok(qr/^Foo: test$/, 'prefix added');
+is $out, 'Foo: test', 'log message built is returned';
 $log->clear;
 
 $log = Log::Any->get_logger;
-$log->info(qw/one two three four/);
+$out = $log->info(qw/one two three four/);
 $log->contains_ok(qr/^one two three four$/, 'arguments concatenated');
+is $out, 'one two three four', 'log message built is returned';
 $log->clear;
 
 $log = Log::Any->get_logger;
-$log->infof(sub { "ran sub" } );
+$out = $log->infof(sub { "ran sub" } );
 $log->contains_ok(qr/^ran sub$/, 'default formatter expands coderefs');
+is $out, 'ran sub', 'log message built is returned';
 $log->clear;
 
 $log = Log::Any->get_logger;
-$log->infof("got %s %s", "coderef", sub { "expanded" } );
+$out = $log->infof("got %s %s", "coderef", sub { "expanded" } );
 $log->contains_ok(qr/DUMMY/, 'default formatter does not expand coderefs as sprintf args');
+like $out, qr/DUMMY/, 'log message built is returned';
 $log->clear;
 
 {
@@ -40,16 +44,19 @@ $log->clear;
 }
 
 $log = Log::Any->get_logger( filter => sub { "@_"} );
-$log->emergency("test");
+$out = $log->emergency("test");
 $log->contains_ok(qr/^main 0 test$/, 'filter has category and numeric level');
+is $out, 'main 0 test', 'log message run through filter is returned';
 $log->clear;
 
 $log = Log::Any->get_logger( formatter => sub { "@_"} );
-$log->tracef("test foo");
+$out = $log->tracef("test foo");
 $log->contains_ok(qr/^main 8 test foo$/, 'formatter has category and numeric level');
+is $out, 'main 8 test foo', 'log message run through formatter is returned';
 $log->clear;
 
 $log = Log::Any->get_logger( category => 'Foo', filter => sub { "@_"}  );
-$log->info("test");
+$out = $log->info("test");
 $log->contains_ok(qr/^Foo 6 test$/, 'category override');
+is $out, 'Foo 6 test', 'log message with category and run through filter is returned';
 $log->clear;
