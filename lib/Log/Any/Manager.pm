@@ -9,8 +9,12 @@ our $VERSION = '1.041';
 sub new {
     my $class = shift;
     my $self  = {
+        # The stack of adapter entries
         entries         => [],
+        # A cache of keys with category names and values of a hashref
+        # with stack entries (from the entries attribute) and adapters
         category_cache  => {},
+        # The adapter to use if no other adapter is appropriate
         default_adapter => {},
     };
     bless $self, $class;
@@ -65,10 +69,24 @@ sub _new_adapter_for_entry {
 
 sub set_default {
     my ( $self, $category, $adapter_name, @adapter_params ) = @_;
+    Log::Any::Proxy::Null->inflate_nulls;
     my $adapter_class = $self->_get_adapter_class($adapter_name);
     $self->{default_adapter}{$category} = [$adapter_class, \@adapter_params];
 }
 
+# =head2 set
+#
+#   $mgr->set( $options );
+#
+# Set the current adapter. Called from
+# L<Log::Any::Adapter::set|Log::Any::Adapter/SETTING AND REMOVING ADAPTERS>, the
+# standard API for setting the current adapter. Adds a new entry to the
+# C<entries> stack and refreshes all the matching adapters.
+#
+# See L<Log::Any::Adapter|Log::Any::Adapter/SETTING AND REMOVING ADAPTERS>
+# for available options.
+#
+# Returns the newly-created entry in the stack.
 sub set {
     my $self = shift;
     my $options;
@@ -124,6 +142,14 @@ sub _new_entry {
     };
 }
 
+# =head2 _reselect_matching_adapters
+#
+#   $self->_reselect_matching_adapters( $pattern )
+#
+# Given a pattern, reselect which adapter should match. This is called
+# after entries are added/removed from the C<entries> attribute.
+#
+# XXX Does not actually use $pattern, so do we need to pass it in?
 sub _reselect_matching_adapters {
     my ( $self, $pattern ) = @_;
 
@@ -138,6 +164,8 @@ sub _reselect_matching_adapters {
         if ( $new_entry ne $category_info->{entry} ) {
             my $new_adapter =
               $self->_new_adapter_for_entry( $new_entry, $category );
+            # Replace existing references to the adapter with the new
+            # adapter
             %{ $category_info->{adapter} } = %$new_adapter;
             bless( $category_info->{adapter}, ref($new_adapter) );
             $category_info->{entry} = $new_entry;
