@@ -3,6 +3,7 @@ use strict;
 use warnings;
 
 package Log::Any::Manager;
+use Log::Any::Proxy::Null;
 
 our $VERSION = '1.041';
 
@@ -20,6 +21,11 @@ sub new {
     bless $self, $class;
 
     return $self;
+}
+
+sub has_consumer {
+    my ( $self ) = @_;
+    return !!( @{ $self->{entries} } || keys %{ $self->{default_adapter} } );
 }
 
 sub get_adapter {
@@ -121,6 +127,7 @@ sub set {
             sub { $self->remove($entry) unless _in_global_destruction() } );
     }
 
+    Log::Any::Proxy::Null->inflate_nulls;
     return $entry;
 }
 

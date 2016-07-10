@@ -91,7 +91,8 @@ sub _get_proxy_class {
     my ( $self, $proxy_name ) = @_;
     return $Log::Any::OverrideDefaultProxyClass
       if $Log::Any::OverrideDefaultProxyClass;
-    return "Log::Any::Proxy" unless $proxy_name;
+    return "Log::Any::Proxy" if !$proxy_name && _manager->has_consumer;
+    return "Log::Any::Proxy::Null" if !$proxy_name;
     my $proxy_class = (
           substr( $proxy_name, 0, 1 ) eq '+'
         ? substr( $proxy_name, 1 )
