@@ -6,6 +6,18 @@ Revision history for Log-Any
 
 1.041     2016-08-18 00:00:10-05:00 America/Chicago (TRIAL RELEASE)
 
+    [Added]
+
+    - Logging methods now return the formatted log string so that it can
+      be used in a `die` or `warn` call.
+
+    [Changed]
+
+    - A new default log proxy (Log::Any::Proxy::Null) is used when there
+      are no adapters configured (and so no place for logs to go). This
+      proxy does no processing and is about 1000% percent faster on my
+      laptop.
+
     [Fixed]
 
     - Suppress 'redundant argument' warnings if too many arguments are
