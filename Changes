@@ -4,6 +4,8 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+1.041     2016-08-18 00:00:10-05:00 America/Chicago (TRIAL RELEASE)
+
     [Fixed]
 
     - Suppress 'redundant argument' warnings if too many arguments are
