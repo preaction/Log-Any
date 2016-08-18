@@ -8,6 +8,7 @@ package Log::Any;
 our $VERSION = '1.041';
 
 use Log::Any::Manager;
+use Log::Any::Proxy::Null;
 use Log::Any::Adapter::Util qw(
   require_dynamic
   detection_aliases

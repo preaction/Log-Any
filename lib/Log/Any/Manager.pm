@@ -3,7 +3,6 @@ use strict;
 use warnings;
 
 package Log::Any::Manager;
-use Log::Any::Proxy::Null;
 
 our $VERSION = '1.041';
 
