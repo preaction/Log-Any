@@ -25,20 +25,9 @@ before_install:
     - source ~/travis-perl-helpers/init
     - build-perl
     - perl -V
-    - build-dist
-    - cd $BUILD_DIR
 
 install:
-    - cpan-install --deps
-    - cpan-install --coverage
-
-before_script:
-    - coverage-setup
+    - cpanm -n -q --skip-satisfied --installdeps .
 
 script:
-    - perl Makefile.PL
-    - make
-    - prove -bl -s -j$(test-jobs) $(test-files)
-
-after_success:
-    - coverage-report
+    - prove -l -s -j$(test-jobs) $(test-files)
