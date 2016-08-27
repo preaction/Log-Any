@@ -4,6 +4,8 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+1.042     2016-08-26 23:37:33-05:00 America/Chicago
+
     [Added]
 
     - Default adapters can now be configured with arguments (thanks
