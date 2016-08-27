@@ -81,6 +81,11 @@ sub get_logger {
         if (ref $default eq 'ARRAY') {
             ($default, @default_adapter_params) = @{ $default };
         }
+        # Every default adapter is set only for a given logger category.
+        # When another adapter is configured (by using
+        # Log::Any::Adapter->set) for this category, it takes
+        # precedence, but if that adapter is later removed, the default
+        # we set here takes over again.
         $class->_manager->set_default(
             $category, $default, @default_adapter_params
         );
@@ -319,12 +324,21 @@ detection methods.
 
 =head2 Setting an alternate default logger
 
-To choose something other than Null as the default, pass it as a parameter when
-loading C<Log::Any>
+When no other adapters are configured for your logger, C<Log::Any> uses
+the C<default_adapter>. To choose something other than Null as the
+default, pass it as a parameter when loading C<Log::Any>
 
     use Log::Any '$log', default_adapter => 'Stderr';
 
 The name of the default class follows the same rules as used by L<Log::Any::Adapter>.
+
+To pass arguments to the default adapter's constructor, use an arrayref:
+
+    use Log::Any '$log', default_adapter => [ 'File' => '/var/log/mylog.log' ];
+
+When a consumer configures their own adapter, the default adapter will be
+overridden. If they later remove their adapter, the default adapter will be
+used again.
 
 =head2 Configuring the proxy
 
