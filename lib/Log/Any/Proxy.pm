@@ -43,6 +43,11 @@ sub new {
     return $self;
 }
 
+sub clone {
+    my $self = shift;
+    return (ref $self)->new( %{ $self }, @_ );
+}
+
 sub init { }
 
 for my $attr (qw/adapter filter formatter prefix/) {
@@ -105,6 +110,9 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
         my ($cat, $lvl, @args) = @_;
         String::Flogger::flog( @args );
     };
+
+    # create a clone with different attributes
+    my $bar_log = $log->clone( prefix => 'bar: ' );
 
 =head1 DESCRIPTION
 

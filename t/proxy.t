@@ -4,7 +4,7 @@ use Test::More;
 use Log::Any::Test;
 use Log::Any::Adapter 'Test';
 
-plan tests => 16;
+plan tests => 18;
 
 my ( $log, $out );
 
@@ -60,3 +60,11 @@ $out = $log->info("test");
 $log->contains_ok(qr/^Foo 6 test$/, 'category override');
 is $out, 'Foo 6 test', 'log message with category and run through filter is returned';
 $log->clear;
+
+$log = Log::Any->get_logger( category => 'Foo', prefix => 'foo', formatter => sub { "@_" } );
+$log = $log->clone( prefix => 'bar ' );
+$out = $log->tracef( 'test' );
+$log->contains_ok( qr/^bar Foo 8 test$/, 'clone keeps existing properties and allows override' );
+is $out, 'bar Foo 8 test', 'log message is returned';
+$log->clear;
+
