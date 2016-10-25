@@ -8,6 +8,7 @@ package Log::Any::Proxy;
 our $VERSION = '1.043';
 
 use Log::Any::Adapter::Util ();
+use overload;
 
 sub _default_formatter {
     my ( $cat, $lvl, $format, @params ) = @_;
@@ -15,7 +16,10 @@ sub _default_formatter {
     my @new_params =
       map {
            !defined($_) ? '<undef>'
-          : ref($_)     ? Log::Any::Adapter::Util::dump_one_line($_)
+          : ref($_)     ? (
+	        overload::OverloadedStringify($_) ? "$_"
+	      : Log::Any::Adapter::Util::dump_one_line($_)
+	    )
           : $_
       } @params;
     # Perl 5.22 adds a 'redundant' warning if the number parameters exceeds
