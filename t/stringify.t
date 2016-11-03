@@ -1,6 +1,6 @@
 use warnings;
 use strict;
-use Test::More;
+use Test::More tests => 1;
 
 {
 
@@ -27,11 +27,9 @@ my $uri = Test_URI->new('http://slashdot.org/');
 
 $log->infof( 'Fetching %s', $uri );
 
-is_deeply(
+is(
     Log::Any::Adapter::Test->msgs->[0]->{message},
     'Fetching http://slashdot.org/',
     'URI was correctly stringified'
 );
-
-done_testing;
 
