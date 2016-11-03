@@ -1,15 +1,29 @@
-#! /usr/bin/env perl
-
-use strict;
 use warnings;
+use strict;
 use Test::More;
+
+{
+
+    package Test_URI;
+
+    use overload '""' => \&stringify;
+
+    sub new {
+        my ( $class, $s ) = @_;
+        return bless { s => $s }, $class;
+    }
+
+    sub stringify {
+        my ($self) = @_;
+        return $self->{s};
+    }
+
+}
 
 use Log::Any '$log';
 use Log::Any::Adapter 'Test';
 
-use URI;
-
-my $uri = URI->new('http://slashdot.org/');
+my $uri = Test_URI->new('http://slashdot.org/');
 
 $log->infof( 'Fetching %s', $uri );
 
