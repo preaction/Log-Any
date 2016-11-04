@@ -4,6 +4,11 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+    [Fixed]
+
+    - Objects that overload stringification are now stringified
+      correctly (instead of run through Data::Dumper). Thanks @mephinet!
+
 1.042     2016-08-26 23:37:33-05:00 America/Chicago
 
     [Added]
