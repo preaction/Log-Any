@@ -45,7 +45,7 @@ sub _export_to_caller {
     my $saw_log_param;
     my @params;
     while ( my $param = shift @_ ) {
-        if ( $param =~ /^\$(\w+)/ ) {
+        if ( !$saw_log_param && $param =~ /^\$(\w+)/ ) {
             $saw_log_param = $1;   # defer until later
             next;                  # singular
         }
