@@ -45,8 +45,8 @@ sub _export_to_caller {
     my $saw_log_param;
     my @params;
     while ( my $param = shift @_ ) {
-        if ( $param eq '$log' ) {
-            $saw_log_param = 1;    # defer until later
+        if ( $param =~ /^\$(\w+)/ ) {
+            $saw_log_param = $1;   # defer until later
             next;                  # singular
         }
         else {
@@ -60,10 +60,10 @@ sub _export_to_caller {
     }
 
     # get logger if one was requested
-    if ($saw_log_param) {
+    if ( defined $saw_log_param ) {
         no strict 'refs';
         my $proxy = $class->get_logger( category => $caller, @params );
-        my $varname = "$caller\::log";
+        my $varname = "${caller}::${saw_log_param}";
         *$varname = \$proxy;
     }
 }
