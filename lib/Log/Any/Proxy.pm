@@ -17,9 +17,9 @@ sub _default_formatter {
       map {
            !defined($_) ? '<undef>'
           : ref($_)     ? (
-	        overload::OverloadedStringify($_) ? "$_"
-	      : Log::Any::Adapter::Util::dump_one_line($_)
-	    )
+            overload::OverloadedStringify($_) ? "$_"
+          : Log::Any::Adapter::Util::dump_one_line($_)
+        )
           : $_
       } @params;
     # Perl 5.22 adds a 'redundant' warning if the number parameters exceeds
