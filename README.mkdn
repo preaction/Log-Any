@@ -4,7 +4,7 @@ Log::Any - Bringing loggers and listeners together
 
 # VERSION
 
-version 1.044
+version 1.045
 
 # STATUS
 
@@ -277,6 +277,16 @@ See the [Log::Any::Adapter](https://metacpan.org/pod/Log::Any::Adapter) document
 - Jonathan Swartz <swartz@pobox.com>
 - David Golden <dagolden@cpan.org>
 - Doug Bell <preaction@cpan.org>
+
+# CONTRIBUTORS
+
+- bj5004 <bartosz.jakubski@hurra.com>
+- cm-perl <cm-perl@users.noreply.github.com>
+- Lucas Kanashiro <kanashiro.duarte@gmail.com>
+- Maxim Vuets <maxim.vuets@booking.com>
+- mephinet <mephinet@gmx.net>
+- Philipp Gortan <philipp.gortan@apa.at>
+- Stephen Thirlwall <sdt@dr.com>
 
 # COPYRIGHT AND LICENSE
 
