@@ -5,7 +5,7 @@ use warnings;
 package Log::Any::Adapter::Null;
 
 # ABSTRACT: Discards all log messages
-our $VERSION = '1.045';
+our $VERSION = '1.046';
 
 use Log::Any::Adapter::Base;
 our @ISA = qw/Log::Any::Adapter::Base/;
