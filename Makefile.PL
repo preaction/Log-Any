@@ -8,7 +8,7 @@ use ExtUtils::MakeMaker;
 
 my %WriteMakefileArgs = (
   "ABSTRACT" => "Bringing loggers and listeners together",
-  "AUTHOR" => "Jonathan Swartz <swartz\@pobox.com>, David Golden <dagolden\@cpan.org>, Doug Bell <preaction\@cpan.org>",
+  "AUTHOR" => "Jonathan Swartz <swartz\@pobox.com>, David Golden <dagolden\@cpan.org>, Doug Bell <preaction\@cpan.org>, Daniel Pittman <daniel\@rimspace.net>, Stephen Thirlwall <sdt\@cpan.org>",
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => 0
   },

@@ -4,7 +4,7 @@ Log::Any - Bringing loggers and listeners together
 
 # VERSION
 
-version 1.045
+version 1.046
 
 # STATUS
 
@@ -277,20 +277,24 @@ See the [Log::Any::Adapter](https://metacpan.org/pod/Log::Any::Adapter) document
 - Jonathan Swartz <swartz@pobox.com>
 - David Golden <dagolden@cpan.org>
 - Doug Bell <preaction@cpan.org>
+- Daniel Pittman <daniel@rimspace.net>
+- Stephen Thirlwall <sdt@cpan.org>
 
 # CONTRIBUTORS
 
 - bj5004 <bartosz.jakubski@hurra.com>
 - cm-perl <cm-perl@users.noreply.github.com>
 - Lucas Kanashiro <kanashiro.duarte@gmail.com>
+- Maros Kollar <maros.kollar@geizhals.at>
 - Maxim Vuets <maxim.vuets@booking.com>
 - mephinet <mephinet@gmx.net>
 - Philipp Gortan <philipp.gortan@apa.at>
 - Stephen Thirlwall <sdt@dr.com>
+- Stephen Thirlwall <stephen.thirlwall@strategicdata.com.au>
 
 # COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2016 by Jonathan Swartz, David Golden, and Doug Bell.
+This software is copyright (c) 2017 by Jonathan Swartz, David Golden, and Doug Bell.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

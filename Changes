@@ -2,7 +2,12 @@ Revision history for Log-Any
 
 ** denotes an incompatible change
 
-{{ $NEXT }}
+1.046     2017-01-11 21:22:57-06:00 America/Chicago (TRIAL RELEASE)
+
+    [Added]
+
+    - The Syslog adapter is now part of the core distribution, since it
+      relies only on core Perl modules.
 
 1.045     2016-11-11 21:52:46-06:00 America/Chicago
 
