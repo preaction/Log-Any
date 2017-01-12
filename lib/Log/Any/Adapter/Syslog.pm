@@ -10,7 +10,7 @@ our $VERSION = '1.046';
 use Log::Any::Adapter::Util qw{make_method};
 use base qw{Log::Any::Adapter::Base};
 
-use Unix::Syslog qw{:macros :subs};
+use Sys::Syslog qw( :DEFAULT setlogsock );
 use File::Basename ();
 
 my $log_params;
@@ -44,9 +44,9 @@ sub init {
     my ($self) = @_;
 
     $self->{name}     ||= File::Basename::basename($0) || 'perl';
-    $self->{options}  ||= LOG_PID;
-    $self->{facility} ||= LOG_LOCAL7;
-    $self->{min_level}||= $self->_min_level;
+    $self->{options}  ||= "pid";
+    $self->{facility} ||= "local7";
+    $self->{log_level} ||= $self->{min_level} || $self->_min_level;
 
     # We want to avoid re-opening the syslog unnecessarily, so only do it if
     # the parameters have changed.
@@ -62,36 +62,36 @@ sub init {
 
 sub _log_params {
     my ($self) = @_;
-    return sprintf('%d,%d,%s',
+    return sprintf('%s;%s;%s',
         $self->{options}, $self->{facility}, $self->{name});
 }
 
 # Create logging methods: debug, info, etc.
 foreach my $method (Log::Any->logging_methods()) {
     my $priority = {
-        trace     => LOG_DEBUG,
-        debug     => LOG_DEBUG,
-        info      => LOG_INFO,
-        inform    => LOG_INFO,
-        notice    => LOG_NOTICE,
-        warning   => LOG_WARNING,
-        warn      => LOG_WARNING,
-        error     => LOG_ERR,
-        err       => LOG_ERR,
-        critical  => LOG_CRIT,
-        crit      => LOG_CRIT,
-        fatal     => LOG_CRIT,
-        alert     => LOG_ALERT,
-        emergency => LOG_EMERG,
+        trace     => "debug",
+        debug     => "debug",
+        info      => "info",
+        inform    => "info",
+        notice    => "notice",
+        warning   => "warning",
+        warn      => "warning",
+        error     => "error",
+        err       => "error",
+        critical  => "critical",
+        crit      => "critical",
+        fatal     => "critical",
+        alert     => "alert",
+        emergency => "emergency",
     }->{$method};
-    defined($priority) or $priority = LOG_ERR; # unknown, take a guess.
+    defined($priority) or $priority = "error"; # unknown, take a guess.
 
     make_method($method, sub {
         my $self = shift;
         return if $logging_levels{$method} <
-                $logging_levels{$self->{min_level}};
+                $logging_levels{$self->{log_level}};
 
-        syslog($priority, '%s', join('', @_))
+        syslog($priority, join('', @_))
     });
 }
 
@@ -100,7 +100,7 @@ foreach my $method (Log::Any->detection_methods()) {
     my $level = $method; $level =~ s/^is_//;
     make_method($method, sub {
         my $self = shift;
-        return $logging_levels{$level} >= $logging_levels{$self->{min_level}};
+        return $logging_levels{$level} >= $logging_levels{$self->{log_level}};
     });
 
 }
@@ -118,22 +118,21 @@ __END__
     Log::Any::Adapter->set('Syslog');
 
     # You can override defaults:
-    use Unix::Syslog qw{:macros};
     Log::Any::Adapter->set(
         'Syslog',
         # name defaults to basename($0)
         name     => 'my-name',
-        # options default to LOG_PID
-        options  => LOG_PID|LOG_PERROR,
-        # facility defaults to LOG_LOCAL7
-        facility => LOG_LOCAL7
+        # options default to "pid"
+        options  => "pid,ndelay",
+        # facility defaults to "local7"
+        facility => "mail"
     );
 
 =head1 DESCRIPTION
 
 L<Log::Any> is a generic adapter for writing logging into Perl modules; this
-adapter use the L<Unix::Syslog> module to direct that output into the standard
-Unix syslog system.
+adapter use the L<Sys::Syslog> module to direct that output into the OS's
+logging system (even on Windows).
 
 =head1 CONFIGURATION
 
@@ -152,31 +151,29 @@ inserted into each line sent to syslog to identify the source.
 
 =item options
 
-The I<options> configure the behaviour of syslog; see L<Unix::Syslog> for
+The I<options> configure the behaviour of syslog; see L<Sys::Syslog> for
 details.
 
-The default is C<LOG_PID>, which includes the PID of the current process after
+The default is C<"pid">, which includes the PID of the current process after
 the process name:
 
     example-process[2345]: something amazing!
 
-The most likely addition to that is C<LOG_PERROR> which causes syslog to also
-send a copy of all log messages to the controlling terminal of the process.
-
-B<WARNING:> If you pass a defined value you are setting, not augmenting, the
-options.  So, if you want C<LOG_PID> as well as other flags, pass them all.
+The most likely addition to that is C<perror> (non-POSIX) which causes
+syslog to also send a copy of all log messages to the controlling
+terminal of the process.
 
 =item facility
 
 The I<facility> determines where syslog sends your messages.  The default is
-C<LOCAL7>, which is not the most useful value ever, but is less bad than
+C<local7>, which is not the most useful value ever, but is less bad than
 assuming the fixed facilities.
 
-See L<Unix::Syslog> and L<syslog(3)> for details on the available facilities.
+See L<Sys::Syslog> and L<syslog(3)> for details on the available facilities.
 
-=item min_level
+=item log_level
 
-Minimum syslog level. All messages below the selected level will be silently
+Minimum log level. All messages below the selected level will be silently
 discarded. Default is debug.
 
 If LOG_LEVEL environment variable is set, it will be used instead. If TRACE
