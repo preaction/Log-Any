@@ -1,9 +1,11 @@
-package Log::Any::Adapter::Syslog;
+use 5.008001;
 use strict;
 use warnings;
 
+package Log::Any::Adapter::Syslog;
+
 # ABSTRACT: Send Log::Any logs to syslog
-# VERSION
+our $VERSION = '1.046';
 
 use Log::Any::Adapter::Util qw{make_method};
 use base qw{Log::Any::Adapter::Base};
@@ -110,6 +112,8 @@ __END__
 
 =head1 SYNOPSIS
 
+    use Log::Any::Adapter 'Syslog';
+    # ... or ...
     use Log::Any::Adapter;
     Log::Any::Adapter->set('Syslog');
 
