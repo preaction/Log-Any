@@ -245,6 +245,46 @@ If defined, this string will be prepended to all messages.  It will not
 include a trailing space, so add that yourself if you want.  This is less
 flexible/powerful than L</filter>, but avoids an extra function call.
 
+=head1 TIPS
+
+=head2 UTF-8 in Data Structures
+
+If you have high-bit characters in a data structure being passed to a log
+method, Log::Any will output that data structure with the high-bit
+characters encoded as C<\x{###}>, Perl's escape sequence for high-bit
+characters. This is because the L<Data::Dumper> module escapes those
+characters.
+
+    use utf8;
+    use Log::Any qw( $log );
+    my @data = ( "Привет мир" ); # Hello, World!
+    $log->infof("Got: %s", \@data);
+    # Got: ["\x{41f}\x{440}\x{438}\x{432}\x{435}\x{442} \x{43c}\x{438}\x{440}"]
+
+If you want to instead display the actual characters in your log file or
+terminal, you can use the L<Data::Dumper::AutoEncode> module. To wire this
+up into Log::Any, you must pass a custom C<formatter> sub:
+
+    use utf8;
+    use Data::Dumper::AutoEncode;
+
+    sub log_formatter {
+        my ( $category, $level, $format, @params ) = @_;
+        # Run references through Data::Dumper::AutoEncode
+        @params = map { ref $_ ? eDumper( $_ ) : $_ } @params;
+        return sprintf $format, @params;
+    }
+
+    use Log::Any '$log', formatter => \&log_formatter;
+
+This formatter changes the output to:
+
+	Got: $VAR1 = [
+			  'Привет мир'
+			];
+
+Thanks to L<@denis-it|https://github.com/denis-it> for this tip!
+
 =cut
 
 # vim: ts=4 sts=4 sw=4 et tw=75:
