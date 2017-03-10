@@ -11,6 +11,11 @@ Revision history for Log-Any
       have Unix::Syslog installed (which Log::Any does not explicitly
       depend on).
 
+    - Log level aliases are now case-insensitive to match the regular
+      log levels. Prior to this, "WARNING", "Warning", and "warning"
+      would all work, but "WARN", and "Warn" would not, only "warn".
+      Thanks to @0x62ash for reporting this issue. [Github #55]
+
 1.046     2017-01-11 21:22:57-06:00 America/Chicago (TRIAL RELEASE)
 
     [Added]

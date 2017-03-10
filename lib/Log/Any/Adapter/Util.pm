@@ -125,7 +125,7 @@ log level constants.  E.g. "err" would return 3.
 sub numeric_level {
     my ($level) = @_;
     my $canonical =
-      exists $LOG_LEVEL_ALIASES{$level} ? $LOG_LEVEL_ALIASES{$level} : $level;
+      exists $LOG_LEVEL_ALIASES{ lc $level } ? $LOG_LEVEL_ALIASES{ lc $level } : $level;
     return $LOG_LEVELS{ uc($canonical) };
 }
 
