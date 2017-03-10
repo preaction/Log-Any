@@ -48,6 +48,27 @@ sub init {
     $self->{facility} ||= "local7";
     $self->{log_level} ||= $self->{min_level} || $self->_min_level;
 
+    if ( $self->{options} !~ /\D/ ) {
+        # This is a backwards-compatibility shim from previous versions
+        # of Log::Any::Adapter::Syslog that relied on Unix::Syslog.
+        # Unix::Syslog only allowed setting options based on the numeric
+        # macros exported by Unix::Syslog. These macros are not exported
+        # by Sys::Syslog (and Sys::Syslog does not accept them). So, we
+        # map the Unix::Syslog macros onto the equivalent Sys::Syslog
+        # strings.
+        eval { require Unix::Syslog; } or die "Unix::Syslog is required to use numeric options";
+        my $num_opt = $self->{options};
+        my %opt_map = (
+            pid => Unix::Syslog::LOG_PID(),
+            cons => Unix::Syslog::LOG_CONS(),
+            odelay => Unix::Syslog::LOG_ODELAY(),
+            ndelay => Unix::Syslog::LOG_NDELAY(),
+            nowait => Unix::Syslog::LOG_NOWAIT(),
+            perror => Unix::Syslog::LOG_PERROR(),
+        );
+        $self->{options} = join ",", grep { $num_opt & $opt_map{ $_ } } keys %opt_map;
+    }
+
     # We want to avoid re-opening the syslog unnecessarily, so only do it if
     # the parameters have changed.
     my $new_params = $self->_log_params;

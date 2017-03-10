@@ -2,6 +2,15 @@ Revision history for Log-Any
 
 ** denotes an incompatible change
 
+{{ $NEXT }}
+
+    [Fixed]
+
+    - Fixed backwards-compatibility with users using the Unix::Syslog
+      macros in Log::Any::Adapter::Syslog. This requires that the user
+      have Unix::Syslog installed (which Log::Any does not explicitly
+      depend on).
+
 1.046     2017-01-11 21:22:57-06:00 America/Chicago (TRIAL RELEASE)
 
     [Added]
