@@ -35,7 +35,7 @@ require Log::Any::Adapter;
         ok( $log->is_trace, "log defaults to trace level" );
         is scalar @warnings, 1, 'one warning issued';
         like $warnings[0],
-            qr{Invalid log level "FOOBAR"\. Defaulting to "trace" at @{[__FILE__]} line \d+\.\n},
+            qr{Invalid log level "FOOBAR"\. Defaulting to "trace" at @{[__FILE__]} line \d+},
             'warning is correct';
     }
 }
@@ -65,7 +65,7 @@ require Log::Any::Adapter;
         ok( $log->is_trace, "log defaults to trace level" );
         is scalar @warnings, 1, 'one warning issued';
         like $warnings[0],
-            qr{Invalid log level "FOOBAR"\. Defaulting to "trace" at @{[__FILE__]} line \d+\.\n},
+            qr{Invalid log level "FOOBAR"\. Defaulting to "trace" at @{[__FILE__]} line \d+},
             'warning is correct';
     }
 }
@@ -95,7 +95,7 @@ require Log::Any::Adapter;
         ok( $log->is_trace, "log defaults to trace level" );
         is scalar @warnings, 1, 'one warning issued';
         like $warnings[0],
-            qr{Invalid log level "FOOBAR"\. Defaulting to "trace" at @{[__FILE__]} line \d+\.\n},
+            qr{Invalid log level "FOOBAR"\. Defaulting to "trace" at @{[__FILE__]} line \d+},
             'warning is correct';
     }
 }
