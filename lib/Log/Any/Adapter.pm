@@ -8,6 +8,7 @@ package Log::Any::Adapter;
 our $VERSION = '1.047';
 
 use Log::Any;
+our @CARP_NOT = ( 'Log::Any::Manager' );
 
 sub import {
     my $pkg = shift;

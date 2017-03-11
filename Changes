@@ -16,6 +16,12 @@ Revision history for Log-Any
       would all work, but "WARN", and "Warn" would not, only "warn".
       Thanks to @0x62ash for reporting this issue. [Github #55]
 
+    - Invalid log levels for the File, Stderr, and Stdout adapters now
+      result in a warning, and the default level of "trace" is used.
+      Previously, no warning would be issued and no logs would be
+      generated. Thanks to @0x62ash for reporting this issue. [Github
+      #55]
+
 1.046     2017-01-11 21:22:57-06:00 America/Chicago (TRIAL RELEASE)
 
     [Added]

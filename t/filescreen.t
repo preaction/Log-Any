@@ -4,7 +4,7 @@ use Test::More;
 use File::Temp qw(tempdir);
 use Log::Any::Adapter::Util qw(cmp_deeply read_file);
 
-plan tests => 16;
+plan tests => 25;
 
 require Log::Any::Adapter;
 
@@ -26,6 +26,18 @@ require Log::Any::Adapter;
         Log::Any::Adapter->set({lexically => \my $lex}, 'File', $file);
         ok( $log->is_trace, "file will log trace lexically" );
     }
+
+    { # Test that File adapter validates log level properly
+        my @warnings;
+        local $SIG{__WARN__} = sub { push @warnings, $_[0] };
+        Log::Any::Adapter->set( {lexically => \my $lex}, 'File', $file, log_level => 'FOOBAR' );
+        my $log = Log::Any->get_logger();
+        ok( $log->is_trace, "log defaults to trace level" );
+        is scalar @warnings, 1, 'one warning issued';
+        like $warnings[0],
+            qr{Invalid log level "FOOBAR"\. Defaulting to "trace" at @{[__FILE__]} line \d+\.\n},
+            'warning is correct';
+    }
 }
 
 {
@@ -44,6 +56,18 @@ require Log::Any::Adapter;
         Log::Any::Adapter->set({lexically => \my $lex}, 'Stdout');
         ok( $log->is_trace, "stdout will log trace lexically" );
     }
+
+    { # Test that Stdout adapter validates log level properly
+        my @warnings;
+        local $SIG{__WARN__} = sub { push @warnings, $_[0] };
+        Log::Any::Adapter->set( {lexically => \my $lex}, 'Stdout', log_level => 'FOOBAR' );
+        my $log = Log::Any->get_logger();
+        ok( $log->is_trace, "log defaults to trace level" );
+        is scalar @warnings, 1, 'one warning issued';
+        like $warnings[0],
+            qr{Invalid log level "FOOBAR"\. Defaulting to "trace" at @{[__FILE__]} line \d+\.\n},
+            'warning is correct';
+    }
 }
 
 {
@@ -61,6 +85,18 @@ require Log::Any::Adapter;
     {
         Log::Any::Adapter->set({lexically => \my $lex}, 'Stderr');
         ok( $log->is_trace, "stderr will log trace lexically" );
+    }
+
+    { # Test that Stderr adapter validates log level properly
+        my @warnings;
+        local $SIG{__WARN__} = sub { push @warnings, $_[0] };
+        Log::Any::Adapter->set( {lexically => \my $lex}, 'Stderr', log_level => 'FOOBAR' );
+        my $log = Log::Any->get_logger();
+        ok( $log->is_trace, "log defaults to trace level" );
+        is scalar @warnings, 1, 'one warning issued';
+        like $warnings[0],
+            qr{Invalid log level "FOOBAR"\. Defaulting to "trace" at @{[__FILE__]} line \d+\.\n},
+            'warning is correct';
     }
 }
 

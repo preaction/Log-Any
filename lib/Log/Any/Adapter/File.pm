@@ -25,11 +25,15 @@ sub new {
 
 sub init {
     my $self = shift;
-    if ( exists $self->{log_level} ) {
-        $self->{log_level} = Log::Any::Adapter::Util::numeric_level( $self->{log_level} )
-            unless $self->{log_level} =~ /^\d+$/;
+    if ( exists $self->{log_level} && $self->{log_level} =~ /\D/ ) {
+        my $numeric_level = Log::Any::Adapter::Util::numeric_level( $self->{log_level} );
+        if ( !$numeric_level ) {
+            require Carp;
+            Carp::carp( sprintf 'Invalid log level "%s". Defaulting to "%s"', $self->{log_level}, 'trace' );
+        }
+        $self->{log_level} = $numeric_level;
     }
-    else {
+    if ( !$self->{log_level} ) {
         $self->{log_level} = $trace_level;
     }
     my $file = $self->{file};
