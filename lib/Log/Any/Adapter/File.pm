@@ -5,7 +5,7 @@ use warnings;
 package Log::Any::Adapter::File;
 
 # ABSTRACT: Simple adapter for logging to files
-our $VERSION = '1.048';
+our $VERSION = '1.049';
 
 use Config;
 use Fcntl qw/:flock/;
