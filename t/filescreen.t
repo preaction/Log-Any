@@ -5,6 +5,7 @@ use File::Temp qw(tempdir);
 use Log::Any::Adapter::Util qw(cmp_deeply read_file);
 
 plan tests => 25;
+my $__FILE__ = quotemeta __FILE__;
 
 require Log::Any::Adapter;
 
@@ -35,7 +36,7 @@ require Log::Any::Adapter;
         ok( $log->is_trace, "log defaults to trace level" );
         is scalar @warnings, 1, 'one warning issued';
         like $warnings[0],
-            qr{Invalid log level "FOOBAR"\. Defaulting to "trace" at @{[__FILE__]} line \d+},
+            qr{Invalid log level "FOOBAR"\. Defaulting to "trace" at $__FILE__ line \d+},
             'warning is correct';
     }
 }
@@ -65,7 +66,7 @@ require Log::Any::Adapter;
         ok( $log->is_trace, "log defaults to trace level" );
         is scalar @warnings, 1, 'one warning issued';
         like $warnings[0],
-            qr{Invalid log level "FOOBAR"\. Defaulting to "trace" at @{[__FILE__]} line \d+},
+            qr{Invalid log level "FOOBAR"\. Defaulting to "trace" at $__FILE__ line \d+},
             'warning is correct';
     }
 }
@@ -95,7 +96,7 @@ require Log::Any::Adapter;
         ok( $log->is_trace, "log defaults to trace level" );
         is scalar @warnings, 1, 'one warning issued';
         like $warnings[0],
-            qr{Invalid log level "FOOBAR"\. Defaulting to "trace" at @{[__FILE__]} line \d+},
+            qr{Invalid log level "FOOBAR"\. Defaulting to "trace" at $__FILE__ line \d+},
             'warning is correct';
     }
 }
