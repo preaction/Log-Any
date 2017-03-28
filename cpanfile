@@ -4,6 +4,7 @@ requires "Data::Dumper" => "0";
 requires "Exporter" => "0";
 requires "Fcntl" => "0";
 requires "IO::File" => "0";
+requires "Sys::Syslog" => "0";
 requires "Test::Builder" => "0";
 requires "constant" => "0";
 requires "strict" => "0";

@@ -2,7 +2,15 @@ Revision history for Log-Any
 
 ** denotes an incompatible change
 
-{{ $NEXT }}
+1.049     2017-03-28 16:02:10-05:00 America/Chicago
+
+    [Fixed]
+
+    - Fixed failing tests on Windows because of path separator
+      interpolation. Thanks @nanis [Github #56]
+
+    - Added explicit core dependency on Sys::Syslog in case of Perls
+      with non-standard core libraries. Thanks @nanis [Github #57]
 
 1.048     2017-03-27 15:16:12-05:00 America/Chicago
 
