@@ -10,18 +10,27 @@ our $VERSION = '1.050';
 use Log::Any::Adapter::Util ();
 use overload;
 
+sub _stringify_params {
+    my @params = @_;
+
+    return map {
+        !defined($_)
+          ? '<undef>'
+          : ref($_) ? (
+            overload::OverloadedStringify($_)
+            ? "$_"
+            : Log::Any::Adapter::Util::dump_one_line($_)
+          )
+          : $_
+    } @params;
+}
+
 sub _default_formatter {
     my ( $cat, $lvl, $format, @params ) = @_;
     return $format->() if ref($format) eq 'CODE';
-    my @new_params =
-      map {
-           !defined($_) ? '<undef>'
-          : ref($_)     ? (
-            overload::OverloadedStringify($_) ? "$_"
-          : Log::Any::Adapter::Util::dump_one_line($_)
-        )
-          : $_
-      } @params;
+
+    my @new_params = _stringify_params(@params);
+
     # Perl 5.22 adds a 'redundant' warning if the number parameters exceeds
     # the number of sprintf placeholders.  If a user does this, the warning
     # is issued from here, which isn't very helpful.  Doing something
@@ -40,9 +49,11 @@ sub new {
     }
     unless ( $self->{category} ) {
         require Carp;
-        Carp::croak("$class requires an 'category' parameter")
+        Carp::croak("$class requires an 'category' parameter");
     }
     bless $self, $class;
+    $self->{structured_logging} =
+      $self->{adapter}->can('structured') && !$self->{filter};
     $self->init(@_);
     return $self;
 }
@@ -76,9 +87,22 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
     };
     *{$name} = sub {
         my ( $self, @parts ) = @_;
-        my $message = join(" ", grep { defined($_) && length($_) } @parts );
-        if ( length $message ) {
-            $message = $self->{filter}->( $self->{category}, $numeric, $message )
+
+        if ( $self->{structured_logging} ) {
+            unshift @parts, $self->{prefix} if $self->{prefix};
+            $self->{adapter}
+              ->structured( $realname, $self->{category}, @parts );
+            return unless defined wantarray;
+        }
+
+        @parts = grep { defined($_) && length($_) } @parts;
+        if ( grep { ref } @parts ) {
+            @parts = _stringify_params(@parts);
+        }
+        my $message = join( " ", @parts );
+        if ( length $message && !$self->{structured_logging} ) {
+            $message =
+              $self->{filter}->( $self->{category}, $numeric, $message )
               if defined $self->{filter};
             if ( defined $message and length $message ) {
                 $message = "$self->{prefix}$message"
@@ -213,6 +237,9 @@ logged.  Otherwise, the return value is passed to the logging adapter.
 Numeric levels range from 0 (emergency) to 8 (trace).  Constant functions
 for these levels are available from L<Log::Any::Adapter::Util>.
 
+Configurating a filter disables structured logging, even if the
+configured adapter supports it.
+
 =attr formatter
 
 A code reference to format messages given to the C<*f> methods (C<tracef>,
@@ -244,6 +271,14 @@ for these levels are available from L<Log::Any::Adapter::Util>.
 If defined, this string will be prepended to all messages.  It will not
 include a trailing space, so add that yourself if you want.  This is less
 flexible/powerful than L</filter>, but avoids an extra function call.
+
+=head2 Logging Structured Data
+
+If you have data in addition to the text you want to log, you can
+specify a hashref together with your string. If the configured adapter
+supports structured data, it will receive the hashref as-is, otherwise
+it will be converted to a string using L<Data::Dumper> and will be
+appended to your text.
 
 =head1 TIPS
 

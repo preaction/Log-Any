@@ -135,7 +135,11 @@ In a CPAN or other module:
     # log a string
     $log->error("an error occurred");
 
-    # log a string and data using a formatting filter
+    # log a string and some data
+    $log->info("program started",
+        {progname => $0, pid => $$, perl_version => $]});
+
+    # log a string and data using a format string
     $log->debugf("arguments are: %s", \@_);
 
     # log an error and throw an exception
@@ -278,7 +282,16 @@ C<warn> call).
 You should B<not> include a newline in your message; that is the responsibility
 of the logging mechanism, which may or may not want the newline.
 
-There are also versions of each of these methods with an additional "f" suffix
+If you want to log additional structured data alongside with your string, you
+can add a hashref to your log string. e.g.
+
+    $log->info("program started",
+        {progname => $0, pid => $$, perl_version => $]});
+
+If the configured L<Log::Any::Adapter> does not support logging structured data,
+the hash will be converted to a string using L<Data::Dumper>.
+
+There are also versions of each of the logging methods with an additional "f" suffix
 (C<infof>, C<errorf>, C<debugf>, etc.) that format a list of arguments.  The
 specific formatting mechanism and meaning of the arguments is controlled by the
 L<Log::Any::Proxy> object.
