@@ -52,8 +52,6 @@ sub new {
         Carp::croak("$class requires an 'category' parameter");
     }
     bless $self, $class;
-    $self->{structured_logging} =
-      $self->{adapter}->can('structured') && !$self->{filter};
     $self->init(@_);
     return $self;
 }
@@ -88,7 +86,10 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
     *{$name} = sub {
         my ( $self, @parts ) = @_;
 
-        if ( $self->{structured_logging} ) {
+        my $structured_logging =
+            $self->{adapter}->can('structured') && !$self->{filter};
+
+        if ($structured_logging) {
             unshift @parts, $self->{prefix} if $self->{prefix};
             $self->{adapter}
               ->structured( $realname, $self->{category}, @parts );
@@ -100,7 +101,7 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
             @parts = _stringify_params(@parts);
         }
         my $message = join( " ", @parts );
-        if ( length $message && !$self->{structured_logging} ) {
+        if ( length $message && !$structured_logging ) {
             $message =
               $self->{filter}->( $self->{category}, $numeric, $message )
               if defined $self->{filter};
