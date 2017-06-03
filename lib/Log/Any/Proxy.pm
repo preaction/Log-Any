@@ -42,7 +42,7 @@ sub _default_formatter {
 
 sub new {
     my $class = shift;
-    my $self = { formatter => \&_default_formatter, @_ };
+    my $self = { formatter => \&_default_formatter, context => {}, @_ };
     unless ( $self->{adapter} ) {
         require Carp;
         Carp::croak("$class requires an 'adapter' parameter");
@@ -92,11 +92,11 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
         if ($structured_logging) {
             unshift @parts, $self->{prefix} if $self->{prefix};
             $self->{adapter}
-              ->structured( $realname, $self->{category}, @parts );
+              ->structured( $realname, $self->{category}, @parts, grep { scalar keys %$_ } $self->{context});
             return unless defined wantarray;
         }
 
-        @parts = grep { defined($_) && length($_) } @parts;
+        @parts = grep { defined($_) && length($_) } @parts, grep {scalar keys %$_} $self->{context};
         if ( grep { ref } @parts ) {
             @parts = _stringify_params(@parts);
         }
@@ -121,6 +121,11 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
         return unless defined $message and length $message;
         return $self->$name($message);
     };
+}
+
+sub context {
+    my ($self) = @_;
+    return $self->{context};
 }
 
 1;
@@ -238,7 +243,7 @@ logged.  Otherwise, the return value is passed to the logging adapter.
 Numeric levels range from 0 (emergency) to 8 (trace).  Constant functions
 for these levels are available from L<Log::Any::Adapter::Util>.
 
-Configurating a filter disables structured logging, even if the
+Configuring a filter disables structured logging, even if the
 configured adapter supports it.
 
 =attr formatter
