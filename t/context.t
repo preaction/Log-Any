@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More;
+use Test::More tests => 2;
 
 use Log::Any::Adapter;
 use Log::Any '$log';
@@ -53,6 +53,3 @@ is_deeply( \@TestAdapters::TEXT_LOG, \@expected_text_log,
     'text log is correct' );
 is_deeply( \@TestAdapters::STRUCTURED_LOG,
     \@expected_structured_log, 'structured log is correct' );
-
-done_testing;
-

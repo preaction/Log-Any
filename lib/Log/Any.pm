@@ -358,9 +358,10 @@ L<Data::Dumper>, and will be appended to the log message.
 
 =head2 Setting an alternate default logger
 
-When no other adapters are configured for your logger, C<Log::Any> uses
-the C<default_adapter>. To choose something other than Null as the
-default, pass it as a parameter when loading C<Log::Any>
+When no other adapters are configured for your logger, C<Log::Any>
+uses the C<default_adapter>. To choose something other than Null as
+the default, either set the C<LOG_ANY_DEFAULT_ADAPTER> environment
+variable, or pass it as a parameter when loading C<Log::Any>
 
     use Log::Any '$log', default_adapter => 'Stderr';
 
