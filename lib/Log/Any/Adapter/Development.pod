@@ -179,7 +179,7 @@ Your adapter can choose to receive structured data instead of a
 string. In this case, instead of implementing all the L</Logging
 methods>, you define a single method called C<structured>. The method
 receives the log level, the category, and all arguments that were
-passed to the logging function, so be prepared to no only handle
+passed to the logging function, so be prepared to not only handle
 strings, but also hashrefs, arrayrefs, coderefs, etc.
 
 =head2 Aliases

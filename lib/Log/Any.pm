@@ -335,6 +335,27 @@ the detection methods will always return 1.
 In contrast, the default logging mechanism - Null - will return 0 for all
 detection methods.
 
+=head2 Log context data
+
+C<Log::Any> supports logging context data by exposing the C<context>
+hashref. All the key/value pairs added to this hash will be printed
+with every log message. You can localize the data so that it will be
+removed again automatically at the end of the block:
+
+    $log->context->{directory} = $dir;
+    for my $file (glob "$dir/*") {
+        local $log->context->{file} = basename($file);
+        $log->warn("Can't read file!") unless -r $file;
+    }
+
+This will produce the following line:
+
+    Can't read file! {directory => '/foo',file => 'bar'}
+
+If the configured L<Log::Any::Adapter> does not support structured
+data, the context hash will be converted to a string using
+L<Data::Dumper>, and will be appended to the log message.
+
 =head2 Setting an alternate default logger
 
 When no other adapters are configured for your logger, C<Log::Any> uses
