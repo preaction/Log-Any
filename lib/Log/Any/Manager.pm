@@ -55,8 +55,9 @@ sub _choose_entry_for_category {
         }
     }
     # nothing requested so fallback to default
+    my $default_adapter_name = $ENV{LOG_ANY_DEFAULT_ADAPTER} || "Null";
     my $default = $self->{default_adapter}{$category}
-        || [ $self->_get_adapter_class("Null"), [] ];
+        || [ $self->_get_adapter_class($default_adapter_name), [] ];
     my ($adapter_class, $adapter_params) = @$default;
     _require_dynamic($adapter_class);
     return {
