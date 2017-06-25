@@ -299,14 +299,15 @@ L<Log::Any::Proxy> object.
     $log->errorf("an error occurred: %s", $@);
     $log->debugf("called with %d params: %s", $param_count, \@params);
 
-By default it renders like C<sprintf>, with the following additional features:
+By default it renders like L<C<sprintf>|perlfunc/"sprintf FORMAT, LIST">,
+with the following additional features:
 
 =over
 
 =item *
 
 Any complex references (like C<\@params> above) are automatically converted to
-single-line strings with C<Data::Dumper>.
+single-line strings with L<Data::Dumper>.
 
 =item *
 
@@ -415,7 +416,7 @@ logging mechanism.
 Each of the logging mechanisms have their pros and cons, particularly in terms
 of how they are configured. For example, log4perl offers a great deal of power
 and flexibility but uses a global and potentially heavy configuration, whereas
-C<Log::Dispatch> is extremely configuration-light but doesn't handle
+L<Log::Dispatch> is extremely configuration-light but doesn't handle
 categories. There is also the unnamed future logger that may have advantages
 over either of these two, and all the custom in-house loggers people have
 created and cannot (for whatever reason) stop using.
