@@ -42,14 +42,18 @@ sub _default_formatter {
 
 sub new {
     my $class = shift;
-    my $self = { formatter => \&_default_formatter, context => {}, @_ };
+    my $self = { formatter => \&_default_formatter, @_ };
     unless ( $self->{adapter} ) {
         require Carp;
         Carp::croak("$class requires an 'adapter' parameter");
     }
     unless ( $self->{category} ) {
         require Carp;
-        Carp::croak("$class requires an 'category' parameter");
+        Carp::croak("$class requires a 'category' parameter");
+    }
+    unless ( $self->{context} ) {
+        require Carp;
+        Carp::croak("$class requires a 'context' parameter");
     }
     bless $self, $class;
     $self->init(@_);
@@ -63,7 +67,7 @@ sub clone {
 
 sub init { }
 
-for my $attr (qw/adapter filter formatter prefix/) {
+for my $attr (qw/adapter filter formatter prefix context/) {
     no strict 'refs';
     *{$attr} = sub { return $_[0]->{$attr} };
 }
@@ -123,11 +127,6 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
         return unless defined $message and length $message;
         return $self->$name($message);
     };
-}
-
-sub context {
-    my ($self) = @_;
-    return $self->{context};
 }
 
 1;

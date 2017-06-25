@@ -15,12 +15,19 @@ use TestAdapters;
 $log->context->{progname} = basename($0);
 $log->context->{pid}      = 42;
 
+sub process_file {
+    my ($file) = @_;
+    my $log2 = Log::Any->get_logger( category => 'MyApp::FileProcessor' );
+    $log2->info('Performing work');
+}
+
 sub process_dir {
     my ($dir) = @_;
-    local $log->context->{directory} = $dir;
+    my $log1 = Log::Any->get_logger( category => 'MyApp::DirWalker' );
+    local $log1->context->{directory} = $dir;
     for ( 1 .. 3 ) {
-        local $log->context->{pass} = $_;
-        $log->info('Performing work');
+        local $log1->context->{pass} = $_;
+        process_file("$dir/$_");
     }
 }
 
@@ -35,7 +42,7 @@ my @expected_text_log = map {
 } ( 1 .. 3 );
 
 my @expected_structured_log = map {
-    {   category => 'main',
+    {   category => 'MyApp::FileProcessor',
         data     => [
             {   directory => '/bar',
                 pass      => $_,

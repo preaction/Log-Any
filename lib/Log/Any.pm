@@ -92,10 +92,11 @@ sub get_logger {
     }
 
     my $adapter = $class->_manager->get_adapter( $category );
+    my $context = $class->_manager->get_context();
 
     require_dynamic($proxy_class);
     return $proxy_class->new(
-        %params, adapter => $adapter, category => $category,
+        %params, adapter => $adapter, category => $category, context => $context
     );
 }
 
