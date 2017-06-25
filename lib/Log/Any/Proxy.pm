@@ -96,10 +96,12 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
             return unless defined wantarray;
         }
 
-        @parts = grep { defined($_) && length($_) } @parts, grep {scalar keys %$_} $self->{context};
-        if ( grep { ref } @parts ) {
-            @parts = _stringify_params(@parts);
-        }
+        @parts = grep { defined($_) && length($_) } @parts;
+
+        # last part might be a hashref - if so, stringify
+        push @parts, _stringify_params(pop @parts) if ( @parts && ((ref $parts[-1] || '') eq ref {}));
+
+        push @parts, _stringify_params($self->{context}) if %{$self->{context}};
         my $message = join( " ", @parts );
         if ( length $message && !$structured_logging ) {
             $message =
@@ -281,7 +283,7 @@ flexible/powerful than L</filter>, but avoids an extra function call.
 =head2 Logging Structured Data
 
 If you have data in addition to the text you want to log, you can
-specify a hashref together with your string. If the configured adapter
+specify a hashref after your string. If the configured adapter
 supports structured data, it will receive the hashref as-is, otherwise
 it will be converted to a string using L<Data::Dumper> and will be
 appended to your text.

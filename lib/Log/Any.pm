@@ -283,7 +283,7 @@ You should B<not> include a newline in your message; that is the responsibility
 of the logging mechanism, which may or may not want the newline.
 
 If you want to log additional structured data alongside with your string, you
-can add a hashref to your log string. e.g.
+can add a single hashref after your log string. e.g.
 
     $log->info("program started",
         {progname => $0, pid => $$, perl_version => $]});
