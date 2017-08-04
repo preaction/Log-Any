@@ -34,8 +34,11 @@ sub process_dir {
 Log::Any::Adapter->set('+TestAdapters::Normal');
 process_dir('/foo');
 
-Log::Any::Adapter->set('+TestAdapters::Structured');
-process_dir('/bar');
+{
+    local $log->context->{pid} = 84;
+    Log::Any::Adapter->set('+TestAdapters::Structured');
+    process_dir('/bar');
+}
 
 my @expected_text_log = map {
     qq(Performing work {directory => "/foo",pass => $_,pid => 42,progname => "context.t"})
@@ -46,7 +49,7 @@ my @expected_structured_log = map {
         data     => [
             {   directory => '/bar',
                 pass      => $_,
-                pid       => 42,
+                pid       => 84,
                 progname  => 'context.t'
             }
         ],
