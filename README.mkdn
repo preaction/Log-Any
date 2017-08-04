@@ -4,7 +4,7 @@ Log::Any - Bringing loggers and listeners together
 
 # VERSION
 
-version 1.049
+version 1.050
 
 # STATUS
 
@@ -20,7 +20,11 @@ In a CPAN or other module:
     # log a string
     $log->error("an error occurred");
 
-    # log a string and data using a formatting filter
+    # log a string and some data
+    $log->info("program started",
+        {progname => $0, pid => $$, perl_version => $]});
+
+    # log a string and data using a format string
     $log->debugf("arguments are: %s", \@_);
 
     # log an error and throw an exception
@@ -163,7 +167,16 @@ The log string will be returned so that it can be used further (e.g. for a `die`
 You should **not** include a newline in your message; that is the responsibility
 of the logging mechanism, which may or may not want the newline.
 
-There are also versions of each of these methods with an additional "f" suffix
+If you want to log additional structured data alongside with your string, you
+can add a single hashref after your log string. e.g.
+
+    $log->info("program started",
+        {progname => $0, pid => $$, perl_version => $]});
+
+If the configured [Log::Any::Adapter](https://metacpan.org/pod/Log::Any::Adapter) does not support logging structured data,
+the hash will be converted to a string using [Data::Dumper](https://metacpan.org/pod/Data::Dumper).
+
+There are also versions of each of the logging methods with an additional "f" suffix
 (`infof`, `errorf`, `debugf`, etc.) that format a list of arguments.  The
 specific formatting mechanism and meaning of the arguments is controlled by the
 [Log::Any::Proxy](https://metacpan.org/pod/Log::Any::Proxy) object.
@@ -171,10 +184,11 @@ specific formatting mechanism and meaning of the arguments is controlled by the
     $log->errorf("an error occurred: %s", $@);
     $log->debugf("called with %d params: %s", $param_count, \@params);
 
-By default it renders like `sprintf`, with the following additional features:
+By default it renders like [`sprintf`](https://metacpan.org/pod/perlfunc#sprintf-FORMAT-LIST),
+with the following additional features:
 
 - Any complex references (like `\@params` above) are automatically converted to
-single-line strings with `Data::Dumper`.
+single-line strings with [Data::Dumper](https://metacpan.org/pod/Data::Dumper).
 - Any undefined values are automatically converted to the string "&lt;undef>".
 
 ## Log level detection
@@ -198,11 +212,33 @@ the detection methods will always return 1.
 In contrast, the default logging mechanism - Null - will return 0 for all
 detection methods.
 
+## Log context data
+
+`Log::Any` supports logging context data by exposing the `context`
+hashref. All the key/value pairs added to this hash will be printed
+with every log message. You can localize the data so that it will be
+removed again automatically at the end of the block:
+
+    $log->context->{directory} = $dir;
+    for my $file (glob "$dir/*") {
+        local $log->context->{file} = basename($file);
+        $log->warn("Can't read file!") unless -r $file;
+    }
+
+This will produce the following line:
+
+    Can't read file! {directory => '/foo',file => 'bar'}
+
+If the configured [Log::Any::Adapter](https://metacpan.org/pod/Log::Any::Adapter) does not support structured
+data, the context hash will be converted to a string using
+[Data::Dumper](https://metacpan.org/pod/Data::Dumper), and will be appended to the log message.
+
 ## Setting an alternate default logger
 
-When no other adapters are configured for your logger, `Log::Any` uses
-the `default_adapter`. To choose something other than Null as the
-default, pass it as a parameter when loading `Log::Any`
+When no other adapters are configured for your logger, `Log::Any`
+uses the `default_adapter`. To choose something other than Null as
+the default, either set the `LOG_ANY_DEFAULT_ADAPTER` environment
+variable, or pass it as a parameter when loading `Log::Any`
 
     use Log::Any '$log', default_adapter => 'Stderr';
 
@@ -254,7 +290,7 @@ See the [Log::Any::Adapter](https://metacpan.org/pod/Log::Any::Adapter) document
     Each of the logging mechanisms have their pros and cons, particularly in terms
     of how they are configured. For example, log4perl offers a great deal of power
     and flexibility but uses a global and potentially heavy configuration, whereas
-    `Log::Dispatch` is extremely configuration-light but doesn't handle
+    [Log::Dispatch](https://metacpan.org/pod/Log::Dispatch) is extremely configuration-light but doesn't handle
     categories. There is also the unnamed future logger that may have advantages
     over either of these two, and all the custom in-house loggers people have
     created and cannot (for whatever reason) stop using.
@@ -289,8 +325,6 @@ See the [Log::Any::Adapter](https://metacpan.org/pod/Log::Any::Adapter) document
 - Maxim Vuets <maxim.vuets@booking.com>
 - mephinet <mephinet@gmx.net>
 - Philipp Gortan <philipp.gortan@apa.at>
-- Stephen Thirlwall <sdt@dr.com>
-- Stephen Thirlwall <stephen.thirlwall@strategicdata.com.au>
 
 # COPYRIGHT AND LICENSE
 
