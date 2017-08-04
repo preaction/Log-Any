@@ -4,7 +4,7 @@ use warnings;
 
 package Log::Any::Adapter::Base;
 
-our $VERSION = '1.050';
+our $VERSION = '1.051';
 our @CARP_NOT = ( 'Log::Any::Adapter' );
 
 # we import these in case any legacy adapter uses them as class methods
