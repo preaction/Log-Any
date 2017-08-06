@@ -26,7 +26,7 @@ sub new {
 
 sub has_consumer {
     my ( $self ) = @_;
-    return !!( @{ $self->{entries} } || keys %{ $self->{default_adapter} } );
+    return !!( @{ $self->{entries} } || keys %{ $self->{default_adapter} } || $ENV{LOG_ANY_DEFAULT_ADAPTER} );
 }
 
 sub get_adapter {
