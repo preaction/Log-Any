@@ -2,6 +2,16 @@ Revision history for Log-Any
 
 ** denotes an incompatible change
 
+{{ $NEXT }}
+
+    [Fixed]
+
+    - Fixed version of Log::Any::Adapter::Syslog so that installing it
+      will also install the rest of Log-Any.
+
+    - Fixed method aliasing in Log::Any::Adapter::Syslog for "error"
+      log method. Thanks @legaultp for the patch!
+
 1.051     2017-08-06 20:41:53-05:00 America/Chicago (TRIAL RELEASE)
 
     [Fixed]
