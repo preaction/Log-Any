@@ -4,6 +4,8 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+1.700     2017-09-28 16:59:22-05:00 America/Chicago
+
     [Fixed]
 
     - Fixed version of Log::Any::Adapter::Syslog so that installing it
