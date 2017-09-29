@@ -31,7 +31,7 @@ sub _min_level {
     my $self = shift;
 
     return $ENV{LOG_LEVEL}
-        if $ENV{LOG_LEVEL} && defined $logging_levels{$ENV{LOG_LEVEL}};
+       if $ENV{LOG_LEVEL} && defined $logging_levels{$ENV{LOG_LEVEL}};
     return 'trace' if $ENV{TRACE};
     return 'debug' if $ENV{DEBUG};
     return 'info'  if $ENV{VERBOSE};
