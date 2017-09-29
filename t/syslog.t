@@ -25,9 +25,9 @@ my %tests = (
     notice    => "notice",
     warning   => "warning",
     error     => "err",
-    critical  => "critical",
+    critical  => "crit",
     alert     => "alert",
-    emergency => "emergency",
+    emergency => "emerg",
 );
 
 for my $level (sort keys %tests) {
@@ -61,6 +61,6 @@ Log::Any::Adapter->set( 'Syslog', log_level => 'emergency' );
 $log->error( 'foo' );
 is scalar @logs, 0, 'no log written because log_level too high';
 $log->emergency( 'help' );
-is $logs[-1][0], 'emergency', 'emergency log is logged';
+is $logs[-1][0], 'emerg', 'emergency log is logged';
 is $logs[-1][1], 'help', 'emergency log is logged';
 
