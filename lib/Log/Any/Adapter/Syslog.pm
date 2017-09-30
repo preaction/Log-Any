@@ -99,11 +99,11 @@ foreach my $method (Log::Any->logging_methods()) {
         warn      => "warning",
         error     => "err",
         err       => "err",
-        critical  => "critical",
-        crit      => "critical",
-        fatal     => "critical",
+        critical  => "crit",
+        crit      => "crit",
+        fatal     => "crit",
         alert     => "alert",
-        emergency => "emergency",
+        emergency => "emerg",
     }->{$method};
     defined($priority) or $priority = "error"; # unknown, take a guess.
 
