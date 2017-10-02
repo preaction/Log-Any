@@ -4,6 +4,8 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+1.701     2017-10-02 14:36:51-05:00 America/Chicago
+
     [Fixed]
 
     - Fixed more method aliases in Log::Any::Adapter::Syslog that were
