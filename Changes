@@ -4,6 +4,12 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+    [Fixed]
+
+    - Fixed more method aliases in Log::Any::Adapter::Syslog that were
+      mapped to invalid syslog priorities. Thanks @legaultp for the
+      patch!
+
 1.700     2017-09-28 16:59:22-05:00 America/Chicago
 
     [Fixed]
