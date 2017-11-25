@@ -72,10 +72,8 @@ sub get_logger {
     my ( $class, %params ) = @_;
     no warnings 'once';
 
-    my $proxy_class = $class->_get_proxy_class( delete $params{proxy_class} );
     my $category =
       defined $params{category} ? delete $params{'category'} : caller;
-
     if ( my $default = delete $params{'default_adapter'} ) {
         my @default_adapter_params = ();
         if (ref $default eq 'ARRAY') {
@@ -90,6 +88,8 @@ sub get_logger {
             $category, $default, @default_adapter_params
         );
     }
+
+    my $proxy_class = $class->_get_proxy_class( delete $params{proxy_class} );
 
     my $adapter = $class->_manager->get_adapter( $category );
     my $context = $class->_manager->get_context();
