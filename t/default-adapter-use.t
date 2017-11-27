@@ -4,7 +4,6 @@ use Test::More tests => 3;
 
 use Log::Any '$log', default_adapter => 'Stderr';
 
-note "Got proxy =".ref $log;
 isa_ok( $log, 'Log::Any::Proxy', 'we have a proxy...' );
 ok( !$log->isa('Log::Any::Proxy::Null'), '...but it\'s not the null proxy' );
 
