@@ -4,6 +4,11 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+    [Fixed]
+
+    - Fixed log output disappearing when the `default_adapter` is set.
+      Thanks @dallaylaen! [Github #65]
+
 1.701     2017-10-02 14:36:51-05:00 America/Chicago
 
     [Fixed]

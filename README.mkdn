@@ -4,7 +4,7 @@ Log::Any - Bringing loggers and listeners together
 
 # VERSION
 
-version 1.701
+version 1.702
 
 # STATUS
 
@@ -320,6 +320,8 @@ See the [Log::Any::Adapter](https://metacpan.org/pod/Log::Any::Adapter) document
 
 - bj5004 <bartosz.jakubski@hurra.com>
 - cm-perl <cm-perl@users.noreply.github.com>
+- Karen Etheridge <ether@cpan.org>
+- Konstantin S. Uvarin <khedin@gmail.com>
 - Lucas Kanashiro <kanashiro.duarte@gmail.com>
 - Maros Kollar <maros.kollar@geizhals.at>
 - Maxim Vuets <maxim.vuets@booking.com>
