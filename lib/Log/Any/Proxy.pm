@@ -121,7 +121,7 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
     };
     *{$namef} = sub {
         my ( $self, @args ) = @_;
-        return unless $self->{adapter}->$is_realname;
+        return if !$self->{adapter}->$is_realname && !defined wantarray;
         my $message =
           $self->{formatter}->( $self->{category}, $numeric, @args );
         return unless defined $message and length $message;
