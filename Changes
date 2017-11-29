@@ -4,6 +4,8 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+1.703     2017-11-29 10:56:17-06:00 America/Chicago
+
     [Fixed]
 
     - Fixed log format methods (errorf, warnf, infof, etc...) not
