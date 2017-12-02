@@ -65,7 +65,7 @@ BEGIN {
     @logging_and_detection_methods = ( @logging_methods, @detection_methods );
 }
 
-=func logging_methods
+=sub logging_methods
 
 Returns a list of all logging method. E.g. "trace", "info", etc.
 
@@ -73,7 +73,7 @@ Returns a list of all logging method. E.g. "trace", "info", etc.
 
 sub logging_methods               { @logging_methods }
 
-=func detection_methods
+=sub detection_methods
 
 Returns a list of detection methods.  E.g. "is_trace", "is_info", etc.
 
@@ -81,7 +81,7 @@ Returns a list of detection methods.  E.g. "is_trace", "is_info", etc.
 
 sub detection_methods             { @detection_methods }
 
-=func logging_and_detection_methods
+=sub logging_and_detection_methods
 
 Returns a list of logging and detection methods (but not aliases).
 
@@ -89,7 +89,7 @@ Returns a list of logging and detection methods (but not aliases).
 
 sub logging_and_detection_methods { @logging_and_detection_methods }
 
-=func log_level_aliases
+=sub log_level_aliases
 
 Returns key/value pairs mapping aliases to "official" names.  E.g. "err" maps
 to "error".
@@ -98,7 +98,7 @@ to "error".
 
 sub log_level_aliases             { %LOG_LEVEL_ALIASES }
 
-=func logging_aliases
+=sub logging_aliases
 
 Returns a list of logging alias names.  These are the keys from
 L</log_level_aliases>.
@@ -107,7 +107,7 @@ L</log_level_aliases>.
 
 sub logging_aliases               { @logging_aliases }
 
-=func detection_aliases
+=sub detection_aliases
 
 Returns a list of detection aliases.  E.g. "is_err", "is_fatal", etc.
 
@@ -115,7 +115,7 @@ Returns a list of detection aliases.  E.g. "is_err", "is_fatal", etc.
 
 sub detection_aliases             { @detection_aliases }
 
-=func numeric_level
+=sub numeric_level
 
 Given a level name (or alias), returns the numeric value described above under
 log level constants.  E.g. "err" would return 3.
@@ -129,7 +129,7 @@ sub numeric_level {
     return $LOG_LEVELS{ uc($canonical) };
 }
 
-=func dump_one_line
+=sub dump_one_line
 
 Given a reference, returns a one-line L<Data::Dumper> dump with keys sorted.
 
@@ -153,7 +153,7 @@ Given a reference, returns a one-line L<Data::Dumper> dump with keys sorted.
     return $string;
 };
 
-=func make_method
+=sub make_method
 
 Given a method name, a code reference and a package name, installs the code
 reference as a method in the package.
@@ -168,7 +168,7 @@ sub make_method {
     *{ $pkg . "::$method" } = $code;
 }
 
-=func require_dynamic (DEPRECATED)
+=sub require_dynamic (DEPRECATED)
 
 Given a class name, attempts to load it via require unless the class
 already has a constructor available.  Throws an error on failure. Used
@@ -187,7 +187,7 @@ sub require_dynamic {
     }
 }
 
-=func read_file (DEPRECATED)
+=sub read_file (DEPRECATED)
 
 Slurp a file.  Does *not* apply any layers.  Used for testing and may
 become private in the future.
@@ -204,7 +204,7 @@ sub read_file {
     return $contents;
 }
 
-=func cmp_deeply (DEPRECATED)
+=sub cmp_deeply (DEPRECATED)
 
 Compares L<dump_one_line> results for two references.  Also takes a test
 label as a third argument.  Used for testing and may become private in the
