@@ -89,6 +89,7 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
     };
     *{$name} = sub {
         my ( $self, @parts ) = @_;
+        return if !$self->{adapter}->$is_realname && !defined wantarray;
 
         my $structured_logging =
             $self->{adapter}->can('structured') && !$self->{filter};
