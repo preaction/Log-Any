@@ -4,6 +4,8 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+1.704     2017-12-17 18:13:33-06:00 America/Chicago
+
     [Fixed]
 
     - Fixed some invalid POD and added a test to ensure POD validity
