@@ -379,8 +379,8 @@ used again.
 
 =head2 Configuring the proxy
 
-Any parameter passed on the import line or via the C<get_logger> method
-are passed on the the L<Log::Any::Proxy> constructor.
+Any parameters passed on the import line or via the C<get_logger> method
+are passed on to the L<Log::Any::Proxy> constructor.
 
     use Log::Any '$log', filter => \&myfilter;
 
