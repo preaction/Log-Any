@@ -4,6 +4,11 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+    [Fixed]
+
+    - Fixed the `binmode` attribute of the File adapter not working
+      properly. Thanks @MadLord80! [Github #71]
+
 1.704     2017-12-17 18:13:33-06:00 America/Chicago
 
     [Fixed]

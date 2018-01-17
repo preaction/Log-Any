@@ -4,7 +4,7 @@ Log::Any - Bringing loggers and listeners together
 
 # VERSION
 
-version 1.704
+version 1.705
 
 # STATUS
 
@@ -254,8 +254,8 @@ used again.
 
 ## Configuring the proxy
 
-Any parameter passed on the import line or via the `get_logger` method
-are passed on the the [Log::Any::Proxy](https://metacpan.org/pod/Log::Any::Proxy) constructor.
+Any parameters passed on the import line or via the `get_logger` method
+are passed on to the [Log::Any::Proxy](https://metacpan.org/pod/Log::Any::Proxy) constructor.
 
     use Log::Any '$log', filter => \&myfilter;
 
@@ -326,6 +326,7 @@ See the [Log::Any::Adapter](https://metacpan.org/pod/Log::Any::Adapter) document
 - Maros Kollar <maros.kollar@geizhals.at>
 - Maxim Vuets <maxim.vuets@booking.com>
 - mephinet <mephinet@gmx.net>
+- Nick Tonkin <1nickt@users.noreply.github.com>
 - Philipp Gortan <philipp.gortan@apa.at>
 - Phill Legault <saladdayllc@gmail.com>
 - Shlomi Fish <shlomif@shlomifish.org>
