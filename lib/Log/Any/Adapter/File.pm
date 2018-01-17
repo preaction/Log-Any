@@ -37,7 +37,7 @@ sub init {
         $self->{log_level} = $trace_level;
     }
     my $file = $self->{file};
-    my $binmode ||= ':utf8';
+    my $binmode = $self->{binmode} || ':utf8';
     $binmode = ":$binmode" unless substr($binmode,0,1) eq ':';
     open( $self->{fh}, ">>$binmode", $file )
       or die "cannot open '$file' for append: $!";
