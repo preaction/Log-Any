@@ -27,7 +27,7 @@ sub init {
     my $self = shift;
     if ( exists $self->{log_level} && $self->{log_level} =~ /\D/ ) {
         my $numeric_level = Log::Any::Adapter::Util::numeric_level( $self->{log_level} );
-        if ( !$numeric_level ) {
+        if ( !defined($numeric_level) ) {
             require Carp;
             Carp::carp( sprintf 'Invalid log level "%s". Defaulting to "%s"', $self->{log_level}, 'trace' );
         }
