@@ -4,6 +4,8 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+1.706     2018-07-06 20:20:00-05:00 America/Chicago
+
     [Fixed]
 
     - The File, Stderr, and Stdout adapters now correctly allow being
