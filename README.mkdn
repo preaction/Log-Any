@@ -4,7 +4,7 @@ Log::Any - Bringing loggers and listeners together
 
 # VERSION
 
-version 1.705
+version 1.706
 
 # STATUS
 
@@ -327,6 +327,7 @@ See the [Log::Any::Adapter](https://metacpan.org/pod/Log::Any::Adapter) document
 - Maxim Vuets <maxim.vuets@booking.com>
 - mephinet <mephinet@gmx.net>
 - Nick Tonkin <1nickt@users.noreply.github.com>
+- Paul Durden <alabamapaul@gmail.com>
 - Philipp Gortan <philipp.gortan@apa.at>
 - Phill Legault <saladdayllc@gmail.com>
 - Shlomi Fish <shlomif@shlomifish.org>
