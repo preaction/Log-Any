@@ -33,7 +33,7 @@ sub init {
         }
         $self->{log_level} = $numeric_level;
     }
-    if ( !$self->{log_level} ) {
+    if ( !defined $self->{log_level} ) {
         $self->{log_level} = $trace_level;
     }
     my $file = $self->{file};
