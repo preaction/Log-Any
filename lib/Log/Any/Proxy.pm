@@ -94,19 +94,22 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
         my $structured_logging =
             $self->{adapter}->can('structured') && !$self->{filter};
 
+        my $data_from_parts = pop @parts
+            if ( @parts && ( ( ref $parts[-1] || '' ) eq ref {} ) );
+        my $data_from_context = $self->{context};
+        my $data =
+            { map {%$_} grep {$_ && %$_} $data_from_context, $data_from_parts };
+
         if ($structured_logging) {
             unshift @parts, $self->{prefix} if $self->{prefix};
             $self->{adapter}
-              ->structured( $realname, $self->{category}, @parts, grep { scalar keys %$_ } $self->{context});
+              ->structured( $realname, $self->{category}, @parts, grep {%$_} $data );
             return unless defined wantarray;
         }
 
         @parts = grep { defined($_) && length($_) } @parts;
+        push @parts, _stringify_params($data) if %$data;
 
-        # last part might be a hashref - if so, stringify
-        push @parts, _stringify_params(pop @parts) if ( @parts && ((ref $parts[-1] || '') eq ref {}));
-
-        push @parts, _stringify_params($self->{context}) if %{$self->{context}};
         my $message = join( " ", @parts );
         if ( length $message && !$structured_logging ) {
             $message =
