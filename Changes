@@ -4,6 +4,8 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+1.707     2018-08-01 22:55:01-05:00 America/Chicago
+
     [Fixed]
 
     - The local context hash (`$log->context`) and the log hash
