@@ -103,3 +103,40 @@ sub _get_adapters {
 }
 
 1;
+
+__END__
+
+=pod
+
+=head1 SYNOPSIS
+
+    Log::Any::Adapter->set(
+        'Multiplex',
+        adapters_and_args => {
+            'Stdout' => [],
+            'Stderr' => [ log_level => 'warn' ],
+            ...
+            $adapter => \@adapter_args
+        },
+    );
+
+=head1 DESCRIPTION
+
+This built-in L<Log::Any> adapter provides a simple means of routing logs to
+multiple other L<Log::Any::Adapter>s.
+
+Adapters receiving messages from this adapter can behave just like they are the
+only recipient of the log message. That means they can, for example, use
+L<Log::Any::Adapter::Development/Structured logging> (or not).
+
+C<adapters_and_args> is a hashref whose keys should be adapters, and whose
+values are the arguments to pass those adapters on initialization.
+
+Note that this differs from other loggers like L<Log::Dispatch>, which will
+only provide its output modules a single string C<$message>, and not the full
+L<Log::Any/Log context data>.
+
+=head1 SEE ALSO
+
+L<Log::Any>, L<Log::Any::Adapter>
+
