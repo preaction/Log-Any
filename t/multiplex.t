@@ -10,15 +10,15 @@ use Log::Any::Adapter;
     use base 'Log::Any::Adapter::Base';
     use Log::Any::Adapter::Util qw(make_method);
 
-    our $Instance;
-    our $Is_Logging      = 0;
-    our @Structured_Args = ();
+    our $instance;
+    our $is_logging      = 0;
+    our @structured_args = ();
 
-    sub init { $Instance = shift }
+    sub init { $instance = shift }
 
-    sub structured { @Structured_Args = @_ }
+    sub structured { @structured_args = @_ }
     foreach my $method ( Log::Any->detection_methods() ) {
-        make_method( $method, sub { $Is_Logging } );
+        make_method( $method, sub { $is_logging } );
     }
 }
 
@@ -27,19 +27,19 @@ use Log::Any::Adapter;
     use base 'Log::Any::Adapter::Base';
     use Log::Any::Adapter::Util qw(make_method);
 
-    our $Instance;
-    our $Is_Logging        = 0;
-    our %Unstructured_Args = ();
+    our $instance;
+    our $is_logging        = 0;
+    our %unstructured_args = ();
 
-    sub init { $Instance = shift }
+    sub init { $instance = shift }
 
     # Log what we called at each severity
     foreach my $method ( Log::Any->logging_methods() ) {
-        make_method( $method, sub { $Unstructured_Args{$method} = [@_] } );
+        make_method( $method, sub { $unstructured_args{$method} = [@_] } );
     }
 
     foreach my $method ( Log::Any->detection_methods() ) {
-        make_method( $method, sub { $Is_Logging } );
+        make_method( $method, sub { $is_logging } );
     }
 }
 
@@ -90,67 +90,67 @@ subtest basic_arg_validation => sub {
 };
 
 subtest multiplex_implementation => sub {
-    my %Random_Args = ( log_level => 'scream' );
+    my %random_args = ( log_level => 'scream' );
 
     my $entry = Log::Any::Adapter->set(
         'Multiplex',
         adapters_and_args => {
-            '+_My::Structured::Adapter'   => [ %Random_Args ],
-            '+_My::Unstructured::Adapter' => [ %Random_Args ],
+            '+_My::Structured::Adapter'   => [ %random_args ],
+            '+_My::Unstructured::Adapter' => [ %random_args ],
         }
     );
 
     my $log = Log::Any->get_logger();
     ok !$log->is_info, "multiplex logging off for both destinations";
 
-    $_My::Structured::Adapter::Is_Logging   = 1;
-    $_My::Unstructured::Adapter::Is_Logging = 0;
+    $_My::Structured::Adapter::is_logging   = 1;
+    $_My::Unstructured::Adapter::is_logging = 0;
     ok $log->is_info, "multiplex logging on for one destination";
 
-    $_My::Structured::Adapter::Is_Logging   = 0;
-    $_My::Unstructured::Adapter::Is_Logging = 1;
+    $_My::Structured::Adapter::is_logging   = 0;
+    $_My::Unstructured::Adapter::is_logging = 1;
     ok $log->is_info, "multiplex logging on for other destination";
 
-    $_My::Structured::Adapter::Is_Logging   = 1;
-    $_My::Unstructured::Adapter::Is_Logging = 1;
+    $_My::Structured::Adapter::is_logging   = 1;
+    $_My::Unstructured::Adapter::is_logging = 1;
     ok $log->is_info, "multiplex logging on for both destinations";
 
-    my $structured_adapter   = $_My::Structured::Adapter::Instance;
-    my $unstructured_adapter = $_My::Unstructured::Adapter::Instance;
+    my $structured_adapter   = $_My::Structured::Adapter::instance;
+    my $unstructured_adapter = $_My::Unstructured::Adapter::instance;
 
     is $structured_adapter->{log_level},
-       $Random_Args{log_level},
+       $random_args{log_level},
        "Arguments passed to structured adapter";
     is $unstructured_adapter->{log_level},
-       $Random_Args{log_level},
+       $random_args{log_level},
        "Arguments passed to unstructured adapter";
 
-    my $Message = "In a bottle";
-    my $Level   = 'info';
-    my $Cat     = __PACKAGE__;
+    my $message = "In a bottle";
+    my $level   = 'info';
+    my $cat     = __PACKAGE__;
     $log->context->{foo} = 'bar';
-    my $Ctx_Str = '{foo => "bar"}';
-    $log->$Level($Message);
+    my $ctx_str = '{foo => "bar"}';
+    $log->$level($message);
 
-    is_deeply [ @_My::Structured::Adapter::Structured_Args ],
-              [ $structured_adapter, $Level, $Cat, $Message, $log->context ],
+    is_deeply [ @_My::Structured::Adapter::structured_args ],
+              [ $structured_adapter, $level, $cat, $message, $log->context ],
               "Passed appropriate structured args";
-    is_deeply $_My::Unstructured::Adapter::Unstructured_Args{$Level},
-              [ $unstructured_adapter, $Message, $Ctx_Str ],
+    is_deeply $_My::Unstructured::Adapter::unstructured_args{$level},
+              [ $unstructured_adapter, $message, $ctx_str ],
               "Passed appropriate unstructured args";
 
-    @_My::Structured::Adapter::Structured_Args = ();
-    $_My::Structured::Adapter::Is_Logging = 0;
-    $log->$Level($Message);
-    is_deeply [ @_My::Structured::Adapter::Structured_Args ],
+    @_My::Structured::Adapter::structured_args = ();
+    $_My::Structured::Adapter::is_logging = 0;
+    $log->$level($message);
+    is_deeply [ @_My::Structured::Adapter::structured_args ],
               [ ],
               "structured adapter not called when not logging";
 
-    $_My::Structured::Adapter::Is_Logging = 1;
-    %_My::Unstructured::Adapter::Unstructured_Args = ();
-    $_My::Unstructured::Adapter::Is_Logging = 0;
-    $log->$Level($Message);
-    is_deeply { %_My::Unstructured::Adapter::Unstructured_Args },
+    $_My::Structured::Adapter::is_logging = 1;
+    %_My::Unstructured::Adapter::unstructured_args = ();
+    $_My::Unstructured::Adapter::is_logging = 0;
+    $log->$level($message);
+    is_deeply { %_my::Unstructured::Adapter::unstructured_args },
               { },
               "unstructured adapter not called when not logging";
 };
