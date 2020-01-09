@@ -3,7 +3,6 @@ package Log::Any::Adapter::Multiplex;
 # ABSTRACT: Adapter to use allow structured logging across other adapters
 # VERSION
 
-use List::Util qw(any);
 use Log::Any;
 use Log::Any::Adapter;
 use Log::Any::Adapter::Util qw(make_method);
@@ -71,7 +70,9 @@ foreach my $method ( Log::Any->detection_methods() ) {
         $method,
         sub {
             my ($self) = @_;
-            return any { $_->$method } $self->_get_adapters();
+            # Not using List::Util::any because it could break older perl builds
+            my @logging_adaptors = grep { $_->$method } $self->_get_adapters();
+            return @logging_adaptors ? 1 : 0;
         }
     );
 }
