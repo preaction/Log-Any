@@ -43,6 +43,8 @@ use Log::Any::Adapter;
     }
 }
 
+require_ok('Log::Any::Adapter::Multiplex');
+
 subtest basic_arg_validation => sub {
     # helpful for making sure init() is called on each set() below
     my $log = Log::Any->get_logger;
