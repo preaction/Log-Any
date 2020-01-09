@@ -45,7 +45,8 @@ use Log::Any::Adapter;
 
 require_ok('Log::Any::Adapter::Multiplex');
 
-subtest basic_arg_validation => sub {
+# basic_arg_validation
+{
     # helpful for making sure init() is called on each set() below
     my $log = Log::Any->get_logger;
 
@@ -89,9 +90,10 @@ subtest basic_arg_validation => sub {
     };
     ok !$@, "Multiplex set up as expected"
         or diag $@;
-};
+}
 
-subtest multiplex_implementation => sub {
+# multiplex_implementation
+{
     my %random_args = ( log_level => 'scream' );
 
     my $entry = Log::Any::Adapter->set(
@@ -155,6 +157,6 @@ subtest multiplex_implementation => sub {
     is_deeply { %_My::Unstructured::Adapter::unstructured_args },
               { },
               "unstructured adapter not called when not logging";
-};
+}
 
 done_testing();
