@@ -158,5 +158,3 @@ require_ok('Log::Any::Adapter::Multiplex');
               { },
               "unstructured adapter not called when not logging";
 }
-
-done_testing();
