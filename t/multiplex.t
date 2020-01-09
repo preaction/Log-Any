@@ -150,7 +150,7 @@ subtest multiplex_implementation => sub {
     %_My::Unstructured::Adapter::unstructured_args = ();
     $_My::Unstructured::Adapter::is_logging = 0;
     $log->$level($message);
-    is_deeply { %_my::Unstructured::Adapter::unstructured_args },
+    is_deeply { %_My::Unstructured::Adapter::unstructured_args },
               { },
               "unstructured adapter not called when not logging";
 };
