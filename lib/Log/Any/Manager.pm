@@ -171,9 +171,8 @@ sub _reselect_matching_adapters {
 
     # Reselect adapter for each category matching $pattern
     #
-    while ( my ( $category, $category_info ) =
-        each( %{ $self->{category_cache} } ) )
-    {
+    for my $category ( keys %{ $self->{category_cache} } ) {
+        my $category_info = $self->{category_cache}->{$category};
         my $new_entry = $self->_choose_entry_for_category($category);
         if ( $new_entry ne $category_info->{entry} ) {
             my $new_adapter =
