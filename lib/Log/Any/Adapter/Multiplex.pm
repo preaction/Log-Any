@@ -16,16 +16,16 @@ use base qw(Log::Any::Adapter::Base);
 sub init {
     my $self = shift;
 
-    my $adapters_and_args = $self->{adapters_and_args};
-    if ( ( ref($adapters_and_args) ne 'HASH' ) ||
-         ( grep { ref($_) ne 'ARRAY' } values %$adapters_and_args ) ) {
+    my $adapters = $self->{adapters};
+    if ( ( ref($adapters) ne 'HASH' ) ||
+         ( grep { ref($_) ne 'ARRAY' } values %$adapters ) ) {
         Carp::croak("A list of adapters and their arguments must be provided");
     }
 }
 
 sub structured {
     my ($self, $level, $category, @structured_log_args) = @_;
-    my %adapters_and_args = %{ $self->{adapters_and_args} };
+    my %adapters = %{ $self->{adapters} };
     my $unstructured_log_args;
 
     for my $adapter ( $self->_get_adapters($category) ) {
@@ -88,8 +88,8 @@ sub _get_adapters {
     my $category_cache = $self->{category_cache};
     if ( !defined( $category_cache->{$category} ) ) {
         my $new_cache = [];
-        my %adapters_and_args = %{ $self->{adapters_and_args} };
-        while ( my ($adapter_name, $adapter_args) = each %adapters_and_args ) {
+        my %adapters = %{ $self->{adapters} };
+        while ( my ($adapter_name, $adapter_args) = each %adapters ) {
             my $adapter_class = Log::Any::Manager->_get_adapter_class($adapter_name);
             push @$new_cache, $adapter_class->new(
                 @$adapter_args,
@@ -113,7 +113,7 @@ __END__
 
     Log::Any::Adapter->set(
         'Multiplex',
-        adapters_and_args => {
+        adapters => {
             'Stdout' => [],
             'Stderr' => [ log_level => 'warn' ],
             ...
@@ -130,7 +130,7 @@ Adapters receiving messages from this adapter can behave just like they are the
 only recipient of the log message. That means they can, for example, use
 L<Log::Any::Adapter::Development/Structured logging> (or not).
 
-C<adapters_and_args> is a hashref whose keys should be adapters, and whose
+C<adapters> is a hashref whose keys should be adapters, and whose
 values are the arguments to pass those adapters on initialization.
 
 Note that this differs from other loggers like L<Log::Dispatch>, which will

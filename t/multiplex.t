@@ -51,38 +51,38 @@ require_ok('Log::Any::Adapter::Multiplex');
     my $log = Log::Any->get_logger;
 
     eval { Log::Any::Adapter->set( 'Multiplex' ) };
-    ok $@, 'adapters_and_args are required';
+    ok $@, 'adapters are required';
 
     eval {
         Log::Any::Adapter->set(
             'Multiplex',
-            adapters_and_args => 'Stdout'
+            adapters => 'Stdout'
         )
     };
-    ok $@, 'adapters_and_args must be a hash';
+    ok $@, 'adapters must be a hash';
 
     eval {
         Log::Any::Adapter->set(
             'Multiplex',
-            adapters_and_args => 'Stdout'
+            adapters => 'Stdout'
         )
     };
-    ok $@, 'adapters_and_args must be a hash';
+    ok $@, 'adapters must be a hash';
 
     eval {
         Log::Any::Adapter->set(
             'Multiplex',
-            adapters_and_args => {
+            adapters => {
                 Stdout => {}
             }
         )
     };
-    ok $@, 'adapters_and_args values must be arrays';
+    ok $@, 'adapters values must be arrays';
 
     eval {
         Log::Any::Adapter->set(
             'Multiplex',
-            adapters_and_args => {
+            adapters => {
                 Stdout => [ log_level => 'info' ],
                 Stderr => [],
             }
@@ -98,7 +98,7 @@ require_ok('Log::Any::Adapter::Multiplex');
 
     my $entry = Log::Any::Adapter->set(
         'Multiplex',
-        adapters_and_args => {
+        adapters => {
             '+_My::Structured::Adapter'   => [ %random_args ],
             '+_My::Unstructured::Adapter' => [ %random_args ],
         }
