@@ -59,10 +59,15 @@ trace.
 
     sub new
     {
-        my ($class, %args) = @_;
-        croak 'no "message"'     unless exists $args{message};
-        croak 'no "stack_trace"' unless exists $args{stack_trace};
-        return bless { %args }, $class;
+        my ($class, $message) = @_;
+        croak 'no "message"' unless defined $message;
+        return bless {
+            message     => $message,
+            stack_trace => Devel::StackTrace->new(
+                # Filter e.g "Log::Any::Proxy", "My::Log::Any::Proxy", etc.
+                ignore_package => [ qr/(?:^|::)Log::Any(?:::|$)/ ],
+            ),
+        }, $class;
     }
 
     sub stringify   { $_[0]->{message}     }
@@ -92,13 +97,7 @@ sub maybe_upgrade_with_stack_trace
                         ( @args == 2 && ref $args[1] eq 'HASH' );
     return @args if ref $args[0];
 
-    $args[0] = Log::Any::MessageWithStackTrace->new(
-        message     => $args[0],
-        stack_trace => Devel::StackTrace->new(
-            # Filter e.g "Log::Any::Proxy", "My::Log::Any::Proxy", etc.
-            ignore_package => [ qr/(?:^|::)Log::Any(?:::|$)/ ],
-        ),
-    );
+    $args[0] = Log::Any::MessageWithStackTrace->new($args[0]);
 
     return @args;
 }
