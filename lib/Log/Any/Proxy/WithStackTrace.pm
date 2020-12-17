@@ -10,7 +10,7 @@ our $VERSION = '1.709';
 use Log::Any::Proxy;
 our @ISA = qw/Log::Any::Proxy/;
 
-use Devel::StackTrace;
+use Devel::StackTrace 2.00;
 use Log::Any::Adapter::Util ();
 use overload;
 

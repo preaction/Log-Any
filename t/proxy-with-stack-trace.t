@@ -10,6 +10,16 @@ use FindBin;
 use lib $FindBin::RealBin;
 use TestAdapters;
 
+BEGIN {
+    eval {
+        require Devel::StackTrace;
+        Devel::StackTrace->VERSION( 2.00 );
+    };
+    if ( $@ ) {
+        plan skip_all => 'Devel::StackTrace >= 2.00 is required for this test';
+    }
+}
+
 use Log::Any::Proxy::WithStackTrace;    # necessary?
 
 my $default_log = Log::Any->get_logger;
