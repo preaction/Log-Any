@@ -10,6 +10,8 @@ use FindBin;
 use lib $FindBin::RealBin;
 use TestAdapters;
 
+use Log::Any::Proxy::WithStackTrace;    # necessary?
+
 my $default_log = Log::Any->get_logger;
 my $log         = Log::Any->get_logger( proxy_class => 'WithStackTrace' );
 
