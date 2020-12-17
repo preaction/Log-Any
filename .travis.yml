@@ -1,3 +1,4 @@
+dist: trusty # Allows old, old Perls
 language: perl
 perl:
     - "5.8"
@@ -27,7 +28,7 @@ before_install:
     - perl -V
 
 install:
-    - cpanm -n -q --skip-satisfied --installdeps .
+    - cpanm -n --skip-satisfied --installdeps .
 
 script:
     - prove -l -s -j$(test-jobs) $(test-files)
