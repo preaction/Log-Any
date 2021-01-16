@@ -18,6 +18,15 @@ BEGIN {
     if ( $@ ) {
         plan skip_all => 'Devel::StackTrace >= 2.00 is required for this test';
     }
+    else {
+        eval {
+            require Storable;
+            Storable->VERSION( 3.08 );
+        };
+        if ( $@ ) {
+            plan skip_all => 'Storable >= 3.08 is required for this test';
+        }
+    }
 }
 
 use Log::Any::Proxy::WithStackTrace;    # necessary?
