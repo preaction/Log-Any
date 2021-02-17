@@ -27,6 +27,7 @@ our $OverrideDefaultProxyClass;
 {
     my $manager = Log::Any::Manager->new();
     sub _manager { return $manager }
+    sub has_consumer { $manager->has_consumer }
 }
 
 sub import {
@@ -401,6 +402,8 @@ application could do this:
     use Log::Any::Adapter ('File', '/path/to/file.log');
 
 See the L<Log::Any::Adapter> documentation for more details.
+
+To detect if a consumer exists, use C<< Log::Any->has_consumer >>.
 
 =head1 Q & A
 
