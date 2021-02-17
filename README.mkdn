@@ -4,7 +4,7 @@ Log::Any - Bringing loggers and listeners together
 
 # VERSION
 
-version 1.708
+version 1.709
 
 # STATUS
 
@@ -276,6 +276,8 @@ application could do this:
     use Log::Any::Adapter ('File', '/path/to/file.log');
 
 See the [Log::Any::Adapter](https://metacpan.org/pod/Log::Any::Adapter) documentation for more details.
+
+To detect if a consumer exists, use `Log::Any->has_consumer`.
 
 # Q & A
 
