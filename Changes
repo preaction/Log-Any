@@ -4,6 +4,8 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+1.709     2021-02-17 15:16:20-06:00 America/Chicago
+
     [Added]
 
     - Added "Log::Any->has_consumer" for the rare case where one needs

@@ -5,7 +5,7 @@ use warnings;
 package Log::Any::Adapter::Capture;
 
 # ABSTRACT: Adapter for capturing log messages into an arrayref
-our $VERSION = '1.709';
+our $VERSION = '1.710';
 
 use Log::Any::Adapter::Util ();
 
