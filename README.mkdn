@@ -4,7 +4,7 @@ Log::Any - Bringing loggers and listeners together
 
 # VERSION
 
-version 1.709
+version 1.710
 
 # STATUS
 
