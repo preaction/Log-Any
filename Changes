@@ -4,6 +4,8 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+1.710     2021-08-02 10:11:33-05:00 America/Chicago
+
     [Other]
 
     - Removed explicit declaration of core dependencies to improve user
