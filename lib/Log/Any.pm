@@ -1,443 +1,139 @@
-use 5.008001;
-use strict;
-use warnings;
-
 package Log::Any;
-
-# ABSTRACT: Bringing loggers and listeners together
-our $VERSION = '1.710';
-
-use Log::Any::Manager;
-use Log::Any::Proxy::Null;
-use Log::Any::Adapter::Util qw(
-  require_dynamic
-  detection_aliases
-  detection_methods
-  log_level_aliases
-  logging_aliases
-  logging_and_detection_methods
-  logging_methods
-);
-
-# This is overridden in Log::Any::Test
-our $OverrideDefaultAdapterClass;
-our $OverrideDefaultProxyClass;
-
-# singleton and accessor
-{
-    my $manager = Log::Any::Manager->new();
-    sub _manager { return $manager }
-    sub has_consumer { $manager->has_consumer }
-}
-
-sub import {
-    my $class  = shift;
-    my $caller = caller();
-
-    my @export_params = ( $caller, @_ );
-    $class->_export_to_caller(@export_params);
-}
-
-sub _export_to_caller {
-    my $class  = shift;
-    my $caller = shift;
-
-    # Parse parameters passed to 'use Log::Any'
-    my $saw_log_param;
-    my @params;
-    while ( my $param = shift @_ ) {
-        if ( !$saw_log_param && $param =~ /^\$(\w+)/ ) {
-            $saw_log_param = $1;   # defer until later
-            next;                  # singular
-        }
-        else {
-            push @params, $param, shift @_;    # pairwise
-        }
-    }
-
-    unless ( @params % 2 == 0 ) {
-        require Carp;
-        Carp::croak("Argument list not balanced: @params");
-    }
-
-    # get logger if one was requested
-    if ( defined $saw_log_param ) {
-        no strict 'refs';
-        my $proxy = $class->get_logger( category => $caller, @params );
-        my $varname = "${caller}::${saw_log_param}";
-        *$varname = \$proxy;
-    }
-}
-
-sub get_logger {
-    my ( $class, %params ) = @_;
-    no warnings 'once';
-
-    my $category =
-      defined $params{category} ? delete $params{'category'} : caller;
-    if ( my $default = delete $params{'default_adapter'} ) {
-        my @default_adapter_params = ();
-        if (ref $default eq 'ARRAY') {
-            ($default, @default_adapter_params) = @{ $default };
-        }
-        # Every default adapter is set only for a given logger category.
-        # When another adapter is configured (by using
-        # Log::Any::Adapter->set) for this category, it takes
-        # precedence, but if that adapter is later removed, the default
-        # we set here takes over again.
-        $class->_manager->set_default(
-            $category, $default, @default_adapter_params
-        );
-    }
-
-    my $proxy_class = $class->_get_proxy_class( delete $params{proxy_class} );
-
-    my $adapter = $class->_manager->get_adapter( $category );
-    my $context = $class->_manager->get_context();
-
-    require_dynamic($proxy_class);
-    return $proxy_class->new(
-        %params, adapter => $adapter, category => $category, context => $context
-    );
-}
-
-sub _get_proxy_class {
-    my ( $self, $proxy_name ) = @_;
-    return $Log::Any::OverrideDefaultProxyClass
-      if $Log::Any::OverrideDefaultProxyClass;
-    return "Log::Any::Proxy" if !$proxy_name && _manager->has_consumer;
-    return "Log::Any::Proxy::Null" if !$proxy_name;
-    my $proxy_class = (
-          substr( $proxy_name, 0, 1 ) eq '+'
-        ? substr( $proxy_name, 1 )
-        : "Log::Any::Proxy::$proxy_name"
-    );
-    return $proxy_class;
-}
-
-# For backward compatibility
-sub set_adapter {
-    my $class = shift;
-    Log::Any->_manager->set(@_);
-}
-
-1;
-
-__END__
-
-=pod
+our $VERSION = '1.999_000';
+# ABSTRACT: Fast logging that plays well with others
 
 =head1 SYNOPSIS
 
-In a CPAN or other module:
+    ### Basic use
+    # Get a logger that logs to STDERR
+    use Log::Any;
+    my $log = Log::Any->new;
 
-    package Foo;
-    use Log::Any qw($log);
+    # Shortcut
+    use Log::Any qw( $log );
 
-    # log a string
-    $log->error("an error occurred");
+    # Log levels
+    $log->info( "Informational" );
+    $log->debug( "Debugging" );
+    $log->warn( "Warning" );
+    $log->error( "Error!" );
+    $log->fatal( "Fatal!" );
 
-    # log a string and some data
-    $log->info("program started",
-        {progname => $0, pid => $$, perl_version => $]});
+    ### CPAN Modules / Opt-in logging
+    # Get a logger that is silent (logs go nowhere) by default
+    use Log::Any::Proxy;
+    my $log = Log::Any::Proxy->new;
+    if ( $log->is_silent ) {
+        warn "Load Log::Any to see my logging!\n";
+    }
 
-    # log a string and data using a format string
-    $log->debugf("arguments are: %s", \@_);
+    # Shortcut
+    use Log::Any::Proxy qw( $log );
+    # Make any silent loggers log to Stderr
+    use Log::Any;
+    if ( !$log->is_silent ) {
+        say "Now I don't feel lonely!";
+    }
 
-    # log an error and throw an exception
-    die $log->fatal("a fatal error occurred");
+    ### Log to Syslog
+    use Log::Any -syslog;
 
-In a Moo/Moose-based module:
+    ### Log to Stderr, Syslog, and a file
+    use Log::Any -stderr, -syslog, -file => 'debug.log';
 
-    package Foo;
-    use Log::Any ();
-    use Moo;
+    ### Log to Log4perl
+    use Log::Any -log4perl;
+    # With a config file
+    use Log::Any -log4perl => 'log4perl.properties';
 
-    has log => (
-        is => 'ro',
-        default => sub { Log::Any->get_logger },
-    );
+    ### Add a log destination
+    use Log::Any qw( $log );
+    $log->to( -file => 'debug.log' );
 
-In your application:
+    # Add a log destination for one run
+    perl -MLog::Any=-file,debug.log script.pl
 
-    use Foo;
-    use Log::Any::Adapter;
+    ### Get a scoped log object
+    my $scoped_log = $log->scope;
+    # Add contextual information
+    $scoped_log->context( id => 'request id' );
+    # Shortcut
+    my $scoped_log = $log->scope( id => 'request id' );
+    # Log this scope to a file
+    $scoped_log->to( -file => 'debug.log' );
 
-    # Send all logs to Log::Log4perl
-    Log::Any::Adapter->set('Log4perl');
+    ### Logging
+    # Log conditionally
+    $log->debug( sub { "A wall of text" );
 
-    # Send all logs to Log::Dispatch
-    my $log = Log::Dispatch->new(outputs => [[ ... ]]);
-    Log::Any::Adapter->set( 'Dispatch', dispatcher => $log );
+    # Log with formatting
+    $log->debugf( "An object: %s", $object );
 
-    # See Log::Any::Adapter documentation for more options
+    # Log conditionally with formatting
+    $log->debugf( sub { "An object: %s", $object } );
+
+    # Log and exit non-zero. Something is displayed even if silent or logs are redirected.
+    die $log->fatal( "Goodbye" );
+    # Log and warn. Something is displayed even if silent or logs are redirected.
+    warn $log->warn( "I feel asleep!" );
+    # Log and print. Something is displayed even if silent or logs are redirected.
+    say $log->info( "Hello new friend!" );
+
+    ### Log output
+    # Regular log messages
+    use Log::Any qw( $log );        # ??? Should timestamp?
+    $log->info( "Hello" );          # [info] Hello
+    $log->warn( "Uh-oh" );          # [warn] Uh-oh
+    die $log->fatal( "Oh no!" );    # [fatal] Oh no!
+                                    # Oh no! at script.pl line 4.
+    # Show stack traces
+    use Log::Any -trace, qw( $log );
+    $log->info( "Hello" );          # [info] Hello at script.pl line 2.
+    $log->warn( "Uh-oh" );          # [warn] Uh-oh at script.pl line 3.
+    die $log->fatal( "Oh no!" );    # [fatal] Oh no! at script.pl line 4.
+                                    # Oh no! at script.pl line 4.
+    # Enable traces for one run
+    perl -MLog::Any=-trace script.pl
+
+    # With context
+    use Log::Any qw( $log );
+    $log->context( REMOTE_ADDR => '127.0.0.1' );            # ??? What must be supported in tag names/values?
+    $log->info( "There's no place like" );                  # [info] There's no place like REMOTE_ADDR=127.0.0.1
+    $log->infof( "We're not in %s, anymore", "Kansas" );    # [info] We're not in Kansas, anymore REMOTE_ADDR=127.0.0.1
 
 =head1 DESCRIPTION
 
-C<Log::Any> provides a standard log production API for modules.
-L<Log::Any::Adapter> allows applications to choose the mechanism for log
-consumption, whether screen, file or another logging mechanism like
-L<Log::Dispatch> or L<Log::Log4perl>.
+=head2 Changes From v1
 
-Many modules have something interesting to say. Unfortunately there is no
-standard way for them to say it - some output to STDERR, others to C<warn>,
-others to custom file logs. And there is no standard way to get a module to
-start talking - sometimes you must call a uniquely named method, other times
-set a package variable.
+=over 4
 
-This being Perl, there are many logging mechanisms available on CPAN.  Each has
-their pros and cons. Unfortunately, the existence of so many mechanisms makes
-it difficult for a CPAN author to commit his/her users to one of them. This may
-be why many CPAN modules invent their own logging or choose not to log at all.
+=item Loading Log::Any logs to C<STDERR> by default
 
-To untangle this situation, we must separate the two parts of a logging API.
-The first, I<log production>, includes methods to output logs (like
-C<$log-E<gt>debug>) and methods to inspect whether a log level is activated
-(like C<$log-E<gt>is_debug>). This is generally all that CPAN modules care
-about. The second, I<log consumption>, includes a way to configure where
-logging goes (a file, the screen, etc.) and the code to send it there. This
-choice generally belongs to the application.
+If you want your module to create logs that can be enabled by a consuming application later,
+change C<use Log::Any> in your module to C<use Log::Any::Proxy>.
 
-A CPAN module uses C<Log::Any> to get a log producer object.  An application,
-in turn, may choose one or more logging mechanisms via L<Log::Any::Adapter>, or
-none at all.
+=item Log::Any v2 requires Perl 5.24
 
-C<Log::Any> has a very tiny footprint and no dependencies beyond Perl 5.8.1,
-which makes it appropriate for even small CPAN modules to use. It defaults to
-'null' logging activity, so a module can safely log without worrying about
-whether the application has chosen (or will ever choose) a logging mechanism.
+=item Log::Any v2 requires non-core modules
 
-See L<http://www.openswartz.com/2007/09/06/standard-logging-api/> for the
-original post proposing this module.
-
-=head1 LOG LEVELS
-
-C<Log::Any> supports the following log levels and aliases, which is meant to be
-inclusive of the major logging packages:
-
-     trace
-     debug
-     info (inform)
-     notice
-     warning (warn)
-     error (err)
-     critical (crit, fatal)
-     alert
-     emergency
-
-Levels are translated as appropriate to the underlying logging mechanism. For
-example, log4perl only has six levels, so we translate 'notice' to 'info' and
-the top three levels to 'fatal'.  See the documentation of an adapter class
-for specifics.
-
-=head1 CATEGORIES
-
-Every logger has a category, generally the name of the class that asked for the
-logger. Some logging mechanisms, like log4perl, can direct logs to different
-places depending on category.
-
-=head1 PRODUCING LOGS (FOR MODULES)
-
-=head2 Getting a logger
-
-The most convenient way to get a logger in your module is:
-
-    use Log::Any qw($log);
-
-This creates a package variable I<$log> and assigns it to the logger for the
-current package. It is equivalent to
-
-    our $log = Log::Any->get_logger;
-
-In general, to get a logger for a specified category:
-
-    my $log = Log::Any->get_logger(category => $category)
-
-If no category is specified, the calling package is used.
-
-A logger object is an instance of L<Log::Any::Proxy>, which passes
-on messages to the L<Log::Any::Adapter> handling its category.
-
-If the C<proxy_class> argument is passed, an alternative to
-L<Log::Any::Proxy> (such as a subclass) will be instantiated and returned
-instead.  The argument is automatically prepended with "Log::Any::Proxy::".
-If instead you want to pass the full name of a proxy class, prefix it with
-a "+". E.g.
-
-    # Log::Any::Proxy::Foo
-    my $log = Log::Any->get_logger(proxy_class => 'Foo');
-
-    # MyLog::Proxy
-    my $log = Log::Any->get_logger(proxy_class => '+MyLog::Proxy');
-
-=head2 Logging
-
-To log a message, pass a single string to any of the log levels or aliases. e.g.
-
-    $log->error("this is an error");
-    $log->warn("this is a warning");
-    $log->warning("this is also a warning");
-
-The log string will be returned so that it can be used further (e.g. for a C<die> or
-C<warn> call).
-
-You should B<not> include a newline in your message; that is the responsibility
-of the logging mechanism, which may or may not want the newline.
-
-If you want to log additional structured data alongside with your string, you
-can add a single hashref after your log string. e.g.
-
-    $log->info("program started",
-        {progname => $0, pid => $$, perl_version => $]});
-
-If the configured L<Log::Any::Adapter> does not support logging structured data,
-the hash will be converted to a string using L<Data::Dumper>.
-
-There are also versions of each of the logging methods with an additional "f" suffix
-(C<infof>, C<errorf>, C<debugf>, etc.) that format a list of arguments.  The
-specific formatting mechanism and meaning of the arguments is controlled by the
-L<Log::Any::Proxy> object.
-
-    $log->errorf("an error occurred: %s", $@);
-    $log->debugf("called with %d params: %s", $param_count, \@params);
-
-By default it renders like L<C<sprintf>|perlfunc/"sprintf FORMAT, LIST">,
-with the following additional features:
-
-=over
-
-=item *
-
-Any complex references (like C<\@params> above) are automatically converted to
-single-line strings with L<Data::Dumper>.
-
-=item *
-
-Any undefined values are automatically converted to the string "<undef>".
+This may be relaxed later, but L<Devel::StackTrace> is required.
 
 =back
 
-=head2 Log level detection
-
-To detect whether a log level is on, use "is_" followed by any of the log
-levels or aliases. e.g.
-
-    if ($log->is_info()) { ... }
-    $log->debug("arguments are: " . Dumper(\@_))
-        if $log->is_debug();
-
-This is important for efficiency, as you can avoid the work of putting together
-the logging message (in the above case, stringifying C<@_>) if the log level is
-not active.
-
-The formatting methods (C<infof>, C<errorf>, etc.) check the log level for you.
-
-Some logging mechanisms don't support detection of log levels. In these cases
-the detection methods will always return 1.
-
-In contrast, the default logging mechanism - Null - will return 0 for all
-detection methods.
-
-=head2 Log context data
-
-C<Log::Any> supports logging context data by exposing the C<context>
-hashref. All the key/value pairs added to this hash will be printed
-with every log message. You can localize the data so that it will be
-removed again automatically at the end of the block:
-
-    $log->context->{directory} = $dir;
-    for my $file (glob "$dir/*") {
-        local $log->context->{file} = basename($file);
-        $log->warn("Can't read file!") unless -r $file;
-    }
-
-This will produce the following line:
-
-    Can't read file! {directory => '/foo',file => 'bar'}
-
-If the configured L<Log::Any::Adapter> does not support structured
-data, the context hash will be converted to a string using
-L<Data::Dumper>, and will be appended to the log message.
-
-=head2 Setting an alternate default logger
-
-When no other adapters are configured for your logger, C<Log::Any>
-uses the C<default_adapter>. To choose something other than Null as
-the default, either set the C<LOG_ANY_DEFAULT_ADAPTER> environment
-variable, or pass it as a parameter when loading C<Log::Any>
-
-    use Log::Any '$log', default_adapter => 'Stderr';
-
-The name of the default class follows the same rules as used by L<Log::Any::Adapter>.
-
-To pass arguments to the default adapter's constructor, use an arrayref:
-
-    use Log::Any '$log', default_adapter => [ 'File' => '/var/log/mylog.log' ];
-
-When a consumer configures their own adapter, the default adapter will be
-overridden. If they later remove their adapter, the default adapter will be
-used again.
-
-=head2 Configuring the proxy
-
-Any parameters passed on the import line or via the C<get_logger> method
-are passed on to the L<Log::Any::Proxy> constructor.
-
-    use Log::Any '$log', filter => \&myfilter;
-
-=head2 Testing
-
-L<Log::Any::Test> provides a mechanism to test code that uses C<Log::Any>.
-
-=head1 CONSUMING LOGS (FOR APPLICATIONS)
-
-Log::Any provides modules with a L<Log::Any::Proxy> object, which is the log
-producer.  To consume its output and direct it where you want (a file, the
-screen, syslog, etc.), you use L<Log::Any::Adapter> along with a
-destination-specific subclass.
-
-For example, to send output to a file via L<Log::Any::Adapter::File>, your
-application could do this:
-
-    use Log::Any::Adapter ('File', '/path/to/file.log');
-
-See the L<Log::Any::Adapter> documentation for more details.
-
-To detect if a consumer exists, use C<< Log::Any->has_consumer >>.
-
-=head1 Q & A
-
-=over
-
-=item Isn't Log::Any just yet another logging mechanism?
-
-No. C<Log::Any> does not include code that knows how to log to a particular
-place (file, screen, etc.) It can only forward logging requests to another
-logging mechanism.
-
-=item Why don't you just pick the best logging mechanism, and use and promote it?
-
-Each of the logging mechanisms have their pros and cons, particularly in terms
-of how they are configured. For example, log4perl offers a great deal of power
-and flexibility but uses a global and potentially heavy configuration, whereas
-L<Log::Dispatch> is extremely configuration-light but doesn't handle
-categories. There is also the unnamed future logger that may have advantages
-over either of these two, and all the custom in-house loggers people have
-created and cannot (for whatever reason) stop using.
-
-=item Is it safe for my critical module to depend on Log::Any?
-
-Our intent is to keep C<Log::Any> minimal, and change it only when absolutely
-necessary. Most of the "innovation", if any, is expected to occur in
-C<Log::Any::Adapter>, which your module should not have to depend on (unless it
-wants to direct logs somewhere specific). C<Log::Any> has no non-core dependencies.
-
-=item Why doesn't Log::Any use I<insert modern Perl technique>?
-
-To encourage CPAN module authors to adopt and use C<Log::Any>, we aim to have
-as few dependencies and chances of breakage as possible. Thus, no C<Moose> or
-other niceties.
-
-=back
+=head1 SEE ALSO
 
 =cut
+
+use v5.20;
+use warnings;
+use base 'Log::Any::Proxy';
+
+=sub import
+
+=cut
+
+sub import {
+    my ( $class, @args ) = @_;
+}
+
+1;
