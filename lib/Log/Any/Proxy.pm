@@ -67,7 +67,7 @@ sub clone {
 
 sub init { }
 
-for my $attr (qw/adapter filter formatter prefix context/) {
+for my $attr (qw/adapter category filter formatter prefix context/) {
     no strict 'refs';
     *{$attr} = sub { return $_[0]->{$attr} };
 }
@@ -282,6 +282,11 @@ for these levels are available from L<Log::Any::Adapter::Util>.
 If defined, this string will be prepended to all messages.  It will not
 include a trailing space, so add that yourself if you want.  This is less
 flexible/powerful than L</filter>, but avoids an extra function call.
+
+=attr context
+
+Logging context data hashref. All the key/value pairs added to this hash
+will be printed with every log message.
 
 =head2 Logging Structured Data
 
