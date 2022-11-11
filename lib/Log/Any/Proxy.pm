@@ -47,7 +47,7 @@ sub new {
         require Carp;
         Carp::croak("$class requires an 'adapter' parameter");
     }
-    unless ( $self->{category} ) {
+    unless ( defined $self->{category} ) {
         require Carp;
         Carp::croak("$class requires a 'category' parameter");
     }
