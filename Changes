@@ -4,6 +4,8 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+1.711     2022-11-22 11:28:01-06:00 America/Chicago
+
   [Fixed]
 
   - Fixed proxy not exposing 'category' attribute (#86). Thanks

@@ -5,7 +5,7 @@ use warnings;
 package Log::Any;
 
 # ABSTRACT: Bringing loggers and listeners together
-our $VERSION = '1.711';
+our $VERSION = '1.712';
 
 use Log::Any::Manager;
 use Log::Any::Proxy::Null;

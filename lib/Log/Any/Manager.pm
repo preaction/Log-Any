@@ -4,7 +4,7 @@ use warnings;
 
 package Log::Any::Manager;
 
-our $VERSION = '1.711';
+our $VERSION = '1.712';
 
 sub new {
     my $class = shift;
