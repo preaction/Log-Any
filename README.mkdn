@@ -4,11 +4,7 @@ Log::Any - Bringing loggers and listeners together
 
 # VERSION
 
-version 1.711
-
-# STATUS
-
-<a href="https://travis-ci.org/preaction/Log-Any"><img src="https://travis-ci.org/preaction/Log-Any.svg?branch=master"></a><a href="https://coveralls.io/r/preaction/Log-Any"><img src="https://coveralls.io/repos/preaction/Log-Any/badge.png" alt="Coverage Status" /></a>
+version 1.712
 
 # SYNOPSIS
 
@@ -327,6 +323,7 @@ To detect if a consumer exists, use `Log::Any->has_consumer`.
 - Jonathan &lt;jjrs.pam+github@gmail.com>
 - Karen Etheridge <ether@cpan.org>
 - Konstantin S. Uvarin <khedin@gmail.com>
+- Larry Leszczynski <larryl@cpan.org>
 - Lucas Kanashiro <kanashiro.duarte@gmail.com>
 - Maros Kollar <maros.kollar@geizhals.at>
 - Maxim Vuets <maxim.vuets@booking.com>
