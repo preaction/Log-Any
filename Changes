@@ -4,6 +4,8 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+1.712     2022-12-09 11:05:10-06:00 America/Chicago
+
   [Added]
 
   - Added `Log::Any::Proxy::WithStackTrace` to provide a stack trace at

@@ -5,7 +5,7 @@ use warnings;
 package Log::Any::Proxy;
 
 # ABSTRACT: Log::Any generator proxy object
-our $VERSION = '1.712';
+our $VERSION = '1.713';
 
 use Log::Any::Adapter::Util ();
 use overload;
