@@ -4,6 +4,8 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+1.713     2022-12-12 12:44:52-06:00 America/Chicago
+
   [Fixed]
 
   - Fixed tests failing due to missing Devel::Stacktrace. This is an
