@@ -4,6 +4,8 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+1.714     2023-03-20 11:48:30-05:00 America/Chicago
+
   [Fixed]
 
   - Fixed Syslog adaptor losing ident and facility information if
