@@ -4,6 +4,16 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+  [Fixed]
+
+  - Fixed Syslog adaptor losing ident and facility information if
+    another library wrongly calls Sys::Syslog::closelog(). This is not
+    a perfect solution, but a perfect solution can only ever be to fix
+    the close that's calling closelog() :P
+
+    Thanks to Tom Christiansen and @GrantStreetGroup for reporting this
+    issue and providing the fix.
+
 1.713     2022-12-12 12:44:52-06:00 America/Chicago
 
   [Fixed]
