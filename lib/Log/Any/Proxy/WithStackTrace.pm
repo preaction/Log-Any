@@ -60,14 +60,14 @@ trace.
 
     sub new
     {
-        my ($class, $message) = @_;
+        my ($class, $show_args, $message) = @_;
         croak 'no "message"' unless defined $message;
         return bless {
             message     => $message,
             stack_trace => Devel::StackTrace->new(
                 # Filter e.g "Log::Any::Proxy", "My::Log::Any::Proxy", etc.
                 ignore_package => [ qr/(?:^|::)Log::Any(?:::|$)/ ],
-                (!$self->{show_args} ? no_args => 1 : ())
+                no_args => !$show_args,
             ),
         }, $class;
     }
@@ -95,12 +95,13 @@ sub maybe_upgrade_with_stack_trace
     # Only want a non-ref arg, optionally followed by a structured data
     # context hashref:
     #
-
-    unless ($self->{show_args}) {
+    unless (!!$self->{show_args}) {
         for my $i (0 .. $#args) { # Check if there's a stack trace to scrub args from
             my $trace = extract_stack_trace($args[$i]);
-            $self->delete_args_from_stack_trace($trace);
-            $args[$i] = $trace;
+            if ($trace) {
+                $self->delete_args_from_stack_trace($trace);
+                $args[$i] = $trace;
+            }
         }
     }
 
@@ -108,7 +109,8 @@ sub maybe_upgrade_with_stack_trace
                         ( @args == 2 && ref $args[1] eq 'HASH' );
     return @args if ref $args[0];
 
-    $args[0] = Log::Any::MessageWithStackTrace->new($args[0]);
+
+    $args[0] = Log::Any::MessageWithStackTrace->new(!!$self->{show_args}, $args[0]);
 
     return @args;
 }
@@ -138,13 +140,14 @@ arguments from all of the C<Devel::StackTrace::Frame> in the trace.
 
 =cut
 
-sub delete_args_from_stack_trace {
-    assert_argc(2);
+sub delete_args_from_stack_trace
+{
     my ($self, $trace) = @_;
-    assert_object_isa($trace, 'Devel::StackTrace');
+
+    return unless $trace;
 
     foreach my $frame ($trace->frames) {
-        delete $frame->{args};
+        $frame->{args} = [];
     }
 }
 
