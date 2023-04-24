@@ -41,7 +41,8 @@ that is a non-reference scalar, that message will be upgraded into a
 C<Log::Any::MessageWithStackTrace> object with a C<stack_trace> method,
 and that method will return a trace relative to where the logging method
 was called.  A string overload is provided on the object to return the
-original message.
+original message. Unless a C<show_args> flag is specified, arguments
+in the stack trace will be scrubbed.
 
 B<Important:> This proxy should be used with a L<Log::Any::Adapter> that
 is configured to handle structured data.  Otherwise the object created
