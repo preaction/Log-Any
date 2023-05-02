@@ -34,14 +34,14 @@ use Log::Any::Proxy::WithStackTrace;    # necessary?
 
 my $default_log   = Log::Any->get_logger;
 my $log           = Log::Any->get_logger( proxy_class => 'WithStackTrace' );
-my $log_show_args = Log::Any->get_logger( proxy_class => 'WithStackTrace', show_args => 1);
+my $log_show_args = Log::Any->get_logger( proxy_class => 'WithStackTrace', proxy_show_stack_trace_args => 1);
 
 is ref $default_log,   'Log::Any::Proxy::Null',
     'no adapter default proxy is Null';
 is ref $log,           'Log::Any::Proxy::WithStackTrace',
     'no adapter explicit proxy is WithStackTrace';
 is ref $log_show_args, 'Log::Any::Proxy::WithStackTrace',
-    'no adapter explicit proxy with show_args flag is WithStackTrace';
+    'no adapter explicit proxy with proxy_show_stack_trace_args flag is WithStackTrace';
 
 $default_log  ->info("test");
 $log          ->info("test");
@@ -52,7 +52,7 @@ is ref $default_log,   'Log::Any::Proxy::Null',
 is ref $log,           'Log::Any::Proxy::WithStackTrace',
     'no adapter explicit proxy is still WithStackTrace after logging';
 is ref $log_show_args, 'Log::Any::Proxy::WithStackTrace',
-    'no adapter explicit proxy with show_args flag is still WithStackTrace after logging';
+    'no adapter explicit proxy with proxy_show_stack_trace_args flag is still WithStackTrace after logging';
 
 Log::Any->set_adapter('+TestAdapters::Structured');
 
@@ -61,14 +61,14 @@ is ref $default_log,   'Log::Any::Proxy',
 is ref $log,           'Log::Any::Proxy::WithStackTrace',
     'existing explicit proxy is still WithStackTrace after adapter';
 is ref $log_show_args, 'Log::Any::Proxy::WithStackTrace',
-    'existing explicit proxy with show_args flag is still WithStackTrace after adapter';
+    'existing explicit proxy with proxy_show_stack_trace_args flag is still WithStackTrace after adapter';
 
 is ref $default_log->adapter,   'TestAdapters::Structured',
     'existing default proxy has correct adapter';
 is ref $log->adapter,           'TestAdapters::Structured',
     'existing explicit proxy has correct adapter';
 is ref $log_show_args->adapter, 'TestAdapters::Structured',
-    'existing explicit proxy with show_args flag has correct adapter';
+    'existing explicit proxy with proxy_show_stack_trace_args flag has correct adapter';
 
 my @test_cases = (
     [
@@ -162,7 +162,7 @@ sub check_test_cases {
                 },
                 $trace->frames
             ),
-            "stack_trace frame has args if show_args => 1 is passed to logger",
+            "stack_trace frame has args if proxy_show_stack_trace_args => 1 is passed to logger",
         );
     }
 }
