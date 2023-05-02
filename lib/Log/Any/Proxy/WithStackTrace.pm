@@ -19,6 +19,9 @@ use overload;
 
   use Log::Any qw( $log, proxy_class => 'WithStackTrace' );
 
+  # Turns on argument logging in stack traces
+  use Log::Any qw( $log, proxy_class => 'WithStackTrace', proxy_show_stack_trace_args => 1 );
+
   # Some adapter that knows how to handle both structured data,
   # and log messages which are actually objects with a
   # "stack_trace" method:
