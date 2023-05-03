@@ -36,6 +36,7 @@ our @EXPORT_OK = qw(
   logging_aliases
   logging_and_detection_methods
   logging_methods
+  hook_names
   make_method
   numeric_level
   read_file
@@ -47,7 +48,8 @@ push @EXPORT_OK, keys %LOG_LEVELS;
 our %EXPORT_TAGS = ( 'levels' => [ keys %LOG_LEVELS ] );
 
 my ( %LOG_LEVEL_ALIASES, @logging_methods, @logging_aliases, @detection_methods,
-    @detection_aliases, @logging_and_detection_methods );
+    @detection_aliases, @logging_and_detection_methods,
+    @hook_names );
 
 BEGIN {
     %LOG_LEVEL_ALIASES = (
@@ -63,6 +65,8 @@ BEGIN {
     @detection_methods             = map { "is_$_" } @logging_methods;
     @detection_aliases             = map { "is_$_" } @logging_aliases;
     @logging_and_detection_methods = ( @logging_methods, @detection_methods );
+    @hook_names                    =
+      qw(build_context);
 }
 
 =sub logging_methods
@@ -88,6 +92,14 @@ Returns a list of logging and detection methods (but not aliases).
 =cut
 
 sub logging_and_detection_methods { @logging_and_detection_methods }
+
+=sub hook_names
+
+Returns a list of hook names.
+
+=cut
+
+sub hook_names { @hook_names }
 
 =sub log_level_aliases
 
