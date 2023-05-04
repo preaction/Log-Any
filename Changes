@@ -4,6 +4,8 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+1.715     2023-05-04 13:09:22-05:00 America/Chicago
+
   [Fixed]
 
   - Fixed Multiplex adapter losing context details. Normally, the
