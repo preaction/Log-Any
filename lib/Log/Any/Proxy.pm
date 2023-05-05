@@ -96,12 +96,9 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
         return if !$self->{adapter}->$is_realname && !defined wantarray;
 
         # Execute hook: build_context
-        my $caller = (caller 0)[0] ne 'Log::Any::Proxy'
-                    && (caller 0)[3] eq 'Log::Any::Proxy::__ANON__'
-                ? [ caller 0 ] : [ caller 1 ];
         my %items;
         foreach my $hook (@{ $self->{hooks}->{build_context} }) {
-            my %i = $hook->( $realname, $self->{category}, $caller, \%items);
+            my %i = $hook->( $realname, $self->{category}, \%items);
             @items{keys %i} = @i{keys %i};
         }
 

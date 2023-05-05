@@ -180,6 +180,27 @@ sub make_method {
     *{ $pkg . "::$method" } = $code;
 }
 
+=sub get_correct_caller
+
+Return the B<caller(num)> information.
+Use this sub routine only in a hook!
+
+Because caller stack is dependent on Log::Any internals
+we provide it here.
+If you are not using this sub routine from the root of
+the hook call, use parameter B<num> to specify the number
+of stack layers you have.
+
+=cut
+
+sub get_correct_caller {
+    my ($nr_layers) = $_[0] // 2;
+    return (caller $nr_layers)[0] ne 'Log::Any::Proxy'
+            && (caller $nr_layers)[3] eq 'Log::Any::Proxy::__ANON__'
+        ? [ caller $nr_layers ]
+        : [ caller $nr_layers + 1 ];
+}
+
 =sub require_dynamic (DEPRECATED)
 
 Given a class name, attempts to load it via require unless the class
