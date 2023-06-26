@@ -4,6 +4,13 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+  [Added]
+
+  - Added a parameter to show stack trace arguments when using the
+    WithStackTrace proxy. Since these arguments may contain sensitive
+    information, they are now removed by default. Thanks @sam-ng and
+    @GrantStreetGroup for submitting this patch! [Github #97]
+
 1.715     2023-05-04 13:09:22-05:00 America/Chicago
 
   [Fixed]
