@@ -11,12 +11,16 @@ use Log::Any::Proxy;
 our @ISA = qw/Log::Any::Proxy/;
 
 use Devel::StackTrace 2.00;
+use Devel::StackTrace::Extract qw(extract_stack_trace);
 use Log::Any::Adapter::Util ();
 use overload;
 
 =head1 SYNOPSIS
 
   use Log::Any qw( $log, proxy_class => 'WithStackTrace' );
+
+  # Turns on argument logging in stack traces
+  use Log::Any qw( $log, proxy_class => 'WithStackTrace', proxy_show_stack_trace_args => 1 );
 
   # Some adapter that knows how to handle both structured data,
   # and log messages which are actually objects with a
@@ -40,7 +44,8 @@ that is a non-reference scalar, that message will be upgraded into a
 C<Log::Any::MessageWithStackTrace> object with a C<stack_trace> method,
 and that method will return a trace relative to where the logging method
 was called.  A string overload is provided on the object to return the
-original message.
+original message. Unless a C<proxy_show_stack_trace_args> flag is specified, arguments
+in the stack trace will be scrubbed.
 
 B<Important:> This proxy should be used with a L<Log::Any::Adapter> that
 is configured to handle structured data.  Otherwise the object created
@@ -59,13 +64,14 @@ trace.
 
     sub new
     {
-        my ($class, $message) = @_;
+        my ($class, $proxy_show_stack_trace_args, $message) = @_;
         croak 'no "message"' unless defined $message;
         return bless {
             message     => $message,
             stack_trace => Devel::StackTrace->new(
                 # Filter e.g "Log::Any::Proxy", "My::Log::Any::Proxy", etc.
                 ignore_package => [ qr/(?:^|::)Log::Any(?:::|$)/ ],
+                no_args => !$proxy_show_stack_trace_args,
             ),
         }, $class;
     }
@@ -82,7 +88,8 @@ trace.
 This is an internal use method that will convert a non-reference scalar
 message into a C<Log::Any::MessageWithStackTrace> object with a
 C<stack_trace> method.  A string overload is provided to return the
-original message.
+original message. Args are scrubbed out in case they contain sensitive data,
+unless the C<proxy_show_stack_trace_args> option has been set.
 
 =cut
 
@@ -93,11 +100,21 @@ sub maybe_upgrade_with_stack_trace
     # Only want a non-ref arg, optionally followed by a structured data
     # context hashref:
     #
+    unless ($self->{proxy_show_stack_trace_args}) {
+        for my $i (0 .. $#args) { # Check if there's a stack trace to scrub args from
+            my $trace = extract_stack_trace($args[$i]);
+            if ($trace) {
+                $self->delete_args_from_stack_trace($trace);
+                $args[$i] = $trace;
+            }
+        }
+    }
+
     return @args unless   @args == 1 ||
                         ( @args == 2 && ref $args[1] eq 'HASH' );
     return @args if ref $args[0];
 
-    $args[0] = Log::Any::MessageWithStackTrace->new($args[0]);
+    $args[0] = Log::Any::MessageWithStackTrace->new($self->{proxy_show_stack_trace_args}, $args[0]);
 
     return @args;
 }
@@ -116,6 +133,26 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
         return $response if defined wantarray;
         return;
     };
+}
+
+=head2 delete_args_from_stack_trace($trace)
+
+    $self->delete_args_from_stack_trace($trace)
+
+To scrub potentially sensitive data from C<Devel::StackTrace> arguments, this method deletes
+arguments from all of the C<Devel::StackTrace::Frame> in the trace.
+
+=cut
+
+sub delete_args_from_stack_trace
+{
+    my ($self, $trace) = @_;
+
+    return unless $trace;
+
+    foreach my $frame ($trace->frames) {
+        $frame->{args} = [];
+    }
 }
 
 1;
