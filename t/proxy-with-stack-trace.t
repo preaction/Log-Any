@@ -19,14 +19,18 @@ BEGIN {
     if ( $@ ) {
         plan skip_all => 'Devel::StackTrace >= 2.00 is required for this test';
     }
-    else {
-        eval {
-            require Storable;
-            Storable->VERSION( 3.08 );
-        };
-        if ( $@ ) {
-            plan skip_all => 'Storable >= 3.08 is required for this test';
-        }
+    eval {
+        require Storable;
+        Storable->VERSION( 3.08 );
+    };
+    if ( $@ ) {
+        plan skip_all => 'Storable >= 3.08 is required for this test';
+    }
+    eval {
+        require Devel::StackTrace::Extract;
+    };
+    if ( $@ ) {
+        plan skip_all => 'Devel::StackTrace::Extract is required for this test';
     }
 }
 
