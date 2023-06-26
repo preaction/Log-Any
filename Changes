@@ -4,6 +4,8 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+1.716     2023-06-26 14:14:46-05:00 America/Chicago
+
   [Added]
 
   - Added a parameter to show stack trace arguments when using the

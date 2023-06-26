@@ -4,7 +4,7 @@ use warnings;
 
 package Log::Any::Proxy::Test;
 
-our $VERSION = '1.716';
+our $VERSION = '1.717';
 
 use Log::Any::Proxy;
 our @ISA = qw/Log::Any::Proxy/;
