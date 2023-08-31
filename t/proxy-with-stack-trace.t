@@ -244,15 +244,15 @@ foreach my $t (
         [],
         {
             "default log" => [
-                qr{^Help! at t/proxy-with-stack-trace\.t line \d+\.},
+                qr{^Help! at t[\/\\]proxy-with-stack-trace\.t line \d+\.},
                 "Mojo::Exception",
             ],
             "proxy log" => [
-                qr{^Help! at t/proxy-with-stack-trace\.t line \d+\.},
+                qr{^Help! at t[\/\\]proxy-with-stack-trace\.t line \d+\.},
                 "Mojo::Exception",
             ],
             "proxy log show args" => [
-                qr{^Help! at t/proxy-with-stack-trace\.t line \d+\.},
+                qr{^Help! at t[\/\\]proxy-with-stack-trace\.t line \d+\.},
                 "Mojo::Exception",
             ],
         },
@@ -263,15 +263,15 @@ foreach my $t (
         [],
         {
             "default log" => [
-                qr{^Help! at t/proxy-with-stack-trace\.t line \d+\n},
+                qr{^Help! at t[\/\\]proxy-with-stack-trace\.t line \d+\n},
                 "Moose::Exception",
             ],
             "proxy log" => [
-                qr{^Help! at t/proxy-with-stack-trace\.t line \d+\n},
+                qr{^Help! at t[\/\\]proxy-with-stack-trace\.t line \d+\n},
                 "Moose::Exception",
             ],
             "proxy log show args" => [
-                qr{^Help! at t/proxy-with-stack-trace\.t line \d+\n},
+                qr{^Help! at t[\/\\]proxy-with-stack-trace\.t line \d+\n},
                 "Moose::Exception",
             ],
         },
@@ -282,15 +282,15 @@ foreach my $t (
         [],
         {
             "default log" => [
-                qr{^Help!\n\nTrace begun at t/proxy-with-stack-trace\.t line \d+\n},
+                qr{^Help!\n\nTrace begun at t[\/\\]proxy-with-stack-trace\.t line \d+\n},
                 "Throwable::Error",
             ],
             "proxy log" => [
-                qr{^Help!\n\nTrace begun at t/proxy-with-stack-trace\.t line \d+\n},
+                qr{^Help!\n\nTrace begun at t[\/\\]proxy-with-stack-trace\.t line \d+\n},
                 "Throwable::Error",
             ],
             "proxy log show args" => [
-                qr{^Help!\n\nTrace begun at t/proxy-with-stack-trace\.t line \d+\n},
+                qr{^Help!\n\nTrace begun at t[\/\\]proxy-with-stack-trace\.t line \d+\n},
                 "Throwable::Error",
             ],
         },
