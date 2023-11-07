@@ -95,9 +95,25 @@ sub get_logger {
     my $adapter = $class->_manager->get_adapter( $category );
     my $context = $class->_manager->get_context();
 
+    my $hooks_params =
+        defined $params{hooks} ? delete $params{hooks} : {};
+    my $hooks = {};
+    for my $hook_name (Log::Any::Adapter::Util::hook_names()) {
+        if( defined $hooks_params->{$hook_name} ) {
+            if( ref $hooks_params->{$hook_name} ne 'ARRAY' ) {
+                require Carp;
+                Carp::croak("Fault in hook definition: not array");
+            }
+            $hooks->{$hook_name} = $hooks_params->{$hook_name};
+        } else {
+            $hooks->{$hook_name} = [];
+        }
+    }
+
     require_dynamic($proxy_class);
     return $proxy_class->new(
-        %params, adapter => $adapter, category => $category, context => $context
+        %params, adapter => $adapter, category => $category, context => $context,
+        hooks => $hooks,
     );
 }
 

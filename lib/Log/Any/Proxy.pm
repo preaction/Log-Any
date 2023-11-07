@@ -55,6 +55,10 @@ sub new {
         require Carp;
         Carp::croak("$class requires a 'context' parameter");
     }
+    unless ( $self->{hooks} ) {
+        require Carp;
+        Carp::croak("$class requires a 'hooks' parameter");
+    }
     bless $self, $class;
     $self->init(@_);
     return $self;
@@ -67,7 +71,7 @@ sub clone {
 
 sub init { }
 
-for my $attr (qw/adapter category filter formatter prefix context/) {
+for my $attr (qw/adapter category filter formatter prefix context hooks/) {
     no strict 'refs';
     *{$attr} = sub { return $_[0]->{$attr} };
 }
@@ -91,14 +95,23 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
         my ( $self, @parts ) = @_;
         return if !$self->{adapter}->$is_realname && !defined wantarray;
 
+        # Execute hook: build_context
+        my %items;
+        foreach my $hook (@{ $self->{hooks}->{build_context} }) {
+            my %i = $hook->( $realname, $self->{category}, \%items);
+            @items{keys %i} = @i{keys %i};
+        }
+
         my $structured_logging =
             $self->{adapter}->can('structured') && !$self->{filter};
 
         my $data_from_parts = pop @parts
             if ( @parts && ( ( ref $parts[-1] || '' ) eq ref {} ) );
         my $data_from_context = $self->{context};
+        my $data_from_hooks = \%items;
         my $data =
-            { map {%$_} grep {$_ && %$_} $data_from_context, $data_from_parts };
+            { map {%$_} grep {$_ && %$_} $data_from_context, $data_from_parts,
+                $data_from_hooks, };
 
         if ($structured_logging) {
             unshift @parts, $self->{prefix} if $self->{prefix};
