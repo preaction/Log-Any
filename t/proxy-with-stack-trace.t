@@ -44,6 +44,14 @@ BEGIN {
         plan skip_all => 'Devel::StackTrace >= 2.00 is required for this test';
         $num_tests = 0;
     }
+    eval {
+        require Storable;
+        Storable->VERSION( 3.06 );
+    };
+    if ( $@ ) {
+        plan skip_all => 'Storable >= 3.06 is required for this test';
+        $num_tests = 0;
+    }
 }
 
 plan tests => $num_tests if $num_tests;
