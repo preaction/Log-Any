@@ -4,7 +4,7 @@ Log::Any - Bringing loggers and listeners together
 
 # VERSION
 
-version 1.717
+version 1.718
 
 # SYNOPSIS
 
@@ -54,9 +54,9 @@ In your application:
 # DESCRIPTION
 
 `Log::Any` provides a standard log production API for modules.
-[Log::Any::Adapter](https://metacpan.org/pod/Log::Any::Adapter) allows applications to choose the mechanism for log
+[Log::Any::Adapter](https://metacpan.org/pod/Log%3A%3AAny%3A%3AAdapter) allows applications to choose the mechanism for log
 consumption, whether screen, file or another logging mechanism like
-[Log::Dispatch](https://metacpan.org/pod/Log::Dispatch) or [Log::Log4perl](https://metacpan.org/pod/Log::Log4perl).
+[Log::Dispatch](https://metacpan.org/pod/Log%3A%3ADispatch) or [Log::Log4perl](https://metacpan.org/pod/Log%3A%3ALog4perl).
 
 Many modules have something interesting to say. Unfortunately there is no
 standard way for them to say it - some output to STDERR, others to `warn`,
@@ -78,7 +78,7 @@ logging goes (a file, the screen, etc.) and the code to send it there. This
 choice generally belongs to the application.
 
 A CPAN module uses `Log::Any` to get a log producer object.  An application,
-in turn, may choose one or more logging mechanisms via [Log::Any::Adapter](https://metacpan.org/pod/Log::Any::Adapter), or
+in turn, may choose one or more logging mechanisms via [Log::Any::Adapter](https://metacpan.org/pod/Log%3A%3AAny%3A%3AAdapter), or
 none at all.
 
 `Log::Any` has a very tiny footprint and no dependencies beyond Perl 5.8.1,
@@ -134,11 +134,11 @@ In general, to get a logger for a specified category:
 
 If no category is specified, the calling package is used.
 
-A logger object is an instance of [Log::Any::Proxy](https://metacpan.org/pod/Log::Any::Proxy), which passes
-on messages to the [Log::Any::Adapter](https://metacpan.org/pod/Log::Any::Adapter) handling its category.
+A logger object is an instance of [Log::Any::Proxy](https://metacpan.org/pod/Log%3A%3AAny%3A%3AProxy), which passes
+on messages to the [Log::Any::Adapter](https://metacpan.org/pod/Log%3A%3AAny%3A%3AAdapter) handling its category.
 
 If the `proxy_class` argument is passed, an alternative to
-[Log::Any::Proxy](https://metacpan.org/pod/Log::Any::Proxy) (such as a subclass) will be instantiated and returned
+[Log::Any::Proxy](https://metacpan.org/pod/Log%3A%3AAny%3A%3AProxy) (such as a subclass) will be instantiated and returned
 instead.  The argument is automatically prepended with "Log::Any::Proxy::".
 If instead you want to pass the full name of a proxy class, prefix it with
 a "+". E.g.
@@ -169,13 +169,13 @@ can add a single hashref after your log string. e.g.
     $log->info("program started",
         {progname => $0, pid => $$, perl_version => $]});
 
-If the configured [Log::Any::Adapter](https://metacpan.org/pod/Log::Any::Adapter) does not support logging structured data,
-the hash will be converted to a string using [Data::Dumper](https://metacpan.org/pod/Data::Dumper).
+If the configured [Log::Any::Adapter](https://metacpan.org/pod/Log%3A%3AAny%3A%3AAdapter) does not support logging structured data,
+the hash will be converted to a string using [Data::Dumper](https://metacpan.org/pod/Data%3A%3ADumper).
 
 There are also versions of each of the logging methods with an additional "f" suffix
 (`infof`, `errorf`, `debugf`, etc.) that format a list of arguments.  The
 specific formatting mechanism and meaning of the arguments is controlled by the
-[Log::Any::Proxy](https://metacpan.org/pod/Log::Any::Proxy) object.
+[Log::Any::Proxy](https://metacpan.org/pod/Log%3A%3AAny%3A%3AProxy) object.
 
     $log->errorf("an error occurred: %s", $@);
     $log->debugf("called with %d params: %s", $param_count, \@params);
@@ -184,7 +184,7 @@ By default it renders like [`sprintf`](https://metacpan.org/pod/perlfunc#sprintf
 with the following additional features:
 
 - Any complex references (like `\@params` above) are automatically converted to
-single-line strings with [Data::Dumper](https://metacpan.org/pod/Data::Dumper).
+single-line strings with [Data::Dumper](https://metacpan.org/pod/Data%3A%3ADumper).
 - Any undefined values are automatically converted to the string "&lt;undef>".
 
 ## Log level detection
@@ -225,9 +225,9 @@ This will produce the following line:
 
     Can't read file! {directory => '/foo',file => 'bar'}
 
-If the configured [Log::Any::Adapter](https://metacpan.org/pod/Log::Any::Adapter) does not support structured
+If the configured [Log::Any::Adapter](https://metacpan.org/pod/Log%3A%3AAny%3A%3AAdapter) does not support structured
 data, the context hash will be converted to a string using
-[Data::Dumper](https://metacpan.org/pod/Data::Dumper), and will be appended to the log message.
+[Data::Dumper](https://metacpan.org/pod/Data%3A%3ADumper), and will be appended to the log message.
 
 ## Setting an alternate default logger
 
@@ -238,7 +238,7 @@ variable, or pass it as a parameter when loading `Log::Any`
 
     use Log::Any '$log', default_adapter => 'Stderr';
 
-The name of the default class follows the same rules as used by [Log::Any::Adapter](https://metacpan.org/pod/Log::Any::Adapter).
+The name of the default class follows the same rules as used by [Log::Any::Adapter](https://metacpan.org/pod/Log%3A%3AAny%3A%3AAdapter).
 
 To pass arguments to the default adapter's constructor, use an arrayref:
 
@@ -251,27 +251,27 @@ used again.
 ## Configuring the proxy
 
 Any parameters passed on the import line or via the `get_logger` method
-are passed on to the [Log::Any::Proxy](https://metacpan.org/pod/Log::Any::Proxy) constructor.
+are passed on to the [Log::Any::Proxy](https://metacpan.org/pod/Log%3A%3AAny%3A%3AProxy) constructor.
 
     use Log::Any '$log', filter => \&myfilter;
 
 ## Testing
 
-[Log::Any::Test](https://metacpan.org/pod/Log::Any::Test) provides a mechanism to test code that uses `Log::Any`.
+[Log::Any::Test](https://metacpan.org/pod/Log%3A%3AAny%3A%3ATest) provides a mechanism to test code that uses `Log::Any`.
 
 # CONSUMING LOGS (FOR APPLICATIONS)
 
-Log::Any provides modules with a [Log::Any::Proxy](https://metacpan.org/pod/Log::Any::Proxy) object, which is the log
+Log::Any provides modules with a [Log::Any::Proxy](https://metacpan.org/pod/Log%3A%3AAny%3A%3AProxy) object, which is the log
 producer.  To consume its output and direct it where you want (a file, the
-screen, syslog, etc.), you use [Log::Any::Adapter](https://metacpan.org/pod/Log::Any::Adapter) along with a
+screen, syslog, etc.), you use [Log::Any::Adapter](https://metacpan.org/pod/Log%3A%3AAny%3A%3AAdapter) along with a
 destination-specific subclass.
 
-For example, to send output to a file via [Log::Any::Adapter::File](https://metacpan.org/pod/Log::Any::Adapter::File), your
+For example, to send output to a file via [Log::Any::Adapter::File](https://metacpan.org/pod/Log%3A%3AAny%3A%3AAdapter%3A%3AFile), your
 application could do this:
 
     use Log::Any::Adapter ('File', '/path/to/file.log');
 
-See the [Log::Any::Adapter](https://metacpan.org/pod/Log::Any::Adapter) documentation for more details.
+See the [Log::Any::Adapter](https://metacpan.org/pod/Log%3A%3AAny%3A%3AAdapter) documentation for more details.
 
 To detect if a consumer exists, use `Log::Any->has_consumer`.
 
@@ -288,7 +288,7 @@ To detect if a consumer exists, use `Log::Any->has_consumer`.
     Each of the logging mechanisms have their pros and cons, particularly in terms
     of how they are configured. For example, log4perl offers a great deal of power
     and flexibility but uses a global and potentially heavy configuration, whereas
-    [Log::Dispatch](https://metacpan.org/pod/Log::Dispatch) is extremely configuration-light but doesn't handle
+    [Log::Dispatch](https://metacpan.org/pod/Log%3A%3ADispatch) is extremely configuration-light but doesn't handle
     categories. There is also the unnamed future logger that may have advantages
     over either of these two, and all the custom in-house loggers people have
     created and cannot (for whatever reason) stop using.
@@ -320,7 +320,6 @@ To detect if a consumer exists, use `Log::Any->has_consumer`.
 - Andrew Hewus Fresh &lt;andrew+github@afresh1.com>
 - bj5004 <bartosz.jakubski@hurra.com>
 - cm-perl <cm-perl@users.noreply.github.com>
-- Doug Bell <preaction@users.noreply.github.com>
 - Jonathan &lt;jjrs.pam+github@gmail.com>
 - Jonathan Rubin <jon.rubin@grantstreet.com>
 - Karen Etheridge <ether@cpan.org>
@@ -336,7 +335,6 @@ To detect if a consumer exists, use `Log::Any->has_consumer`.
 - Philipp Gortan <philipp.gortan@apa.at>
 - Phill Legault <saladdayllc@gmail.com>
 - Samuel Ng <samuel.ng@grantstreet.com>
-- Samuel Ng <sng@grantstreet.com>
 - Shlomi Fish <shlomif@shlomifish.org>
 - Sven Willenbuecher <sven.willenbuecher@kuehne-nagel.com>
 - XSven <XSven@users.noreply.github.com>
