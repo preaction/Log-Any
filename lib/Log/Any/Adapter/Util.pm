@@ -36,7 +36,6 @@ our @EXPORT_OK = qw(
   logging_aliases
   logging_and_detection_methods
   logging_methods
-  hook_names
   make_method
   numeric_level
   read_file
@@ -49,7 +48,7 @@ our %EXPORT_TAGS = ( 'levels' => [ keys %LOG_LEVELS ] );
 
 my ( %LOG_LEVEL_ALIASES, @logging_methods, @logging_aliases, @detection_methods,
     @detection_aliases, @logging_and_detection_methods,
-    @hook_names );
+    );
 
 BEGIN {
     %LOG_LEVEL_ALIASES = (
@@ -65,8 +64,6 @@ BEGIN {
     @detection_methods             = map { "is_$_" } @logging_methods;
     @detection_aliases             = map { "is_$_" } @logging_aliases;
     @logging_and_detection_methods = ( @logging_methods, @detection_methods );
-    @hook_names                    =
-      qw(build_context);
 }
 
 =sub logging_methods
@@ -92,14 +89,6 @@ Returns a list of logging and detection methods (but not aliases).
 =cut
 
 sub logging_and_detection_methods { @logging_and_detection_methods }
-
-=sub hook_names
-
-Returns a list of hook names.
-
-=cut
-
-sub hook_names { @hook_names }
 
 =sub log_level_aliases
 
@@ -178,27 +167,6 @@ sub make_method {
     $pkg ||= caller();
     no strict 'refs';
     *{ $pkg . "::$method" } = $code;
-}
-
-=sub get_correct_caller
-
-Return the B<caller(num)> information.
-Use this sub routine only in a hook!
-
-Because caller stack is dependent on Log::Any internals
-we provide it here.
-If you are not using this sub routine from the root of
-the hook call, use parameter B<num> to specify the number
-of stack layers you have.
-
-=cut
-
-sub get_correct_caller {
-    my ($nr_layers) = $_[0] // 2;
-    return (caller $nr_layers)[0] ne 'Log::Any::Proxy'
-            && (caller $nr_layers)[3] eq 'Log::Any::Proxy::__ANON__'
-        ? [ caller $nr_layers ]
-        : [ caller $nr_layers + 1 ];
 }
 
 =sub require_dynamic (DEPRECATED)
