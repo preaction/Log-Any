@@ -148,6 +148,10 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
 
 1;
 
+=pod
+
+=encoding utf8
+
 =head1 SYNOPSIS
 
     # prefix log messages
