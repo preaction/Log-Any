@@ -91,24 +91,33 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
         my ( $self, @parts ) = @_;
         return if !$self->{adapter}->$is_realname && !defined wantarray;
 
-        # Execute hook: build_context
-        my %items;
-        foreach my $hook (@{ $self->{hooks}->{build_context} }) {
-            my %i = $hook->( $realname, $self->{category}, \%items);
-            @items{keys %i} = @i{keys %i};
-        }
-
         my $structured_logging =
             $self->{adapter}->can('structured') && !$self->{filter};
 
         my $data_from_parts = pop @parts
             if ( @parts && ( ( ref $parts[-1] || '' ) eq ref {} ) );
         my $data_from_context = $self->{context};
-        my $data_from_hooks = \%items;
         my $data =
-            { map {%$_} grep {$_ && %$_} $data_from_context, $data_from_parts,
-                $data_from_hooks, };
+            { map {%$_} grep {$_ && %$_} $data_from_context, $data_from_parts };
 
+        # Hooks defined when using Log::Any::Proxy
+        if( defined $self->{hooks} ) {
+            foreach my $hook (@{ $self->{hooks}->{context} }) {
+                $hook->( $realname, $self->{category}, $data,
+                    { proxy => $self, calling_sub => $name, }
+                );
+            }
+        }
+
+        # Hooks defined when using Log::Any::Adapter
+        my $calling_sub = (caller 0)[0] eq __PACKAGE__ ? $name.q{f} : $name;
+        if( defined $self->{adapter}->{hooks}->{proxy} ) {
+            foreach my $hook (@{ $self->{adapter}->{hooks}->{proxy} }) {
+                $hook->( $realname, $self->{category}, $data,
+                    { proxy => $self, calling_sub => $calling_sub, }
+                );
+            }
+        }
         if ($structured_logging) {
             unshift @parts, $self->{prefix} if $self->{prefix};
             $self->{adapter}
