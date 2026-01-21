@@ -55,10 +55,6 @@ sub new {
         require Carp;
         Carp::croak("$class requires a 'context' parameter");
     }
-    unless ( $self->{hooks} ) {
-        require Carp;
-        Carp::croak("$class requires a 'hooks' parameter");
-    }
     bless $self, $class;
     $self->init(@_);
     return $self;
