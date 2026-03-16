@@ -4,6 +4,16 @@ Revision history for Log-Any
 
 {{ $NEXT }}
 
+  This release contains fixes for test failures and documentation.
+
+  [Fixed]
+
+  - Fixed t/proxy-with-stack-trace.t failing tests on Windows. Thanks @Akron!
+    [Github #104]
+  - Fixed requirement on Storable > 3.06 for Log::Any::Proxy::WithStackTrace.
+    Thanks @perlpunk! [Github #105]
+  - Fixed POD lists rendering horribly. Thanks @mikkoi! [Github #113]
+
 1.718     2025-06-01 09:59:59-05:00 America/Chicago
 
   [Fixed]
