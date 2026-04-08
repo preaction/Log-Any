@@ -47,7 +47,8 @@ push @EXPORT_OK, keys %LOG_LEVELS;
 our %EXPORT_TAGS = ( 'levels' => [ keys %LOG_LEVELS ] );
 
 my ( %LOG_LEVEL_ALIASES, @logging_methods, @logging_aliases, @detection_methods,
-    @detection_aliases, @logging_and_detection_methods );
+    @detection_aliases, @logging_and_detection_methods,
+    );
 
 BEGIN {
     %LOG_LEVEL_ALIASES = (

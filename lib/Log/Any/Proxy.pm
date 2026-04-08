@@ -67,7 +67,7 @@ sub clone {
 
 sub init { }
 
-for my $attr (qw/adapter category filter formatter prefix context/) {
+for my $attr (qw/adapter category filter formatter prefix context hooks/) {
     no strict 'refs';
     *{$attr} = sub { return $_[0]->{$attr} };
 }
@@ -100,6 +100,24 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
         my $data =
             { map {%$_} grep {$_ && %$_} $data_from_context, $data_from_parts };
 
+        # Hooks defined when using Log::Any::Proxy
+        if( defined $self->{hooks} ) {
+            foreach my $hook (@{ $self->{hooks}->{context} }) {
+                $hook->( $realname, $self->{category}, $data,
+                    { proxy => $self, calling_sub => $name, }
+                );
+            }
+        }
+
+        # Hooks defined when using Log::Any::Adapter
+        my $calling_sub = (caller 0)[0] eq __PACKAGE__ ? $name.q{f} : $name;
+        if( defined $self->{adapter}->{hooks}->{proxy} ) {
+            foreach my $hook (@{ $self->{adapter}->{hooks}->{proxy} }) {
+                $hook->( $realname, $self->{category}, $data,
+                    { proxy => $self, calling_sub => $calling_sub, }
+                );
+            }
+        }
         if ($structured_logging) {
             unshift @parts, $self->{prefix} if $self->{prefix};
             $self->{adapter}
@@ -134,6 +152,10 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
 }
 
 1;
+
+=pod
+
+=encoding utf8
 
 =head1 SYNOPSIS
 
