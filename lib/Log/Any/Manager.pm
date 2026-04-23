@@ -35,7 +35,11 @@ sub get_adapter {
     # Create a new adapter for this category if it is not already in cache
     #
     my $category_cache = $self->{category_cache};
-    if ( !defined( $category_cache->{$category} ) ) {
+
+    # The order in which objects are destroyed during the global destruction
+    # before the program exits is unpredictable.
+    # {adapter} is an object, so already at this point it can be undef!
+    if ( !defined( $category_cache->{$category} ) || !defined( $category_cache->{$category}->{adapter} )) {
         my $entry = $self->_choose_entry_for_category($category);
         my $adapter = $self->_new_adapter_for_entry( $entry, $category );
         $category_cache->{$category} = { entry => $entry, adapter => $adapter };
