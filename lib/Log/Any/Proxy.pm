@@ -100,7 +100,7 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
             }
 
             my $structured_logging =
-                $adapter->can('structured') && !$self->{filter};
+                !$self->{filter} && $adapter->can('structured');
 
             my $data_from_parts = pop @parts
                 if ( @parts && ( ( ref $parts[-1] || '' ) eq ref {} ) );
@@ -110,7 +110,7 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
 
             if ($structured_logging) {
                 unshift @parts, $self->{prefix} if $self->{prefix};
-                $adapter->structured( $realname, $self->{category}, @parts, grep {%$_} $data );
+                $adapter->$structured_logging( $realname, $self->{category}, @parts, grep {%$_} $data );
                 return unless defined wantarray;
             }
 
