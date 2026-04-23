@@ -89,7 +89,8 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
     for my $f ( '', 'f' ) {
         *{"$name$f"} = sub {
             my ( $self, @parts ) = @_;
-            return if !$self->{adapter}->$is_realname && !defined wantarray;
+            my $adapter = $self->{adapter};
+            return if !$adapter->$is_realname && !defined wantarray;
 
             if ($f eq 'f') {
                 my $message =
@@ -99,7 +100,7 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
             }
 
             my $structured_logging =
-                $self->{adapter}->can('structured') && !$self->{filter};
+                $adapter->can('structured') && !$self->{filter};
 
             my $data_from_parts = pop @parts
                 if ( @parts && ( ( ref $parts[-1] || '' ) eq ref {} ) );
@@ -109,8 +110,7 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
 
             if ($structured_logging) {
                 unshift @parts, $self->{prefix} if $self->{prefix};
-                $self->{adapter}
-                  ->structured( $realname, $self->{category}, @parts, grep {%$_} $data );
+                $adapter->structured( $realname, $self->{category}, @parts, grep {%$_} $data );
                 return unless defined wantarray;
             }
 
@@ -125,7 +125,7 @@ foreach my $name ( Log::Any::Adapter::Util::logging_methods(), keys(%aliases) )
                 if ( defined $message and length $message ) {
                     $message = "$self->{prefix}$message"
                       if defined $self->{prefix} && length $self->{prefix};
-                    $self->{adapter}->$realname($message);
+                    $adapter->$realname($message);
                 }
             }
             return $message if defined wantarray;
