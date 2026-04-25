@@ -4,7 +4,7 @@ Log::Any - Bringing loggers and listeners together
 
 # VERSION
 
-version 1.719
+version 1.720
 
 # SYNOPSIS
 
@@ -339,6 +339,7 @@ To detect if a consumer exists, use `Log::Any->has_consumer`.
 - Samuel Ng <samuel.ng@grantstreet.com>
 - Shlomi Fish <shlomif@shlomifish.org>
 - Sven Willenbuecher <sven.willenbuecher@kuehne-nagel.com>
+- Tim Landscheidt <tim@tim-landscheidt.de>
 - Tina Müller <cpan2@tinita.de>
 - XSven <XSven@users.noreply.github.com>
 
